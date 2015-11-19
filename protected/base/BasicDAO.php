@@ -6,12 +6,7 @@ class BasicDAO implements \IBasicDAO {
 	private $tableName = null;
 	public $map = array();
 	
-	
-	//分页
-	public $page;
-	public $pageNum;
-	
-	private $host = "localhost";
+	private $host = "192.168.10.100";
 	private $user = "root";
 	private $password = "";
 	private $database = "accountant";
@@ -22,13 +17,11 @@ class BasicDAO implements \IBasicDAO {
 		$tableName = preg_replace('/([A-Z]{1})/', '_\$1', lcfirst($tableName));
 		$this->tableName=strtolower($tableName);
 		
-		$this->page=isset($_POST['page'])?$_POST['page']:1;
-		$this->pageNum=isset($_POST['pageNum'])?$_POST['pageNum']:18;
+		
 	}
 	
 	//获取连接
 	public function getConnection(){
-		
 		$conn = mysqli_connect($this->host, $this->user, $this->password, $this->database);
 		mysqli_query($conn, "SET NAMES 'UTF8'");
 		return $conn;
@@ -136,9 +129,7 @@ class BasicDAO implements \IBasicDAO {
 			
 			mysqli_close($conn);
 		}
-		$page=isset($_POST['page'])?isset($_POST['page']):1;
-		$pageNum=isset($_POST['pageNum'])?isset($_POST['pageNum']):18;
-		$arr=$this->page($arr,$page,$pageNum);
+		
 		return $arr;
 		
 	}
@@ -161,7 +152,7 @@ class BasicDAO implements \IBasicDAO {
 		return $arr;
 	}
 	//联表查询
-	public function leftJoin($select,$tables,$ids=array(),$where='',$groupby='',$order='',$start=$page,$limit=$pageNum){
+	public function leftJoin($select,$tables,$ids=array(),$where='',$groupby='',$order=''){
 		
 		$conn = $this->getConnection();
 		$sql="$select from $tables[0] ";
@@ -182,12 +173,12 @@ class BasicDAO implements \IBasicDAO {
 		
 		$rtn = mysqli_query($conn,$sql);
 		$arr=array();
-		while ($rtn!=false&&($row=mysqli_fetch_assoc($rtn))){
-			
+		while ($rtn!=false&&($row=mysqli_fetch_assoc($rtn))){		
 			$arr[]=$row;
 		}
 		
-		
+		$page=isset($_POST['page'])?$_POST['page']:1;
+		$pageNum=isset($_POST['pageNum'])?$_POST['pageNum']:18;
 		$arr=$this->page($arr,$page,$pageNum);
 		return $arr;
 	}
