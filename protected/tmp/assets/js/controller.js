@@ -800,18 +800,16 @@ myapp.service('departmentService',function(){
 	var obj = {
 		'data':[],
 		edit:'',
+		employees:[],
 		select:{},
 		active:'',
-		getDepartment:function(){
-			return [{
-				'department_id':1,
-				'department':'客服部',
-				'name':'晶辉',
-				'sex':1,
-				'phone':'15036258545',
-				'date':'2015-12-12',
-				'status':1
-			}];
+		getEmployee:function(http,params,fn){
+			$post(http,_host+"employee/findAll",params).success(function(r){
+				if(r){
+					obj.employees = r.data;
+					fn(r);	
+				}
+			});
 		},
 		add:function(http,scope,fn){
 			return function(othis){
@@ -880,7 +878,7 @@ myapp.service('departmentService',function(){
 				}
 			}
 		},
-		addEmployee:function(scope,fn){
+		addEmployee:function(http,scope,fn){
 			return function(othis){
 				var name = scope.e_name,
 					phone = scope.e_phone,
@@ -896,17 +894,108 @@ myapp.service('departmentService',function(){
 					return;
 				}
 				layer.load();
-				setTimeout(function(){
+				$post(http,_host+"employee/save",{
+					'name':name,
+					'phone':phone,
+					'sex':sex,
+					'department_id':department_id
+				}).success(function(r){
 					layer.closeAll('loading');
-					layer.msg('ok');
-				},1000);
+					if(r){
+						obj.employees.splice(0,0,r);
+						fn(othis);
+					}else{
+						layer.msg('添加失败');
+					}
+				});
 			};
+		},
+		updateEmployee:function(http,scope,fn){
+			return function(othis){
+				var name = scope.e_name,
+				phone = scope.e_phone;
+
+				if(!validate('name',name)){
+					layer.msg('姓名不正确');
+					return;
+				}
+				if(!validate('phone',phone)){
+					layer.msg('电话不正确');
+					return;
+				}
+				$post(http,_host+"employee/update",{
+					'name':name,
+					'phone':phone,
+					'sex':scope.e_sex,
+					'department_id':scope.e_department_id,
+					'employee_id':obj.delete_employee_id
+				}).success(function(r){
+					if(r){
+						obj.employees.forEach(function(ele,index){
+							if(ele.employee_id == r.employee_id){
+								obj.employees[index] = r;
+							}
+						});
+						fn(othis);
+					}
+				});
+			};
+		},
+		deleteEmployee:function(http,fn){
+			return function(othis){
+				$post(http,_host+"employee/delete",{'employee_id':obj.delete_employee_id}).success(function(r){
+					r = r.trim();
+					console.log('dele',r);
+					if(r == 1){
+						var newarr = [];
+						obj.employees.forEach(function(ele,index){
+							if(ele.employee_id != obj.delete_employee_id){
+								newarr.push(ele);
+							}
+						});
+						obj.employees = newarr;
+						fn(othis);
+					}else{
+						layer.msg('删除失败');
+					}
+				});
+			}
 		}
 	};
 	return obj;
 });
 myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService){
-	$scope.departments = departmentService.getDepartment();
+	$scope.editEmployee = departmentService.updateEmployee($http,$scope,function(ele){
+		$scope.employees = departmentService.employees;
+		// $scope.$apply();
+		if(ele.nodeName == 'I'){
+			$(ele).parent().prev().trigger('click');
+		}else{
+			$(ele).prev().trigger('click');
+		}
+	});
+	$scope.deleteEmployee = departmentService.deleteEmployee($http,function(ele){
+		$scope.employees = departmentService.employees;
+		$(ele).next().trigger('click');
+	});
+	$scope.log_employee = function(){
+		$scope.e_name = this.u.name;
+		$scope.e_phone = this.u.phone;
+		$scope.e_sex = this.u.sex;
+		$scope.e_department_id = this.u.department_id;
+		departmentService.delete_employee_id = this.u.employee_id;
+	};
+	$scope.getEmployee = departmentService.getEmployee($http,{'page':1,"pageNum":'20'},function(r){
+		$scope.employees = departmentService.employees;
+		var page_arr = [];
+		for(var i = 0;i<r.count;i++){
+			page_arr.push(i+1);
+		}
+		$scope.pagination = page_arr;
+	});
+	$scope.getByPage = function($http,fn){
+
+	};
 	$scope.showEditWindow = function(){
 		if(departmentService.select){
 			$("#call-edit").trigger('click');
@@ -955,8 +1044,14 @@ myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService
 			layer.msg('选定才能删除');
 		}
 	};
-	$scope.checkEmployee = departmentService.addEmployee($scope,function(ele){
-
+	$scope.checkEmployee = departmentService.addEmployee($http,$scope,function(ele){
+		if(ele.nodeName == 'I'){
+			$(ele).parent().prev().trigger('click');
+		}else{
+			$(ele).prev().trigger('click');
+		}
+		$scope.employees = departmentService.employees;
+		// $scope.$apply();
 	});
 	$scope.deleteDepartment = departmentService.delete($http,function(ele){
 		// $route.reload();

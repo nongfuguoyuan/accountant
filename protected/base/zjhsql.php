@@ -48,7 +48,7 @@
             $total = $this->prepare($count_sql,$params)->fetchColumn();//返回查询出来的行数
             $sql = $sql." limit ".(($page[0]-1)*$page[1]).",".$page[1];
             // $this->pagination($total,$page);
-            $this->count = ceil($total/$page[0]);
+            $this->count = ceil($total/$page[1]);
          }
          
          $stmt = $this->pdo->prepare($sql);

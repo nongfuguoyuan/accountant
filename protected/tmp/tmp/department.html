@@ -29,18 +29,26 @@
 				<th>入职日期</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="u in departments">
+				<tr ng-repeat="u in employees">
 					<td>{{ $index+1 }}</td>
-					<td>{{ u.department }}</td>
+					<td>{{ u.d_name }}</td>
 					<td>
-						<a data-toggle="modal" data-target="#edit-employee">{{ u.name }}</a>
+						<a ng-click="log_employee()" data-toggle="modal" data-target="#edit-employee">{{ u.name }}</a>
 					</td>
-					<td>{{ u.sex }}</td>
+					<td ng-switch="u.sex">
+                        <span ng-switch-when="0">女</span>
+                        <span ng-switch-when="1">男</span>
+                    </td>
 					<td>{{ u.phone }}</td>
-					<td>{{ u.date }}</td>
+					<td>{{ u.create_time }}</td>
 				</tr>
 			</tbody>
 		</table>
+        <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
+            <ul class="pagination pull-right">
+                <li class="paginate_button" ng-repeat="p in pagination"><a href="javascript:;" ng-click="getByPage($event.target)">{{ p }}</a></li>
+            </ul>
+        </div>
 	</div>
 	<!-- 编辑成员 begin -->
 	<div class="modal in" id="edit-employee" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
@@ -67,8 +75,8 @@
                                 <label class="col-xs-12">性别</label>
                                 <div class="col-xs-12">
                                     <select class="form-control" ng-model="e_sex" ng-init="e_sex=1">
-                                    	<option value="0">男</option>
-                                    	<option value="1">女</option>
+                                    	<option value="0">女</option>
+                                    	<option value="1">男</option>
                                     </select>
                                 </div>
                             </div>
@@ -89,9 +97,10 @@
                         </form>
 	                </div>
 	            </div>
-	            <div class="modal-footer">
+	            <div class="modal-footer clearfix">
+                    <button class="btn btn-sm pull-left" ng-click="deleteEmployee($event.target)">删除成员</button>
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button ng-click="checkEmployee($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+	                <button ng-click="editEmployee($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>更新</button>
 	            </div>
 	        </div>
 	    </div>
