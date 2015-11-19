@@ -8,7 +8,7 @@ class BasicDAO implements \IBasicDAO {
 	
 	private $host = "192.168.10.100";
 	private $user = "root";
-	private $password = "123456";
+	private $password = "";
 	private $database = "accountant";
 	
 	//初始化
