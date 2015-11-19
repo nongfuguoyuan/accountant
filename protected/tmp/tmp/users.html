@@ -1,0 +1,335 @@
+<div class="row" ng-controller="userCtrl">
+	<div class="col-sm-12">
+		<div class="clearfix push-10">
+			<label class="css-input switch switch-sm switch-primary pull-left push-5">
+		        只看自己<input type="checkbox" checked="checked"><span></span>
+		    </label>
+		    <div class="pull-left push-10-l rel">
+		    	<input placeholder="姓名/电话" ng-model="searchstr" class="form-control input-sm" type="text" search-users-real-time>
+		    	<ul class="search-result" id="active-ul">
+		    		<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{ r.guest_id }}" sure-search-result>
+		    			{{ r.name }}
+		    		</li>
+		    	</ul>
+		    </div>
+		    <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-user">新建客户</a>
+	    </div>
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-gray-light">
+				<th>公司</th>
+				<th>姓名</th>
+				<th>状态</th>
+				<th>区</th>
+				<th>手机</th>
+				<th>跟进客服</th>
+				<th>跟进记录</th>
+				<th>编辑</th>
+				<th>添加任务</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="u in guests">
+					<td>{{ u.company }}</td>
+					<td>{{ u.name }}</td>
+					<td ng-switch="u.status">
+						<span ng-switch-when="0">
+						潜在客户
+						</span>
+						<span ng-switch-when="1">
+						成交客户
+						</span>
+						<span ng-switch-when="2">
+						流失客户
+						</span>
+					</td>
+					<td ng-click="showAddress($event.target)"><a>{{ u.a_name }}</a></td>
+					<td>{{ u.phone }}</td>
+					<td>{{ u.e_name }}</td>
+					<td class="show-button">
+						<a data-id="{{ u.id }}" ng-click="showFollowDetail($event.target)">{{ u.r_count }}次</a>
+						<button ng-click="initGuestid()" class="vh btn btn-xs btn-default" data-toggle="modal" data-target="#add-guest-record" type="button">添加</button>
+					</td>
+					<td>
+						<a ng-click="initEdit()" data-toggle="modal" data-target="#edit-guest">编辑</a>
+					</td>
+					<td>
+						<div class="btn-group" role="group">
+	                        <button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+	                            <span class="caret"></span>
+	                        </button>
+	                        <ul class="dropdown-menu dropdown-menu-right">
+	                            <li class="dropdown-header">添加任务</li>
+	                            <li>
+	                                <a tabindex="-1" href="javascript:void(0)" data-toggle="modal" data-target="#add-business">工商</a>
+	                            </li>
+	                            <li>
+	                                <a tabindex="-1" href="javascript:void(0)" data-toggle="modal" data-target="#add-account">代理记账</a>
+	                            </li>
+	                        </ul>
+                    	</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
+			<ul class="pagination pull-right">
+				<!--
+				<li class="paginate_button previous disabled" aria-controls="DataTables_Table_0" tabindex="0" id="DataTables_Table_0_previous"><a href="#"><i class="fa fa-angle-left"></i></a></li>
+				<li class="paginate_button active" aria-controls="DataTables_Table_0" tabindex="0"><a href="#">1</a></li>
+				<li class="paginate_button " aria-controls="DataTables_Table_0" tabindex="0"><a href="#">2</a></li>
+				<li class="paginate_button " aria-controls="DataTables_Table_0" tabindex="0"><a href="#">3</a></li>
+				<li class="paginate_button " aria-controls="DataTables_Table_0" tabindex="0"><a href="#">4</a></li>
+				<li class="paginate_button next" aria-controls="DataTables_Table_0" tabindex="0" id="DataTables_Table_0_next"><a href="#"><i class="fa fa-angle-right"></i></a></li>
+				-->
+				<li class="paginate_button" ng-repeat="p in pagination"><a href="javascript:;" ng-click="getByPage($event.target)">{{ p }}</a></li>
+			</ul>
+		</div>
+	</div>
+	<!-- 新建客户 begin-->
+	<div class="modal in" id="add-new-user" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-mx">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加客户</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+	                		<div class="form-group">
+	                            <label class="col-lg-3 control-label">公司</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="add_company">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">姓名</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="add_name">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">手机</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="add_phone">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">座机</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="add_tel">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">区</label>
+	                            <div class="col-lg-7">
+	                                <select class="form-control" request-area ng-model="add_area">
+	                                	<option ng-repeat='area in areas' value="{{area.area_id}}">{{area.name}}</option>
+	                                </select>
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">详细地址</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="add_address">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">客户状态</label>
+	                            <div class="col-lg-7">
+	                                <select class="form-control" ng-model="add_status" ng-init="add_status=0">
+	                                	<option value="0">潜在客户</option>
+	                                	<option value="1">成交客户</option>
+	                                	<option value="2">已流失</option>
+	                                </select>
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">跟进记录</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="add_record">
+	                            </div>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkGuest($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 新建客户 end-->
+	<!-- 跟进记录 begin-->
+	<div class="modal in" id="add-guest-record" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-mx">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加纪录</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+	                		<div class="form-group">
+	                           <textarea placeholder="详细记录" class="form-control" ng-model="guest_record">{{guest_record}}</textarea>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkRecord($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 跟进记录 end-->
+	<!-- 编辑用户 begin -->
+    <div class="modal in" id="edit-guest" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-mx">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">编辑用户</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+		                	<div class="form-group">
+	                            <label class="col-lg-3 control-label">公司</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="edit_company">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">姓名</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="edit_name">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">手机</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="edit_phone">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">座机</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="edit_tel">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">区</label>
+	                            <div class="col-lg-7">
+	                                <select class="form-control" request-area ng-model="edit_area">
+	                                	<option ng-repeat='area in areas' value="{{area.area_id}}">{{area.name}}</option>
+	                                </select>
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">详细地址</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="edit_address">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">状态</label>
+	                            <div class="col-lg-7">
+	                                <select class="form-control" ng-model="edit_status">
+	                                	<option value="0">谈判中</option>
+	                                	<option value="1">成交</option>
+	                                	<option value="2">已流失</option>
+	                                </select>
+	                            </div>
+	                        </div>
+                        </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkEditGuest($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>更新</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <!-- 编辑用户 end -->
+    <!-- 添加工商 begin -->
+    <div class="modal in" id="add-business" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加工商</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+	                		<div class="form-group">
+	                		   <label class="control-label">业务类型</label>
+	                           <select class="form-control" request-process-group ng-model="business_type">
+	                           		<option ng-repeat="p in process_group" value="{{ p.process_group_id }}">{{ p.name }}</option>
+	                           </select>
+	                           <label class="control-label">指定负责人</label>
+	                           <select class="form-control" request-accounting ng-model="business_accounting_id">
+	                           		<option ng-repeat="a in accountings" value="{{ a.accounting_id }}">{{ a.name }}</option>
+	                           </select>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkAddBusiness($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <!-- 添加工商 end   -->
+    <!-- 添加代理记账 begin -->
+    <div class="modal in" id="add-account" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-mx">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加代理记账</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+	                		<div class="form-group">
+	                           
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkAddAccounting($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <!-- 添加代理记账 end   -->
+</div>

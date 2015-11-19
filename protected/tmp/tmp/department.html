@@ -1,0 +1,280 @@
+<div class="row" ng-controller="departmentCtrl">
+	<div class="col-lg-2 department-info">
+		<button class="btn btn-xs btn-default push-5-r push-10" data-toggle="modal" data-target="#edit-department" type="button"><i class="fa fa-pencil"></i>编辑部门</button>
+		<div class="menu-tree" data-type="show" load-menu-tree>
+		</div>
+	</div>
+	<div class="col-lg-10 col-sm-12">
+		<div class="clearfix push-10">
+			<label class="css-input switch switch-sm switch-primary pull-left push-5">
+		        只看自己<input type="checkbox" checked="checked"><span></span>
+		    </label>
+		    <div class="pull-left push-10-l rel">
+		    	<input placeholder="姓名/手机/职位" ng-model="searchstr" class="form-control input-sm" type="text" search-users-real-time>
+		    	<ul class="search-result">
+		    		<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{ r.user_id }}" sure-search-result>
+		    			{{ r.name }}
+		    		</li>
+		    	</ul>
+		    </div>
+		    <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-employee">添加成员</a>
+	    </div>
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-gray-light">
+				<th>序号</th>
+				<th>部门</th>
+				<th>姓名</th>
+				<th>性别</th>
+				<th>手机</th>
+				<th>入职日期</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="u in departments">
+					<td>{{ $index+1 }}</td>
+					<td>{{ u.department }}</td>
+					<td>
+						<a data-toggle="modal" data-target="#edit-employee">{{ u.name }}</a>
+					</td>
+					<td>{{ u.sex }}</td>
+					<td>{{ u.phone }}</td>
+					<td>{{ u.date }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- 编辑成员 begin -->
+	<div class="modal in" id="edit-employee" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-sm modal-dialog">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">编辑成员</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal push-5-t" onsubmit="return false;">
+                            <div class="form-group">
+                                <label class="col-xs-12">成员名称</label>
+                                <div class="col-xs-12">
+                                    <input class="form-control" type="text" ng-model="e_name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12">性别</label>
+                                <div class="col-xs-12">
+                                    <select class="form-control" ng-model="e_sex" ng-init="e_sex=1">
+                                    	<option value="0">男</option>
+                                    	<option value="1">女</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12">手机号</label>
+                                <div class="col-xs-12">
+                                    <input class="form-control" type="text" ng-model="e_phone">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12">部门</label>
+                                <div class="col-xs-12">
+                                    <select class="form-control" ng-model="e_department_id" request-all-department>
+                                    	<option ng-repeat="d in des" value="{{d.department_id}}">{{d.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkEmployee($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 编辑成员 end   -->
+	<!-- 编辑部门 begin -->
+	<div class="modal in" id="edit-department" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-mx">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">编辑部门</h3>
+	                </div>
+	                <div class="block-content">
+	                	<div class="text-center">
+		                	<div class="btn-group push-10">
+	                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#apps-modal">添加</button>
+	                            <button class="btn btn-default" type="button" ng-click='showEditWindow()'>编辑</button>
+	                            <button class="btn btn-default" type="button" ng-click="showDeleteWindow()">删除</button>
+	                        </div>
+                        </div>
+                        <div class="row">
+	                        <div data-type="select" class="menu-tree col-lg-6 col-lg-offset-3" load-menu-tree>
+	                        </div>
+                        </div>
+	                </div>
+	            </div>
+	            <!-- <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkBusiness($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	            </div> -->
+	        </div>
+	    </div>
+	</div>
+	<!-- 编辑部门 end   -->
+	<!-- 插入部门 begin -->
+	<div class="modal fade in" id="apps-modal" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;top:100px;">
+        <div class="modal-sm modal-dialog modal-dialog-top">
+            <div class="modal-content">
+                <div class="block block-themed block-transparent">
+                    <div class="block-header bg-primary-dark">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">添加部门</h3>
+                    </div>
+                    <div class="block-content">
+                        <form class="form-horizontal push-5-t" onsubmit="return false;">
+                            <div class="form-group">
+                                <label class="col-xs-12">名称</label>
+                                <div class="col-xs-12">
+                                    <input class="form-control" type="text" ng-model='add_name'>
+                                </div>
+                            </div>
+                            <div class="clearfix push-10 text-right">
+                            	<button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                            	<button ng-click="checkAddDepartment($event.target)" class="btn btn-primary btn-sm">添加</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- 插入部门 end --> 
+     <!-- 纯选择部门 begin -->
+	<!-- <div class="modal fade in" id="apps-select" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;top:200px;">
+        <div class="modal-mx modal-dialog modal-dialog-top">
+            <div class="modal-content">
+                <div class="block block-themed block-transparent">
+                    <div class="block-header bg-default">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">选择部门</h3>
+                    </div>
+                    <div class="block-content">
+                        <div data-type="select" class="menu-tree" load-menu-tree></div>
+                        <div class="text-right push-10">
+                        	<button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                        	<button class="btn btn-default btn-sm" ng-click="checkSelectDeparentment($event.target)">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+     <!-- 纯选择部门 end --> 
+     <!-- 编辑 begin -->
+     <button class="dn" id="call-edit" data-toggle="modal" data-target="#apps-edit">call edit window</button>
+	<div class="modal fade in" id="apps-edit" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;top:100px;">
+        <div class="modal-sm modal-dialog modal-dialog-top">
+            <div class="modal-content">
+                <div class="block block-themed block-transparent">
+                    <div class="block-header bg-primary">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">编辑部门</h3>
+                    </div>
+                    <div class="block-content">
+                        <form class="form-horizontal push-5-t" onsubmit="return false;">
+                            <div class="form-group">
+                                <label class="col-xs-12">部门名称</label>
+                                <div class="col-xs-12">
+                                    <input class="form-control" type="text" ng-model="edit_name">
+                                </div>
+                            </div>
+                            <div class="clearfix push-10 text-right">
+                            	<button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                            	<button ng-click="checkEditDepartment($event.target)" class="btn btn-primary btn-sm">添加</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- 编辑 end -->
+	<!-- 添加成员 begin -->
+	<div class="modal in" id="add-new-employee" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-sm modal-dialog">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加成员</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal push-5-t" onsubmit="return false;">
+                            <div class="form-group">
+                                <label class="col-xs-12">成员名称</label>
+                                <div class="col-xs-12">
+                                    <input class="form-control" type="text" ng-model="e_name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12">性别</label>
+                                <div class="col-xs-12">
+                                    <select class="form-control" ng-model="e_sex" ng-init="e_sex=1">
+                                    	<option value="0">男</option>
+                                    	<option value="1">女</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12">手机号</label>
+                                <div class="col-xs-12">
+                                    <input class="form-control" type="text" ng-model="e_phone">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12">部门</label>
+                                <div class="col-xs-12">
+                                    <select class="form-control" ng-model="e_department_id" request-all-department>
+                                    	<option ng-repeat="d in des" value="{{d.department_id}}">{{d.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkEmployee($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 添加成员 end -->
+</div>

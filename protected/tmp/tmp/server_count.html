@@ -1,0 +1,112 @@
+<div ng-controller="serverCtrl" ng-model="server">
+    <div class="content bg-image" style="background-image: url('{{server.img}}');">
+        <div class="push-50-t push-15 clearfix">
+            <div class="push-15-r pull-left animated fadeIn">
+                <img class="img-avatar img-avatar-thumb" src="assets/img/avatars/avatar13.jpg" alt="">
+            </div>
+            <h1 class="h2 text-white push-5-t animated zoomIn">{{server.name}}</h1>
+            <h2 class="h5 text-white-op animated zoomIn">{{server.department}}</h2>
+        </div>
+    </div>
+    <div class="content bg-white border-b">
+        <div class="row items-push text-uppercase">
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">名下客户</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{server.all}}</a>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">谈判中</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{server.negotiation}}</a>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已成交</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{server.deal}}</a>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已流失</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{server.loss}}</a>
+            </div>
+        </div>
+    </div>
+    <div class="block">
+        <ul class="nav nav-tabs" data-toggle="tabs">
+            <li class="active" onclick="toggleMe(this)">
+                <a>待办事项</a>
+            </li>
+            <li class="" onclick="toggleMe(this)" ng-click="getEarly()">
+                <a>更早事项</a>
+            </li>
+        </ul>
+        <div class="block-content tab-content bg-white">
+            <!-- Projects -->
+            <div class="tab-pane fade fade-up active in">
+                <div class="border-b push-30">
+                    <h2 class="push-10">{{todo_count}}<span class="h5 font-w400 text-muted">个事项</span></h2>
+                </div>
+                <table ng-show="show_todo" ng-model="show_todo" class="table table-striped table-vcenter">
+                    <thead>
+                        <tr>
+                            <th><i class="fa fa-suitcase text-gray"></i>事项名称</th>
+                            <th class="text-center hidden-xs" style="width: 15%;"><i class="fa fa-ticket text-gray"></i>发起人</th>
+                            <th class="text-center hidden-xs hidden-sm" style="width: 15%;"><i class="fa fa-bar-chart text-gray"></i>接收人</th>
+                            <th class="text-right" style="width: 15%; min-width: 110px;"><i class="fa fa-trophy text-gray"></i>日期</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="t in todos">
+                            <td>
+                                {{t.task}}
+                            </td>
+                            <td class="text-center hidden-xs">{{t.sender}}</td>
+                            <td class="text-center hidden-xs hidden-sm">{{t.accepter}}</td>
+                            <td class="text-primary text-right">
+                                {{t.date_start}}<br/>{{t.date_end}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- END Projects -->
+            <!-- Projects -->
+            <div class="tab-pane fade fade-up">
+                <div class="border-b push-30">
+                    <h2 class="push-10">{{todo_count_early}}<span class="h5 font-w400 text-muted">个事项</span></h2>
+                </div>
+                <table ng-show="show_todo_early" ng-model="show_todo_early" class="table table-striped table-vcenter">
+                    <thead>
+                        <tr>
+                            <th><i class="fa fa-suitcase text-gray"></i>事项名称</th>
+                            <th class="text-center hidden-xs" style="width: 15%;"><i class="fa fa-ticket text-gray"></i>发起人</th>
+                            <th class="text-center hidden-xs hidden-sm" style="width: 15%;"><i class="fa fa-bar-chart text-gray"></i>接收人</th>
+                            <th class="text-right" style="width: 15%; min-width: 110px;"><i class="fa fa-trophy text-gray"></i>日期</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="t in todo_early">
+                            <td>
+                                {{t.task}}
+                            </td>
+                            <td class="text-center hidden-xs">{{t.sender}}</td>
+                            <td class="text-center hidden-xs hidden-sm">{{t.accepter}}</td>
+                            <td class="text-primary text-right">
+                                {{t.date_start}}<br/>{{t.date_end}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- END Projects -->
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function toggleMe(othis){
+        othis = $(othis);
+        var index = othis.index();
+        var tabs = $(".tab-pane");
+        othis.parent().children().removeClass('active');
+        othis.addClass('active');
+        tabs.removeClass('active').removeClass('in');
+        tabs.eq(index).addClass('active').addClass('in');
+    }
+</script>

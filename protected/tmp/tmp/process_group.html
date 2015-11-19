@@ -1,0 +1,73 @@
+<div class="row" ng-controller="processGroupCtrl">
+	<div class="col-sm-12 clearfix">
+		<button class="push-10 pull-right btn btn-info" data-toggle="modal" data-target="#add-process-group-dialog" type="button">添加</button>
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-gray-light">
+				<th>序号</th>
+				<th>名称</th>
+				<th>添加日期</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="u in process_groups">
+					<td>{{ $index+1 }}</td>
+					<td>
+						<a ng-click="initEditName(u.name)" data-toggle="modal" data-target="#edit-process-group-dialog">{{ u.name }}</a>
+					</td>
+					<td>{{ u.date }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+<!-- 添加流程组 begin -->
+<div class="modal in" id="add-process-group-dialog" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                        </li>
+                    </ul>
+                    <h3 class="block-title">添加流程组</h3>
+                </div>
+                <div class="block-content">
+                	<label>流程组名称</label>
+                    <input ng-model="add_name" type="text" class="form-control push-10" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                <button ng-click="checkProcessGroup($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 添加流程组 end -->
+<!-- 添加流程组 begin -->
+<div class="modal in" id="edit-process-group-dialog" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                        </li>
+                    </ul>
+                    <h3 class="block-title">编辑流程组</h3>
+                </div>
+                <div class="block-content">
+                	<label>流程组名称</label>
+                    <input ng-model="edit_name" type="text" class="form-control push-10" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                <button ng-click="checkProcessGroup($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 添加流程组 end -->
+</div>

@@ -1,0 +1,152 @@
+<div class="row" ng-controller="todoCtrl">
+	<div class="col-sm-12">
+		<div class="clearfix push-10">
+			<label class="css-input switch switch-sm switch-primary pull-left push-5">
+		        只看自己<input type="checkbox" checked="checked"><span></span>
+		    </label>
+		    <div class="pull-left push-10-l rel">
+		    	<input placeholder="任务" ng-model="searchstr" class="form-control input-sm" type="text" search-users-real-time>
+		    	<ul class="search-result">
+		    		<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{ r.user_id }}" sure-search-result>
+		    			{{ r.name }}
+		    		</li>
+		    	</ul>
+		    </div>
+		    <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-task-dialog">新建todo</a>
+	    </div>
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-gray-light">
+				<th>序号</th>
+				<th>指派人</th>
+				<th>任务</th>
+				<th>接收人</th>
+				<th>起始日期</th>
+				<th>截至日期</th>
+				<th>操作</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="u in todos">
+					<td>{{ $index+1 }}</td>
+					<td>{{ u.sender }}</td>
+					<td>{{ u.task }}</td>
+					<td>{{ u.accepter }}</td>
+					<td>{{ u.date_start }}</td>
+					<td>{{ u.date_end }}</td>
+					<td>
+						<a data-toggle="modal" data-target="#add-subtask-dialog" ng-click="sendSubTodo()">指派子任务</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+ 	<div class="modal in" id="add-task-dialog" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">新建任务</h3>
+	                </div>
+	                <div class="block-content">
+	                	<label>任务</label>
+	                    <textarea class="todo-textarea form-control push-5" placeholder='详细' ng-model="task_detail"></textarea>
+	                    <label>时间</label>
+	                    <input class="form-control push-10" type="text" id="date_start_task" placeholder="From">
+	                    <input class="form-control push-5" type="text" id="date_end_task" placeholder="To">
+	                    <label>指派给</label>
+	                    <select class="form-control push-10" ng-change="getEmployee()" ng-model="employee_id" request-department>
+	                        <option ng-repeat="d in department" value="{{d.id}}">{{d.name}}</option>
+	                    </select>
+	                    <div class="">
+	                    	<span ng-repeat="e in hasSelects">{{e.name}}&nbsp;</span>
+	                    </div>
+	                    <div class="">
+	                        <div ng-repeat="u in employee" class="checkbox-inline">
+	                            <label for="roles-{{u.id}}">
+	                                <input ng-click="hasSelect($event.target)" type="checkbox" id="roles-{{u.id}}">{{u.name}}
+	                            </label>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button onclick="checkProcessGroup()" class="btn btn-sm btn-primary" type="button" ng-click="checkTask($event.target)"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+	<div class="modal in" id="add-subtask-dialog" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">指派子任务</h3>
+	                </div>
+	                <div class="block-content">
+	                	<label>任务</label>
+	                	<div class="copy-task push-5">
+	                		{{copytask}}
+	                	</div>
+	                    <label>指派给</label>
+	                    <select class="form-control push-10" size="1" ng-model="employee_id" ng-change="getEmployee()" request-department>
+	                        <option ng-repeat="d in department" value="{{d.id}}">{{d.name}}</option>
+	                    </select>
+	                    <div class="">
+	                    	<span ng-repeat="e in hasSelects">{{e.name}}&nbsp;</span>
+	                    </div>
+	                    <div class="">
+	                        <div ng-repeat="u in employee" class="checkbox-inline">
+	                            <label for="roles-{{u.id}}">
+	                                <input ng-click="hasSelect($event.target)" type="checkbox" id="roles-{{u.id}}">{{u.name}}
+	                            </label>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button onclick="checkProcessGroup()" class="btn btn-sm btn-primary" type="button" ng-click="checkTask($event.target)"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+</div>
+
+<script>
+	laydate({
+		elem: '#date_start_task',
+	    format: 'YYYY/MM/DD hh:mm:ss',
+	    min: laydate.now(), //设定最小日期为当前日期
+	    max: '2099-06-16 23:59:59', //最大日期
+	    istime: true,
+	    istoday: false,
+	    choose: function(datas){
+	         // end.min = datas; //开始日选好后，重置结束日的最小日期
+	         // end.start = datas //将结束日的初始值设定为开始日
+	    }
+	});
+	laydate({
+		elem: '#date_end_task',
+	    format: 'YYYY/MM/DD hh:mm:ss',
+	    min: laydate.now(),
+	    max: '2099-06-16 23:59:59',
+	    istime: true,
+	    istoday: false,
+	    choose: function(datas){
+	        // start.max = datas; //结束日选好后，重置开始日的最大日期
+	    }
+	});
+</script>

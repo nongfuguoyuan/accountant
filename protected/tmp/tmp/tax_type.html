@@ -1,0 +1,103 @@
+<div class="row" ng-controller="taxTypeCtrl">
+	<div class="col-sm-12">
+		<div class="text-right push-10">
+			<a class="btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-type">新建税种</a>
+		</div>
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-gray-light">
+				<th>序号</th>
+				<th>税种</th>
+				<th>父类型</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="t in tax_type">
+					<td>{{ $index+1 }}</td>
+					<td>
+						<a data-toggle="modal" data-target="#edit-type" ng-click="initEdit()">{{ t.name }}</a>
+					</td>
+					<td>{{ t.parent }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- 编辑税种 begin -->
+		<div class="modal in" id="edit-type" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-mx">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">编辑税种</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+	                		<div class="form-group">
+	                            <label class="col-lg-3 control-label">名称</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="edit_name">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">分类</label>
+	                            <div class="col-lg-7">
+	                                <select class="form-control" request-tax-type ng-model="parent_id">
+	                                	<option ng-repeat='t in tax_types' value="{{t.tax_type_id}}">{{t.name}}</option>
+	                                </select>
+	                            </div>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkEdit($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 编辑税种 end -->
+	<!-- 新建税种 begin -->
+		<div class="modal in" id="add-type" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-mx">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">新建税种</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+	                		<div class="form-group">
+	                            <label class="col-lg-3 control-label">名称</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="add_name">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">分类</label>
+	                            <div class="col-lg-7">
+	                                <select class="form-control" request-tax-type ng-model="parent_id">
+	                                	<option ng-repeat='t in tax_types' value="{{t.tax_type_id}}">{{t.name}}</option>
+	                                </select>
+	                            </div>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkAdd($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 新建税种 end -->
+</div>

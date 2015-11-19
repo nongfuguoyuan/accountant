@@ -1,0 +1,163 @@
+<div class="row" ng-controller="businessCtrl">
+	<div class="col-sm-12">
+		<div class="clearfix push-10">
+			<label class="css-input switch switch-sm switch-primary pull-left push-5">
+		        只看自己<input type="checkbox" checked="checked"><span></span>
+		    </label>
+		    <div class="pull-left push-10-l rel">
+		    	<input placeholder="姓名/电话" ng-model="searchstr" class="form-control input-sm" type="text" search-users-real-time>
+		    	<ul class="search-result">
+		    		<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{ r.user_id }}" sure-search-result>
+		    			{{ r.name }}
+		    		</li>
+		    	</ul>
+		    </div>
+		    <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-task">新建任务</a>
+	    </div>
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-gray-light">
+				<th>序号</th>
+				<th>姓名</th>
+				<th>电话</th>
+				<th>跟进客服</th>
+				<th>跟进会计</th>
+				<th>受理状态</th>
+				<th>应收款</th>
+				<th>已收款</th>
+				<th>进度</th>
+				<th>申请时间</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="u in business">
+					<td>{{ $index+1 }}</td>
+					<td>{{ u.name }}</td>
+					<td>{{ u.phone }}</td>
+					<td>{{ u.follow_server }}</td>
+					<td>{{ u.follow_accounting }}</td>
+					<td>
+                        <label class="css-input css-radio css-radio-success m0" ng-model="accept" ng-switch="accept" ng-init="accept=u.accept" ng-click="accept=1;toggleBusiness()">
+                            <input type="radio" name="radio-group4"><span></span>
+                            <b ng-switch-when="0">未受理</b>
+                            <b ng-switch-when="1">已受理</b>
+                        </label>
+					</td>
+					<td>
+						{{ u.debt }}
+					</td>
+					<td>
+						{{ u.obtain }}
+					</td>
+					<td>
+						<a ng-click="businessProcess(u.id)" data-toggle="modal" data-target="#edit-business-progress">{{ u.progress }}</a>
+					</td>
+					<td>{{ u.date }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<!-- 新建任务 begin -->
+	<div class="modal in" id="add-new-task" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-mx">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加任务</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+	                		<div class="form-group">
+	                            <label class="col-lg-3 control-label">业务名称</label>
+	                            <div class="col-lg-7">
+	                            	<select class="form-control" ng-model="business_type">
+	                            		<option value="0">注册</option>
+	                            		<option value="1">变更</option>
+	                            		<option value="2">注销</option>
+	                            	</select>
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">负责人</label>
+	                            <div class="col-lg-7">
+	                                <select class="form-control" request-accounting ng-model="server">
+	                                	<option ng-repeat="e in accountings" value="{{e.id}}">{{e.name}}</option>
+	                                </select>
+	                            </div>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkBusiness($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 新建任务 end   -->
+	<!-- 编辑进度 begin -->
+	<div class="modal in" id="edit-business-progress" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">编辑进度</h3>
+	                </div>
+	                <div class="block-content">
+	                	<ul class="list list-timeline pull-t">
+	                		<li>
+	                            <div class="list-timeline-time">2015-02-15 12:02:12</div>
+	                            <i class=" list-timeline-icon bg-default">3天</i>
+	                            <div class="list-timeline-content">
+	                                <p class="font-w600">审核</p>
+	                                <p class="font-s13">不错</p>
+	                            </div>
+	                        </li>
+	                        <li>
+	                            <div class="list-timeline-time">2015-02-15 12:02:12</div>
+	                            <i class=" list-timeline-icon bg-default">3天</i>
+	                            <div class="list-timeline-content">
+	                                <p class="font-w600">后来</p>
+	                                <p class="font-s13">还好</p>
+	                            </div>
+	                        </li>
+	                	</ul>
+	                	<div class="push-10">
+	                		<div class="push-10">
+		                		<label>进度</label>
+		                		<select request-business-process ng-model="progress">
+		                			<option ng-repeat="p in processes" value="{{p.id}}">{{p.name}}</option>
+		                		</select>
+		                		<label>约需</label>
+		                		<select ng-model="rest">
+		                			<option value="1">1</option>
+		                			<option value="1">2</option>
+		                			<option value="1">3</option>
+		                			<option value="1">4</option>
+		                			<option value="1">5</option>
+		                		</select>
+		                		<label>天</label>
+	                		</div>
+	                		<textarea ng-model="note" class="form-control" placeholder="备注"></textarea>
+	                	</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+	                <button ng-click="checkBusinessProgress($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 编辑进度 end -->
+</div>

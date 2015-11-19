@@ -1,0 +1,85 @@
+<div class="row" ng-controller="resourceCtrl">
+	<div class="col-sm-12">
+		<div class="clearfix push-10">
+		    <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-resource" ng-click="getPermissions()">添加来源</a>
+	    </div>
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-gray-light">
+				<th>序号</th>
+				<th>来源</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="u in resource">
+					<td>{{ $index+1 }}</td>
+					<td>
+                        <a ng-click="initEditDes(u.description)" data-toggle="modal" data-target="#edit-resource">{{u.description}}</a>               
+                    </td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+    <!-- 编辑角色 begin -->
+    <div class="modal in" id="edit-resource" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+        <div class="modal-sm modal-dialog">
+            <div class="modal-content">
+                <div class="block block-themed block-transparent remove-margin-b">
+                    <div class="block-header bg-primary-dark">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">编辑来源</h3>
+                    </div>
+                    <div class="block-content">
+                        <form class="form-horizontal push-5-t" onsubmit="return false;">
+                            <div class="form-group">
+                                <label class="col-xs-12">来源名称</label>
+                                <div class="col-xs-12">
+                                    <input class="form-control" type="text" ng-model="edit_description">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                    <button ng-click="checkEditResource($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 编辑角色 end -->
+	<!-- 添加角色 begin -->
+	<div class="modal in" id="add-resource" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-sm modal-dialog">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加来源</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal push-5-t" onsubmit="return false;">
+                            <div class="form-group">
+                                <label class="col-xs-12">来源名称</label>
+                                <div class="col-xs-12">
+                                    <input class="form-control" type="text" ng-model="add_description">
+                                </div>
+                            </div>
+                        </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="checkAddResource($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 添加角色 end -->
+</div>
