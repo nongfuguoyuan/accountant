@@ -1,5 +1,5 @@
 var myapp = angular.module('myapp',['ngRoute']),
-	_host = 'http://192.168.10.100/accountant/index.php/';
+	_host = 'http://192.168.10.35/accountant/index.php/';
 
 myapp.config(['$routeProvider',function($routeProvider){
 	$routeProvider
@@ -800,7 +800,7 @@ myapp.service('departmentService',function(){
 	var obj = {
 		'data':[],
 		edit:'',
-		select:'',
+		select:{},
 		active:'',
 		getDepartment:function(){
 			return [{
@@ -813,46 +813,71 @@ myapp.service('departmentService',function(){
 				'status':1
 			}];
 		},
-		add:function(scope,fn){
+		add:function(http,scope,fn){
 			return function(othis){
-				var name = scope.add_name;
+				var name = scope.add_name,
+					parent_id = obj.select.department_id || 0;
+
+				// console.log(parent_id);
 				if(!name || name.length < 1){
 					layer.msg('字符太短',function(){});
 					return;
 				}
 				layer.load();
-				setTimeout(function(){
+				$post(http,_host+"department/save",{'name':name,'parent_id':parent_id}).success(function(r){
 					layer.closeAll('loading');
-					if(typeof fn == 'function'){
-						fn(othis);
+					r = eval("("+r+")");
+					r = jQuery.parseJSON(r);
+					console.log(r);
+					if(r == 1){
+						// fn(othis);
+						window.location.reload();
+					}else{
+						layer.msg(r.info);
 					}
-				},1000);
+				});
 			}
 		},
-		update:function(scope,fn){
+		update:function(http,scope,fn){
 			return function(othis){
-				var name = scope.edit_name;
+				var name = scope.edit_name,
+					department_id = obj.select.department_id;
+
+				if(typeof department_id == 'undefined'){
+					layer.msg('请先选定');
+					return;
+				}
 				if(!name || name.length < 1){
 					layer.msg('字符太短',function(){});
 					return;
 				}
 				layer.load();
-				setTimeout(function(){
+				$post(http,_host+"department/update",{'department_id':department_id,'name':name}).success(function(r){
+					r = r.trim();
 					layer.closeAll('loading');
-					if(typeof fn == 'function'){
-						fn(othis);
+					if(r == 1){
+						window.location.reload();
+					}else{
+						layer.msg('更新失败');
 					}
-				},1000);
+				});
 			}
 		},
-		delete:function(fn){
-			if(obj.select){
-				console.log('delete',obj.select);
-			}
-			if(typeof fn == 'function'){
-				setTimeout(function(){
-					fn();
-				},1000);
+		delete:function(http,fn){
+			return function(){
+				var department_id = obj.select.department_id;
+				if(typeof department_id == 'undefined'){
+					layer.msg('必须选定内容');
+				}else{
+					$post(http,_host+"department/delete",{'department_id':department_id}).success(function(r){
+						r = r.trim();
+						if(r == 1){
+							window.location.reload();
+						}else{
+							layer.msg('删除失败');
+						}
+					});
+				}
 			}
 		},
 		addEmployee:function(scope,fn){
@@ -880,7 +905,7 @@ myapp.service('departmentService',function(){
 	};
 	return obj;
 });
-myapp.controller('departmentCtrl',function($scope,$http,departmentService){
+myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService){
 	$scope.departments = departmentService.getDepartment();
 	$scope.showEditWindow = function(){
 		if(departmentService.select){
@@ -891,17 +916,21 @@ myapp.controller('departmentCtrl',function($scope,$http,departmentService){
 	};
 
 	$scope.updateDepartment = departmentService.update($scope,function(ele){
-		
+		// $route.reload();
 	});
-	$scope.checkAddDepartment = departmentService.add($scope,function(ele){
+	$scope.checkAddDepartment = departmentService.add($http,$scope,function(ele){
+
 		if(ele.nodeName == 'I'){
 			$(ele).parent().prev().trigger('click');
 		}else{
 			$(ele).prev().trigger('click');
 		}
+		$scope.add_name = "";
+		// $route.reload();
+		// $scope.$apply();
 		//reload menu
 	});
-	$scope.checkEditDepartment = departmentService.update($scope,function(ele){
+	$scope.checkEditDepartment = departmentService.update($http,$scope,function(ele){
 		if(ele.nodeName == 'I'){
 			$(ele).parent().prev().trigger('click');
 		}else{
@@ -917,7 +946,7 @@ myapp.controller('departmentCtrl',function($scope,$http,departmentService){
 			    ,yes: function(index){
 			    	layer.close(index);
 			    	layer.load();
-			    	departmentService.delete(function(){
+			    	departmentService.delete($http,function(){
 			    		layer.closeAll('loading');
 			    	});
 			    }
@@ -929,72 +958,49 @@ myapp.controller('departmentCtrl',function($scope,$http,departmentService){
 	$scope.checkEmployee = departmentService.addEmployee($scope,function(ele){
 
 	});
-	$scope.deleteDepartment = departmentService.delete($scope,function(ele){
-
+	$scope.deleteDepartment = departmentService.delete($http,function(ele){
+		// $route.reload();
 	});
 });
-myapp.directive('requestAllDepartment',function(){
+myapp.directive('requestAllDepartment',function($http){
 	return {
 		restrict:'A',
 		link:function(scope,ele,attrs){
-			ele.bind('focus',function(){
-				scope.des = [{
-					department_id:1,
-					name:'zjh'
-				}];
-				scope.$apply();
+			$post($http,_host+"department/findAll",{}).success(function(r){
+				r = eval("("+r+")");
+				r = jQuery.parseJSON(r);
+				scope.des = r;
+				console.log(r);
+				// scope.$apply();
 			});
 		}
 	}
 });
-myapp.directive('loadMenuTree',function(departmentService){
+myapp.directive('loadMenuTree',function($http,departmentService){
 	return {
 		restrict:'A',
 		replace:"true",
 		link:function(scope,ele,attrs){
-			//请求菜单.交给departmentService
-			var menu = [{
-				department_id:1,
-				name:'总公司',
-				sub:[{
-					department_id:2,
-					name:'事业组',
-					sub:[{
-						department_id:4,
-						name:'客服',
-						sub:''
-					},{
-						department_id:5,
-						name:'会计',
-						sub:''
-					}]
-				},{
-					department_id:3,
-					name:'行政',
-					sub:[{
-						department_id:6,
-						name:'人事',
-						sub:''
-					}]
-				},{
-					department_id:7,
-					name:'秘书',
-					sub:''
-				}]
-			}];
-			if(attrs.type == 'edit'){
-				ele.html(buildTree(menu,function(obj,span){
-					departmentService.edit = obj;
-				}));
-			}
-			if(attrs.type == 'show'){
-				ele.html(buildTree(menu));
-			}
-			if(attrs.type == 'select'){
-				ele.html(buildTree(menu,function(obj,span){
-					departmentService.select = obj;
-				}));
-			}
+			$post($http,_host+"department/findMenu",{}).success(function(r){
+				if(r != false){
+					r = eval("("+r+")");
+					var menu = jQuery.parseJSON(r);
+					console.log(menu);
+					if(attrs.type == 'edit'){
+						ele.html(buildTree(menu,function(obj,span){
+							departmentService.edit = obj;
+						}));
+					}
+					if(attrs.type == 'show'){
+						ele.html(buildTree(menu));
+					}
+					if(attrs.type == 'select'){
+						ele.html(buildTree(menu,function(obj,span){
+							departmentService.select = obj;
+						}));
+					}
+				}
+			});
 		}
 	};
 });

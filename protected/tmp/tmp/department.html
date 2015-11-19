@@ -105,7 +105,7 @@
 	                <div class="block-header bg-primary-dark">
 	                    <ul class="block-options">
 	                        <li>
-	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                            <button id="dep-hook-close" data-dismiss="modal" type="button"><i class="si si-close"></i></button>
 	                        </li>
 	                    </ul>
 	                    <h3 class="block-title">编辑部门</h3>
@@ -115,7 +115,7 @@
 		                	<div class="btn-group push-10">
 	                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#apps-modal">添加</button>
 	                            <button class="btn btn-default" type="button" ng-click='showEditWindow()'>编辑</button>
-	                            <button class="btn btn-default" type="button" ng-click="showDeleteWindow()">删除</button>
+	                            <button class="btn btn-default" type="button" ng-click="deleteDepartment()">删除</button>
 	                        </div>
                         </div>
                         <div class="row">
@@ -213,7 +213,7 @@
                             </div>
                             <div class="clearfix push-10 text-right">
                             	<button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-                            	<button ng-click="checkEditDepartment($event.target)" class="btn btn-primary btn-sm">添加</button>
+                            	<button ng-click="checkEditDepartment()" class="btn btn-primary btn-sm">更新</button>
                             </div>
                         </form>
                     </div>

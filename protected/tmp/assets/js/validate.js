@@ -1,3 +1,7 @@
+function $json(r){
+	r = eval("("+")");
+	return jQuery.parseJSON(r);
+}
 function $post(http,url,params){
 	return http({
 	    method: 'POST',
