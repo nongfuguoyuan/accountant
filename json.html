@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>测试</title>
+<script src="jquery-1.11.1.js"></script>
+</head>
+<body>
+<form id="form1">
+
+<input type="button" id="submit" value="submit">
+</form>
+</body>
+<script>
+$(function(){
+	$("#submit").click(function(){
+		$.post("index.php/guest/save",{"name":"zgj","phone":"13553833551"},function(r){
+			console.log(r);
+		});
+	})
+});
+
+</script>
+</html>
