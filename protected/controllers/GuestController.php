@@ -20,15 +20,15 @@ class GuestController extends \BasicController {
 		return $objs;
 	}
 	
-	public function findOne($start,$limit){
+	public function findOne(){
 	
 		$select='select count(record.record_id) as r_count, guest.*,area.name as a_name,resource.description as r_name,employee.name as e_name';
 		$tables=array('guest','area','resource','employee','record');
 		$id = array('area','resource','employee','guest');
 		$ids = array('area','resource','employee','guest');
 		$groupby=' GROUP BY guest.guest_id ';
-		$order=' order by guest_id desc';
-		$objs=$this->dao->leftJoin($select, $tables, $ids,$groupby,$order,$start,$limit);
+		$order=' order by guest_id desc limit 0,1';
+		$objs=$this->dao->leftJoin($select, $tables, $ids,$groupby,$order);
 	
 		return $objs;
 	}

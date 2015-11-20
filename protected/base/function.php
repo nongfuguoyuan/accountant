@@ -66,7 +66,7 @@ function phppost($url,$data=''){
 	$post='';
 	$row = parse_url($url);
 	$host = $row['host'];
-	$port = $row['port'] ? $row['port']:80;
+	$port = isset($row['port']) ? $row['port']:80;
 	$file = $row['path'];
 	while (list($k,$v) = each($data)) 
 	{
@@ -84,7 +84,7 @@ function phppost($url,$data=''){
 		$out .= "Content-type: application/x-www-form-urlencoded\r\n";
 		$out .= "Connection: Close\r\n";
 		$out .= "Content-Length: $len\r\n\r\n";
-		$out .= $post;		
+		$out .= $post;	
 		fwrite($fp, $out);
 		while (!feof($fp)) {
 			$receive .= fgets($fp, 128);

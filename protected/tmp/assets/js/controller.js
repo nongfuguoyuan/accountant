@@ -728,16 +728,15 @@ myapp.controller('taxCtrl',function($scope,$http){
 });
 myapp.service('todoService',function(){
 	var obj = {
-		"hasSelect":[],
-		getTodo:function(){
-			return [{
-				'id':1,
-				'sender':'李二',
-				'accepter':'张新',
-				'task':'刻章',
-				'date_start':'2015-11-02',
-				'date_end':'2015-11-05'
-			}];
+		"hasSelect":[],	
+		todos:[],
+		getTodo:function(http,params,fn){
+			$post(http,_host+"todo/findAll",params).success(function(r){
+				if(r){
+					obj.todos = r.data;
+					fn(r);	
+				}
+			});
 		},
 		getEmployee:function($scope,fn){
 			return function(){
@@ -761,8 +760,8 @@ myapp.controller('todoCtrl',function($scope,$http,todoService){
 	$scope.sendSubTodo = function(){
 		$scope.copytask = this.u.task;
 	};
-	$scope.getEmployee = todoService.getEmployee($scope,function(data){
-		$scope.employee = data;
+	$scope.getTodo = todoService.getTodo($scope,function(r){
+		$scope.todos = r.data;
 		var id = $scope.employee_id;
 	});
 

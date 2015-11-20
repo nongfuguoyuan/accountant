@@ -57,10 +57,9 @@ class EmployeeController extends ZjhController{
 
 	public function findAll(){
 		$post = $this->post;
-		$page = $post['page'];
-		$pagenum = $post['pageNum'];
-		if(empty($page)) $page = 1;
-		if(empty($pagenum)) $pagenum = 1;
+		$page = isset($post['page'])? $post['page']:1;
+		$pagenum = isset($post['pageNum'])?$post['pageNum']:1;
+		
 		$result = $this->load('employee')->find(array($page,$pagenum));
 		if(!$result){
 			$result = array();

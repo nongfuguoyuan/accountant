@@ -8,6 +8,7 @@ class RecordController extends \BasicController {
 	
 	public function findByGuest($arr){
 		$where = "guest_id=".$arr['guest_id'];
+		
 		$arr=$this->dao->findWhereOrderBy($where, "record_time desc");
 		$arr = $arr['data'];
 		for($i=0;$i<count($arr);$i++){
