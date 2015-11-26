@@ -1,7 +1,23 @@
-function $json(r){
-	r = eval("("+")");
-	return jQuery.parseJSON(r);
+function callright(fn){
+	$("#zside-overlay").stop().animate({'right':'0'},200,'swing',function(){
+		if(typeof fn == 'function') fn();
+	});
 }
+
+function closeright(fn){
+	$("#zside-overlay").stop().animate({'right':'-350px'},200,'swing',function(){
+		if(typeof fn == 'function') fn();
+	});
+}
+
+function toggleright(fn){
+	if($("#zside-overlay").attr('data-status') == 'close'){
+		callright();
+	}else{
+		closeright();
+	}
+}
+
 function $post(http,url,params){
 	return http({
 	    method: 'POST',
@@ -10,6 +26,7 @@ function $post(http,url,params){
 	    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 	});
 }
+
 function validate(model,str){
 	if(typeof str == 'undefined'){
 		return false;
@@ -35,6 +52,9 @@ function validate(model,str){
 }
 /*构建菜单树*/
 function buildTree(arr,fn){
+	if(!arr || arr.toString() == "false"){
+		return document.createElement('p');
+	}
 	var domSelect = '';
 	function itdom(arr,fn){
 		if(arr.length > 0){

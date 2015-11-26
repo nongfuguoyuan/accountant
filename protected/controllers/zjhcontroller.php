@@ -1,12 +1,15 @@
 <?php
-	require_once('/../base/function.php');
 	class ZjhController{
 		public function __construct(){
 			$post = &$_POST;
 			$get = &$_GET;
+			
 			if(!empty($post)){
 				foreach($post as $key => $value){
-					$post[$key] = htmlspecialchars_decode(trim($value));
+					// if(is_string($value)){
+					// 	$value = htmlspecialchars_decode(trim($value))
+					// }
+					$post[$key] = $value;
 				}
 			}
 			if(!empty($get)){
@@ -17,6 +20,7 @@
 
 			$this->post = $post;
 			$this->get = $get;
+			$this->session = &$_SESSION;
 			$this->json();
 		}
 		public function json(){

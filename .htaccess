@@ -1,8 +1,19 @@
 <IfModule mod_rewrite.c>
-  Options +FollowSymlinks
-  RewriteEngine On
+	Options +FollowSymlinks
+	RewriteEngine On
 
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_FILENAME} !-f
+	
+	RewriteCond %{REQUEST_URI} ^test\.php$
+	RewriteRule test.php test.php [L]
+
+	RewriteCond %{REQUEST_URI} ^.*\.html$
+	RewriteRule (.*) $1 [L]
+
+	RewriteCond %{REQUEST_URI} ^.*(\.css|\.js|\.gif|\.png|\.jpg|\.jpeg|\.eot|\.svg|\.ttf|\.otf|\.woff|\.html)$
+	RewriteRule (.*) $1 [L]
+
+	RewriteRule !^.*(test\.php)$ index.php
+	#RewriteRule ^.*$ index.php
 </IfModule>

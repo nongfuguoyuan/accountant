@@ -1,0 +1,126 @@
+<div class="row">
+	<aside id="zside-overlay">
+        <div id="side-overlay-scroll">
+            <div class="side-header side-content">
+                <button onclick="closeright()" class="btn btn-default pull-right" type="button" data-toggle="layout" data-action="side_overlay_close">
+                    <i class="fa fa-times"></i>
+                </button>
+                <span>
+                    <span class="font-w600 push-10-l">{{intro}}</span>
+                    <span>{{ log_guest_id }}</span>
+                </span>
+            </div>
+            <div class="side-content remove-padding-t">
+                <div class="block pull-r-l">
+                    <div class="block-header bg-gray-lighter">
+                    </div>
+                    <div class="block-content z-content">
+                    	<ul class="list list-activity">
+                    		<li ng-repeat="r in recordlist" class="record-list">
+	                            <i class="fa fa-times push-2-t cursor" ng-click="delete(r.pay_record_id,$event.target)"></i>
+	                            <div class="font-w600">{{ r.company }}</div>
+	                            <div><a href="javascript:void(0)">{{ r.money }}￥</a></div>
+	                            <div><small class="text-muted">{{ r.create_time }}~{{ r.deadline }}</small></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar">
+            	<button class="btn btn-default" data-toggle="modal" data-target="#add-record">添加</button>
+            </div>
+        </div>
+    </aside>
+
+	<div class="col-sm-12">
+		<div class="clearfix push-10">
+			<label class="css-input switch switch-sm switch-primary pull-left push-5">
+		        只看自己<input type="checkbox" checked="checked"><span></span>
+		    </label>
+		    <div class="pull-left push-10-l rel">
+		    	<input placeholder="姓名/电话" ng-model="searchstr" class="form-control input-sm" type="text" search-users-real-time>
+		    	<ul class="search-result">
+		    		<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{ r.user_id }}" sure-search-result>
+		    			{{ r.name }}
+		    		</li>
+		    	</ul>
+		    </div>
+		    <!-- <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-pay">新建缴费记录</a> -->
+	    </div>
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-gray-light">
+				<th>序号</th>
+				<th>公司</th>
+				<th>姓名</th>
+				<th>电话</th>
+				<th>跟进客服</th>
+				<th>跟进会计</th>
+				<th>状态</th>
+				<th>缴费金额</th>
+				<th>缴费日期</th>
+				<th>服务期限</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="u in payrecord" ng-click="initRight(u)">
+					<td>{{ u.pay_record_id }}</td>
+					<td>
+						<!-- <a ng-click="recordList(u.accounting_id)" data-toggle="modal" data-target="#record-list"> -->
+						{{ u.company }}
+						<!-- </a> -->
+					</td>
+					<td>{{ u.name }}</td>
+					<td>{{ u.phone }}</td>
+					<td>{{ u.server }}</td>
+					<td>{{ u.accounting }}</td>
+					<td ng-model="today">
+						<span ng-if="today>u.deadline">
+						欠费
+						</span>
+						<span ng-if="today<=u.deadline">
+						正常
+						</span>
+					</td>
+					<td>
+                        {{ u.money }}
+					</td>
+					<td>
+						{{ u.create_time }}
+					</td>
+					<td>{{ u.deadline }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- 添加记录 begin -->
+	<div class="modal in" id="add-record" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加缴费记录</h3>
+	                </div>
+	                <div class="block-content">
+	                	<div class="form-group">
+	                		<label>金额</label>
+	                		<input class="form-control" ng-model="add_money"/>
+	                	</div>
+	                	<div class="form-group">
+	                		<label>服务期限</label>
+	                		<input id="record-deadline" class="form-control" ng-model="add_deadline" onclick="laydate()"/>
+	                	</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="add($event.target)" class="btn btn-sm btn-primary" type="button">添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 添加缴费记录 end   -->
+</div>

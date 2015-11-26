@@ -1,0 +1,130 @@
+<div class="row">
+	<div class="col-sm-12">
+		<button ng-click="requestProcessGroup()" class="push-10 pull-right btn-sm btn btn-info" data-toggle="modal" data-target="#add-process-dialog" type="button">添加</button>
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-dark-light">
+				<th>序号</th>
+				<th>流程组</th>
+				<th>流程</th>
+				<th>操作</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="u in processes">
+					<td>{{ $index+1 }}</td>
+					<td>{{ u.g_name }}</td>
+					<td>{{ u.name }}</td>
+					<td>
+						<button ng-click="log_process()" class="btn-xs pull-right btn btn-info" data-toggle="modal" data-target="#edit-process-dialog" class="btn btn-minw btn-square btn-primary" data-id="{{ u.process_group_id }}">
+							<i class="fa fa-pencil"></i>编辑
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!--编辑流程 begin -->
+	<div class="modal in" id="edit-process-dialog" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">编辑流程</h3>
+	                </div>
+	                <div class="block-content">
+                		<form class="form-horizontal" onsubmit="return false;">
+	                		<div class="form-group">
+	                            <div class="col-lg-3">
+	                            	<button class="btn btn-default" onclick="addInput('#edit-process')">添加</button>
+	                            </div>
+	                        </div>
+	                        <div id="edit-process">
+		                        <div class="form-group not-delete">
+		                        	<div class="col-lg-10">
+		                        		<input class="form-control" placeholder="流程名称"/>
+		                        	</div>
+		                        	<button  onclick="deleteMyself(this)" class="col-lg-2 btn btn btn-default"><i class="fa fa-close"></i></button>
+		                        </div>
+		                        <div class="form-group" ng-repeat="e in edit_process">
+		                        	<div class="col-lg-10">
+		                        		<input data-id="{{ e.process_id }}" value="{{ e.name }}" class="form-control" placeholder="流程名称"/>
+		                        	</div>
+		                        	<button ng-click="delete($event.target)" class="col-lg-2 btn btn btn-default"><i class="fa fa-close"></i></button>
+		                        </div>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+	                <button ng-click="edit($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>更新</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!--编辑流程 end -->
+	<!--添加流程 begin -->
+	<div class="modal in" id="add-process-dialog" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加流程</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+	                		<div class="form-group">
+	                            <label class="col-lg-3 control-label">流程组</label>
+	                            <div class="col-lg-6">
+	                                <select class="form-control" ng-model="process_group_id">
+	                                	<option ng-repeat="p in process_group" value="{{ p.process_group_id }}">{{ p.name }}</option>
+	                                </select>
+	                            </div>
+	                            <div class="col-lg-3">
+	                            	<button class="btn btn-default" onclick="addInput('#add-process-input')">添加</button>
+	                            </div>
+	                        </div>
+	                        <div id="add-process-input">
+		                        <div class="form-group not-delete">
+		                        	<div class="col-lg-10">
+		                        		<input class="form-control" placeholder="流程名称"/>
+		                        	</div>
+		                        	<button onclick="deleteMyself(this)" class="col-lg-2 btn btn btn-default"><i class="fa fa-close"></i></button>
+		                        </div>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+	                <button ng-click="add($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!--添加流程 end -->
+	<script>
+		function addInput(id){
+			$(id).find(".not-delete").clone(true).removeClass('not-delete').appendTo($(id)).find('input').val("");
+		}
+		function deleteMyself(othis){
+			var par = $(othis).parent();
+			if(!par.hasClass('not-delete')){
+				par.remove();
+			}else{
+				layer.msg('不能删除');
+			}
+		}
+
+	</script>
+</div>
+

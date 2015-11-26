@@ -12871,6 +12871,9 @@ a.block.block-link-hover3:active {
 .push-5 {
   margin-bottom: 5px !important;
 }
+.push-2-t {
+  margin-top: 2px !important;
+}
 .push-5-t {
   margin-top: 5px !important;
 }
@@ -16979,6 +16982,35 @@ table tr:hover{
 }
 .db{
   display: block;
+}
+.record-list{
+  line-height: 2em;
+  /*border-bottom: 1px solid #efefef;*/
+}
+#zside-overlay{
+  height: 100%;
+  width:350px;
+  position: fixed;
+  z-index: 9;
+  top:60px;
+  right:-350px;
+  background-color: #fff;
+  box-shadow: -5px -5px 5px rgba(0,0,0,0.1);
+}
+#zside-overlay .toolbar{
+  position: absolute;
+  padding:20px 10px;
+  border-top:1px solid #efefef;
+  width:100%;
+  left:0;
+  bottom:60px;
+}
+.cursor:hover{
+  cursor:pointer;
+}
+.z-content{
+  max-height: 450px;
+  overflow-y:scroll;
 }
 /*#add-new-user label{
   line-height: 3em;

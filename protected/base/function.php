@@ -34,6 +34,10 @@ function validate($case,$str){
 			break;
 		case 'phone':
 			return preg_match('/^1[34578]\d{9}$/',$str);
+			break;
+		case 'tel':
+			return preg_match('/^0\d{2,3}[-]?\d{7,8}/',$str);
+			break;
 		case 'code':
 			return preg_match('/^[\da-z]{4}$/', $str);
 			break;
@@ -94,4 +98,7 @@ function phppost($url,$data=''){
 		unset($receive[0]);
 		return implode("",$receive);
 	}
+}
+function secret($pass){
+	return md5(crypt($pass,substr($pass,0,2)));
 }

@@ -1,21 +1,87 @@
 <?php
-	require 'model.php';
 	class Employee extends Model{
+
+		function updateStatus($employee_id,$status){
+			return $this->db->exec('update `employee` set status=:status where employee_id=:employee_id',array(
+				'employee_id'=>$employee_id,
+				'status'=>$status
+			));
+		}
+
+		function findByName($name){
+			return $this->db->query('select * from `employee` where name=?',$name);
+		}
+		function findByPhone($phone){
+			return $this->db->query('select * from `employee` where phone=?',$phone);
+		}
+		function login($phone,$pass){
+			return $this->db->queryOne('select employee_id,name,phone from `employee` where phone=? and password=?',array($phone,$pass));
+		}
+		
+		function findByDepartmentid($department_id){
+			return $this->db->query('select 
+				e.name,
+				e.sex,
+				date_format(e.create_time,"%Y-%m-%d") create_time,
+				e.employee_id,
+				d.name d_name,
+				e.department_id,
+				e.phone
+				 from 
+				`employee` e,
+				`department` d 
+				where
+				e.department_id=d.department_id
+				and d.department_id= ?
+				and e.status = 1',$department_id);
+		}
 		public function find($page){
-			$result = $this->db->query('select e.name,e.sex,e.create_time,e.employee_id,d.name d_name,e.department_id,e.phone from `employee` e,`department` d where 
-				e.department_id=d.department_id',array(),$page);
+			$result = $this->db->query('select 
+				e.name,
+				e.sex,
+				date_format(e.create_time,"%Y-%m-%d") create_time,
+				e.employee_id,
+				d.name d_name,
+				e.department_id,
+				e.phone
+				 from 
+				`employee` e
+				left join 
+				`department` d 
+				on
+				e.department_id=d.department_id
+				where e.status = 1
+				'
+			,array(),$page);
+
 			$count = $this->db->count;
 			return array('count'=>$count,'data'=>$result);
 		}
 		public function findById($employee_id){
-			return $this->db->queryOne('select e.name,e.sex,e.create_time,e.employee_id,d.name d_name,e.department_id,e.phone from `employee` e,`department` d where 
-				e.department_id=d.department_id and e.employee_id=?',$employee_id);
+			return $this->db->queryOne('select 
+				e.name,
+				e.sex,
+				date_format(e.create_time,"%Y-%m-%d") create_time,
+				e.employee_id,
+				d.name d_name,
+				e.department_id,
+				e.phone
+				 from 
+				`employee` e
+				left join 
+				`department` d 
+				on
+				e.department_id=d.department_id
+				where employee_id=?
+				',$employee_id);
 		}
 		public function add($params){
 			$result = $this->db->exec('insert into `employee` set 
 				name=:name,
+				password=:pass,
 				sex=:sex,
 				phone=:phone,
+				status=1,
 				create_time=:create_time,
 				department_id=:department_id
 			',$params);

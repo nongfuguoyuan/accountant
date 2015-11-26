@@ -51,22 +51,63 @@
 *modify author:zjh
 *data:2015-11-19
 */
-require 'zjhcontroller.php';
-
 class EmployeeController extends ZjhController{
 
-	public function findAll(){
+	function updateStatus(){
+		$employee_id = (int)$this->post['employee_id'];
+		$status = (int)$this->post['status'];
+
+		if(empty($employee_id)) return false;
+		else return $this->load('employee')->updateStatus($employee_id,$status);
+	}
+
+
+	function islogin(){
+		return var_dump($this->session);
+	}
+	function session(){
+		if(empty($this->session)){
+			return false;
+		}else{
+			return $this->session;
+		}
+	}
+	public function logout(){
+		session_unset();
+		session_destroy();
+		header('Location:http://192.168.10.105/accountant/login.html');
+	}
+	public function login(){
+		$post = $this->post;
+		$phone = $post['phone'];
+		$pass = $post['pass'];
+		if(!validate('phone',$phone)){
+			return false;
+		}
+		if(strlen($pass) < 5){
+			return false;
+		}
+
+		$result = $this->load('employee')->login($phone,secret($pass));
+		if($result){
+			$this->session['user'] = $result;
+			header('Location:http://192.168.10.105/accountant/protected/tmp/index.html');
+		}else{
+			header('Location:http://192.168.10.105/accountant/login.html');
+		}
+	}
+	public function find(){
 		$post = $this->post;
 		$page = $post['page'];
 		$pagenum = $post['pageNum'];
 		if(empty($page)) $page = 1;
-		if(empty($pagenum)) $pagenum = 1;
-		$result = $this->load('employee')->find(array($page,$pagenum));
-		if(!$result){
-			$result = array();
-		}
-		return $result;
-		// return json_encode($result);
+		if(empty($pagenum)) $pagenum = 100;
+
+		return $this->load('employee')->find(array($page,$pagenum));
+	}
+	public function findByDepartmentid(){
+		$department_id = (int)$this->post['department_id'];
+		return $this->load('employee')->findByDepartmentid($department_id);
 	}
 
 	public function save(){
@@ -83,6 +124,7 @@ class EmployeeController extends ZjhController{
 		}
 		return $this->load('employee')->add(array(
 			'name'=>$name,
+			'pass'=>secret('000000'),
 			'phone'=>$phone,
 			'sex'=>$sex,
 			'create_time'=>timenow(),

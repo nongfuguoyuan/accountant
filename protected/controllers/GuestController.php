@@ -1,69 +1,113 @@
 <?php
-class GuestController extends \BasicController {
+class GuestController extends ZjhController {
 
-	public function __construct($tableName=__CLASS__){
-		
-		parent::__construct($tableName);
-	}
-	
-	//重写了父类方法因为需要添加字段
-	public function findAll(){
-		
-		$select='select count(record.record_id) as r_count, guest.*,area.name as a_name,resource.description as r_name,employee.name as e_name';
-		$tables=array('guest','area','resource','employee','record');
-		$id = array('area','resource','employee','guest');
-		$ids = array('area','resource','employee','guest');
-		$groupby=' GROUP BY guest.guest_id ';
-		$order=' order by guest_id desc';
-		$objs=$this->dao->leftJoin($select, $tables, $ids,$groupby,$order);
+	function save(){
+		$post = $this->post;
+		$company = $post['company'];
+		$name = $post['name'];
+		$tel = $post['tel'];
+		$phone = $post['phone'];
+		$job = $post['job'];
+		$area_id = (int)$post['area_id'];
+		$address = $post['address'];
+		$resource_id = (int)$post['resource_id'];
+		$employee_id = $this->session['user']['employee_id'];
+		$status = (int)$post['status'];
 
-		return $objs;
-	}
-	
-	public function findOne($start,$limit){
-	
-		$select='select count(record.record_id) as r_count, guest.*,area.name as a_name,resource.description as r_name,employee.name as e_name';
-		$tables=array('guest','area','resource','employee','record');
-		$id = array('area','resource','employee','guest');
-		$ids = array('area','resource','employee','guest');
-		$groupby=' GROUP BY guest.guest_id ';
-		$order=' order by guest_id desc';
-		$objs=$this->dao->leftJoin($select, $tables, $ids,$groupby,$order,$start,$limit);
-	
-		return $objs;
-	}
-	public function save($arr){
-		if((isset($arr['name'])&&isset($arr['phone']))||(isset($arr['name'])&&isset($arr['tel']))){
-			$info=null;
-			$arr1=array();
-			if(strlen($arr['phone'])==11){//判断手机号码长度
-				if(!$this->findbyphone(array('phone'=>$arr['phone']))){//判断手机号码是否存在
-					$tag=$this->dao->save($arr);//保存记录
-					if($tag){
-						$arr1['tag']=$tag;
-						//获取插入的最新数据
-						$where='1=1';
-						$order=' guest_id desc';
-						$info=$this->findOne(0,1);
-						$info=$info['data'];
-						$arr1['info']=$info;
-					}
-					
-				}else {
-					$info="手机号码已存在";
-					$tag=false;
-				}
-				
-			}else {
-				$info="手机号码长度不是11位";
-				$tag=false;
-			}
-			
-		}else{
-			$tag=false;
+		if(!validate('phone',$phone)){
+			return false;
 		}
-		$arr1=array('tag'=>$tag,'info'=>$info);
-		return $arr1;
+		if(!validate('name',$name)){
+			return false;
+		}
+		if(empty($employee_id)){
+			return false;
+		}
+		// return array(
+		// 	"company"=>$company,
+		// 	"name"=>$name,
+		// 	"phone"=>$phone,
+		// 	"job"=>$job,
+		// 	"area_id"=>$area_id,
+		// 	"address"=>$address,
+		// 	"resource_id"=>$resource_id,
+		// 	"employee_id"=>$employee_id,
+		// 	"tel"=>$tel,
+		// 	"status"=>$status
+		// );
+		$lastid = $this->load('guest')->add(array(
+			"company"=>$company,
+			"name"=>$name,
+			"phone"=>$phone,
+			"job"=>$job,
+			"area_id"=>$area_id,
+			"address"=>$address,
+			"resource_id"=>$resource_id,
+			"employee_id"=>$employee_id,
+			"tel"=>$tel,
+			"status"=>$status
+		));
+		// return $lastid;
+		if($lastid){
+			return $this->load('guest')->findById($lastid);
+		}else{
+			return false;
+		}
+
+	}
+	function find(){
+		$post = $this->post;
+		$page = $post['page'];
+		$pagenum = $post['pageNum'];
+		if(empty($page)) $page = 1;
+		if(empty($pagenum)) $pagenum = 20;
+		return $this->load('guest')->find(array($page,$pagenum));
+	}
+	function update(){
+		$post = $this->post;
+		$company = $post['company'];
+		$name = $post['name'];
+		$tel = $post['tel'];
+		$phone = $post['phone'];
+		// $job = $post['job'];
+		$area_id = (int)$post['area_id'];
+		$address = $post['address'];
+		// $employee_id = $this->session['user']['employee_id'];
+		$status = (int)$post['status'];
+		$guest_id = (int)$post['guest_id'];
+
+		if(!validate('phone',$phone)){
+			return false;
+		}
+		if(!validate('name',$name)){
+			return false;
+		}
+		$result = $this->load('guest')->update(array(
+			'guest_id'=>$guest_id,
+			"company"=>$company,
+			"name"=>$name,
+			"phone"=>$phone,
+			"area_id"=>$area_id,
+			"address"=>$address,
+			"tel"=>$tel,
+			"status"=>$status
+		));
+		// return $lastid;
+		if($result){
+			return $this->load('guest')->findById($guest_id);
+		}else{
+			return false;
+		}
+
+	}
+	function delete(){
+		return $this->load('guest')->delete((int)$this->post['guest_id']);
+	}
+	function findName(){
+
+	}
+	function search(){
+
 	}
 	
 }
