@@ -14,7 +14,25 @@
                     <div class="block-header bg-gray-lighter">
                     </div>
                     <div class="block-content z-content">
-                    	<button class="btn btn-default" data-toggle="modal" data-target="#add-new-user">更多纪录</button>
+                    	<button ng-click="findList()" class="btn btn-minw btn-default" type="button" style="width:100%">详细信息</button>
+                    	<table ng-show="listshow" ng-init="listshow=false" class="push-10-t block-table text-center bg-gray-lighter border-b">
+                    		<thead>
+                    			<th>税种</th>
+                    			<th>金额</th>
+                    		</thead>
+                    		<tr ng-repeat="t in taxlist">
+                    			<td class="border-r" width="50%">
+                    				{{ t.name }}
+                    			</td>
+                    			<td width="50%">
+                    				{{ t.fee }}
+                    				<div class="btn-group">
+                                        <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Edit Client"><i class="fa fa-pencil"></i></button>
+                                        <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Remove Client"><i class="fa fa-times"></i></button>
+                                    </div>
+                    			</td>
+                    		</tr>
+                    	</table>
                     	<ul class="list list-activity">
                     		<!-- <li ng-repeat="f in follow_record" class="record-list">
 	                            <i class="fa fa-times push-2-t cursor" ng-click="deleteRecord(f.record_id,$event.target)"></i>

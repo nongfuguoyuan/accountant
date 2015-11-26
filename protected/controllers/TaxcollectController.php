@@ -5,6 +5,15 @@
 		function findTotal($parent_id){// 1== 国税 2==地税
 
 		}
+		function findList(){
+			$post = $this->post;
+			$year = (int)$post['year'];
+			$month = (int)$post['month'];
+			$guest_id = (int)$post['guest_id'];
+			
+			return $this->load('taxcollect')->findByGuestid($year,$month,$guest_id);
+
+		}
 		function find(){
 			//找出所有代理记账用户
 			$guests = $this->load('accounting')->findHasAccounting();

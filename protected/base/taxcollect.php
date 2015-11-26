@@ -14,6 +14,21 @@
 			if($result) return $this->db->lastId();
 			else return false;
 		}
+		function findByGuestid($year,$month,$guest_id){
+			return $this->db->query("select
+				t.tax_collect_id,
+				t.guest_id,
+				y.name,
+				t.fee
+				from
+				`tax_collect`t
+				left join `tax_type` y
+				on
+				t.tax_type_id = y.tax_type_id
+				where t.year = ? and
+				t.month = ? and
+				t.guest_id = ?",array($year,$month,$guest_id));
+		}
 		//最近缴纳的月份
 		// function currentMonth($guest_id){
 		// 	return $this->db->queryOne("select max(t.month) month,t.year from

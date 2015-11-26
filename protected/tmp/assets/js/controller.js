@@ -1215,7 +1215,14 @@ myapp.service('taxService',function($http){
 			$post($http,_host+"taxtype/findByParentid",{'parent_id':parent_id}).success(function(r){
 				if(r){
 					fn(r);
+				}else{
+					layer.msg('没有详细记录');
 				}
+			});
+		},
+		findList:function(params,fn){
+			$post($http,_host+"taxcollect/findList",params).success(function(r){
+				if(r) fn(r);
 			});
 		}
 	};
@@ -1315,11 +1322,26 @@ myapp.controller('taxCtrl',function($scope,taxService){
 		});
 	}
 
+	
+	$scope.findList = function(){
+		if(taxService.year != null && taxService.month != null){
+			taxService.findList({'year':taxService.year,'month':taxService.month,'guest_id':taxService.guest_id},function(r){
+				$scope.listshow = true;
+				$scope.taxlist = r;
+			});	
+		}else{
+			layer.msg('没有详细记录');
+		}
+	};
 
 	$scope.initRight = function(u){
+		// console.log(u);
 		$scope.intro = u.company+"/"+u.name;
-		if(taxService.guest_id != u.guest_id){
+		taxService.year = u.year;
+		taxService.month = u.month;
+		taxService.guest_id = u.guest_id;
 
+		if(taxService.guest_id != u.guest_id){
 			callright(function(){
 				taxService.rightwin = true;
 			});
@@ -1334,7 +1356,7 @@ myapp.controller('taxCtrl',function($scope,taxService){
 				});
 			}
 		}
-		taxService.guest_id = u.guest_id;
+
 	};
 
 });
