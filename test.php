@@ -1,7 +1,14 @@
 <?php
 	require('./protected/base/function.php');
+<<<<<<< HEAD
 	session_start();
 	$url = "http://192.168.10.35/accountant/";
+=======
+	$url = "http://localhost/accountant/index.php/";
+	echo phppost($url."todo/findAll",array(
+		
+	));
+>>>>>>> 4d85906003b21a61f5d3a6f1c06008b5a8408678
 
 	// echo phppost($url."business/find",array(
 	// 	'employee_id'=>33

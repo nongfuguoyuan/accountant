@@ -55,6 +55,7 @@ class GuestController extends ZjhController {
 		}
 
 	}
+	
 	function find(){
 		$post = $this->post;
 		$page = $post['page'];
@@ -62,6 +63,7 @@ class GuestController extends ZjhController {
 		if(empty($page)) $page = 1;
 		if(empty($pagenum)) $pagenum = 20;
 		return $this->load('guest')->find(array($page,$pagenum));
+
 	}
 	function update(){
 		$post = $this->post;
