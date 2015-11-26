@@ -1,6 +1,4 @@
 <?php
-require_once 'model.php';
-require_once 'function.php';
 class todo extends Model {
 	
 	public function find($page){

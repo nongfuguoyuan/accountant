@@ -1,6 +1,6 @@
 var myapp = angular.module('myapp',['ngRoute']),
 
-	_host = 'http://192.168.10.100/accountant/';
+	_host = 'http://192.168.10.100/accountant/index.php/';
 
 myapp.config(['$routeProvider',function($routeProvider){
 	$routeProvider
@@ -113,10 +113,12 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 
 	dashboardService.getTodo($http,function(r){
 		$scope.todos=r.data;
+		console.log(r);
 		$scope.todo_count=r.total;
-		if($scope.todo_count > 0){
+		if(r.total > 0){
 			$scope.show_todo = true;
 		}
+		console.log($scope.show_todo);
 	});
 
 	//get session
@@ -150,11 +152,6 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 	});
 
 
-
-	$scope.todo_count = $scope.todos.length;
-	if($scope.todo_count > 0){
-		$scope.show_todo = true;
-	}
 	$scope.getEarly = dashboardService.getEarly($http,function(r){
 		$scope.todo_early = r.data;
 		$scope.todo_count_early = r.total;

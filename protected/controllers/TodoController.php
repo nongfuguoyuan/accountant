@@ -1,5 +1,4 @@
 <?php
-require 'zjhcontroller.php';
 class TodoController extends ZjhController {
 	
 	public function findAll(){

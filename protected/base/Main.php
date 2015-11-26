@@ -10,6 +10,7 @@ class Main {
 		// echo json_encode($objs);
 		$clazz = ucfirst($clazz)."Controller";
 		$controller = $this->getControll($clazz);
+		
 		$result = $controller->$method();
 		return json_encode($result);
 	}

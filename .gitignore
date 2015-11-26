@@ -6,3 +6,5 @@ test.php
 /.project.sumlime-workspace
 /jquery-1.11.1.js
 /.buildpath
+/protected/tmp/test.html
+/protected/tmp/tmp/test.html
