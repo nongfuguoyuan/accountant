@@ -1,6 +1,5 @@
-/.htaccess
-json.html
-login.html
+./.htaccess
+./*.html
 test.php
 .settings
 .project
