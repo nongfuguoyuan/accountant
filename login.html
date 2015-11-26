@@ -1,14 +1,73 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-<form action="login.php" method="post">
-用户名:<input type="text" name="user">
-密码:<input type="password" name="password">
-<input type="submit">
-</form>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<title>米财务-登录</title>
+		<link rel="stylesheet" type="text/css" href="http://192.168.10.105/accountant/protected/tmp/assets/css/oneui.css"/>
+	</head>
+	<body>
+		<!-- <form action="http://192.168.10.35/accountant/employee/login" method="post">
+			<input type="text" name="phone" placeholder="phone">
+			<input type="pass" name="pass" placeholder='password'>
+			<button>OK</button>
+		</form> -->
+		<div class="content overflow-hidden">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+                    <!-- Login Block -->
+                    <div class="block block-themed animated fadeIn">
+                        <div class="block-header bg-primary">
+                            <ul class="block-options">
+                                <li>
+                                    <a href="#">忘记密码?</a>
+                                </li>
+                            </ul>
+                            <h3 class="block-title">登录</h3>
+                        </div>
+                        <div class="block-content block-content-full block-content-narrow">
+                            <!-- Login Title -->
+                            <h1 class="h2 font-w600 push-30-t push-5">米蝶财务</h1>
+                            <!-- END Login Title -->
+
+                            <!-- Login Form -->
+                            <!-- jQuery Validation (.js-validation-login class is initialized in js/pages/base_pages_login.js) -->
+                            <!-- For more examples you can check out https://github.com/jzaefferer/jquery-validation -->
+                            <form class="js-validation-login form-horizontal push-30-t push-50" action="http://192.168.10.100/accountant/employee/login" method="post" novalidate="novalidate">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <div class="form-material form-material-primary floating open">
+                                            <input class="form-control" type="text" id="login-username" name="phone">
+                                            <label for="login-username">手机号</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <div class="form-material form-material-primary floating">
+                                            <input class="form-control" type="password" id="login-password" name="pass">
+                                            <label for="login-password">密码</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label class="css-input switch switch-sm switch-primary">
+                                            <input type="checkbox" id="login-remember-me" name="login-remember-me"><span></span>记住账号
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                        <button class="btn btn-block btn-primary" type="submit"><i class="si si-login pull-right"></i>确定</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- END Login Form -->
+                        </div>
+                    </div>
+                    <!-- END Login Block -->
+                </div>
+            </div>
+        </div>
+	</body>
 </html>

@@ -1,36 +1,41 @@
 <?php
-class RecordController extends \BasicController {
-	private $_guest;
-	public function __construct($tableName=__CLASS__){
-		$this->_guest=new GuestController();
-		parent::__construct($tableName);
-	}
-	
-	public function findByGuest($arr){
-		$where = "guest_id=".$arr['guest_id'];
-		
-		$arr=$this->dao->findWhereOrderBy($where, "record_time desc");
-		$arr = $arr['data'];
-		for($i=0;$i<count($arr);$i++){
-			$arr[$i]['record_time']=substr(($arr[$i]['record_time']), 0,10);
-			$arr1[$i]['record_time']=$arr[$i]['record_time'];
-			$arr1[$i]['content']=$arr[$i]['content'];
+	//modify by zjh
+	class RecordController extends ZjhController{
+
+		function find(){
+			$guest_id = (int)$this->post['guest_id'];
+			if($guest_id == 0) return false;
+
+			return $this->load('record')->find($guest_id);
 		}
-		return $arr1;
-	}
-	
-	public function save($arr){
-		if(isset($arr['guest_id'])){
-			$arr1=array('guest_id'=>$arr['guest_id']);
-			$tag=$this->_guest->dao->findById($arr1);
-			if($tag){
-				$tag1=$this->dao->save($arr);
+
+		function save(){
+			$post = $this->post;
+			$guest_id = (int)$post['guest_id'];
+			$content = $post['content'];
+
+			if($guest_id == 0) return false;
+
+			if(strlen($content) < 1){
+				return false;
 			}
-			return $tag1;
-		}else{
-			return false;
+
+			$lastid = $this->load('record')->add(array(
+				'guest_id'=>$guest_id,
+				'content'=>$content
+			));
+
+			if($lastid) return $this->load('record')->findById($lastid);
+			else return false;
+		}
+
+		function delete(){
+
+			$record_id = (int)$this->post['record_id'];
+
+			if($record_id == 0) return false;
+			else return $this->load('record')->delete($record_id);
 		}
 	}
-}
 
 ?>

@@ -1,4 +1,61 @@
-<div class="row" ng-controller="userCtrl">
+<div class="row">
+
+	<aside id="zside-overlay">
+        <div id="side-overlay-scroll">
+            <div class="side-header side-content">
+                <button onclick="closeright()" class="btn btn-default pull-right" type="button" data-toggle="layout" data-action="side_overlay_close">
+                    <i class="fa fa-times"></i>
+                </button>
+                <span>
+                    <span class="font-w600 push-10-l">{{company}}</span>
+                    <div class="push-10-l">{{name}}</div>
+                </span>
+            </div>
+            <div class="side-content remove-padding-t">
+                <div class="block pull-r-l">
+                    <div class="block-header bg-gray-lighter">
+                        <!-- <h3 class="block-title">{{ company }}</h3> -->
+                    </div>
+                    <div class="block-content z-content">
+                    	<div ng-if="opens.length > 0">
+	                    	<p>已开通服务</p>
+	                    	<ul class="list">
+	                    		<li ng-repeat="p in opens" class="clearfix">
+	                    			<span class="label label-primary">{{ p.name }}</span>
+	                    			<div ng-if="p.progress_value != null" class="push-10-t">
+		                    			<div class="progress active">
+		                                    <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{p.progress_value}}" aria-valuemin="0" aria-valuemax="100" style="width: {{p.progress_value}}%">{{p.progress}}</div>
+		                                </div>
+	                                </div>
+	                    		</li>
+	                    	</ul>
+                    	</div>
+                    	<ul class="list list-activity">
+                    		<li ng-repeat="f in follow_record" class="record-list">
+	                            <i class="fa fa-times push-2-t cursor" ng-click="deleteRecord(f.record_id,$event.target)"></i>
+	                            <div class="font-w600">第{{ follow_record.length - $index }}次</div>
+	                            <div><a href="javascript:void(0)">{{ f.create_time }}</a></div>
+	                            <div><small class="text-muted">{{ f.content }}</small></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar">
+            	<div class="push-10">
+	            	<button class="btn btn-default" data-toggle="modal" data-target="#add-new-user">添加客户</button>
+	            	<button class="btn btn-default" data-toggle="modal" data-target="#edit-guest">编辑客户</button>
+	            	<button class="btn btn-default" ng-click="deleteGuest()">删除客户</button>
+            	</div>
+            	<div>
+            		<button class="btn btn-default" data-toggle="modal" data-target="#add-guest-record">追踪记录</button>
+	            	<button class="btn btn-default" ng-click="initBusiness()" data-toggle="modal" data-target="#add-business">工商业务</button>
+	            	<button class="btn btn-default" data-toggle="modal" data-target="#add-account">代理记账</button>
+            	</div>
+            </div>
+        </div>
+    </aside>
+	
 	<div class="col-sm-12">
 		<div class="clearfix push-10">
 			<label class="css-input switch switch-sm switch-primary pull-left push-5">
@@ -12,7 +69,7 @@
 		    		</li>
 		    	</ul>
 		    </div>
-		    <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-user">新建客户</a>
+		    <!-- <a ng-click="initResource()" class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-user">新建客户</a> -->
 	    </div>
 		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
 			<thead class="bg-gray-light">
@@ -22,12 +79,9 @@
 				<th>区</th>
 				<th>手机</th>
 				<th>跟进客服</th>
-				<th>跟进记录</th>
-				<th>编辑</th>
-				<th>添加任务</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="u in guests">
+				<tr ng-click="initRight(u)" ng-repeat="u in guests">
 					<td>{{ u.company }}</td>
 					<td>{{ u.name }}</td>
 					<td ng-switch="u.status">
@@ -41,32 +95,9 @@
 						流失客户
 						</span>
 					</td>
-					<td ng-click="showAddress($event.target)"><a>{{ u.a_name }}</a></td>
+					<td>{{ u.a_name }}</td>
 					<td>{{ u.phone }}</td>
 					<td>{{ u.e_name }}</td>
-					<td class="show-button">
-						<a data-id="{{ u.id }}" ng-click="showFollowDetail($event.target)">{{ u.r_count }}次</a>
-						<button ng-click="initGuestid()" class="vh btn btn-xs btn-default" data-toggle="modal" data-target="#add-guest-record" type="button">添加</button>
-					</td>
-					<td>
-						<a ng-click="initEdit()" data-toggle="modal" data-target="#edit-guest">编辑</a>
-					</td>
-					<td>
-						<div class="btn-group" role="group">
-	                        <button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-	                            <span class="caret"></span>
-	                        </button>
-	                        <ul class="dropdown-menu dropdown-menu-right">
-	                            <li class="dropdown-header">添加任务</li>
-	                            <li>
-	                                <a tabindex="-1" href="javascript:void(0)" data-toggle="modal" data-target="#add-business">工商</a>
-	                            </li>
-	                            <li>
-	                                <a tabindex="-1" href="javascript:void(0)" data-toggle="modal" data-target="#add-account">代理记账</a>
-	                            </li>
-	                        </ul>
-                    	</div>
-					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -126,7 +157,7 @@
 	                        <div class="form-group">
 	                            <label class="col-lg-3 control-label">区</label>
 	                            <div class="col-lg-7">
-	                                <select class="form-control" request-area ng-model="add_area">
+	                                <select class="form-control" request-area ng-model="add_area_id">
 	                                	<option ng-repeat='area in areas' value="{{area.area_id}}">{{area.name}}</option>
 	                                </select>
 	                            </div>
@@ -135,6 +166,20 @@
 	                            <label class="col-lg-3 control-label">详细地址</label>
 	                            <div class="col-lg-7">
 	                                <input class="form-control" type="text" ng-model="add_address">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">客户来源</label>
+	                            <div class="col-lg-7">
+	                                <select class="form-control" ng-model="add_resource_id">
+	                                	<option ng-repeat="r in resource" value="{{ r.resource_id }}">{{ r.description }}</option>
+	                                </select>
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                            <label class="col-lg-3 control-label">职务</label>
+	                            <div class="col-lg-7">
+	                                <input class="form-control" type="text" ng-model="add_job">
 	                            </div>
 	                        </div>
 	                        <div class="form-group">
@@ -147,18 +192,12 @@
 	                                </select>
 	                            </div>
 	                        </div>
-	                        <div class="form-group">
-	                            <label class="col-lg-3 control-label">跟进记录</label>
-	                            <div class="col-lg-7">
-	                                <input class="form-control" type="text" ng-model="add_record">
-	                            </div>
-	                        </div>
 	                    </form>
 	                </div>
 	            </div>
 	            <div class="modal-footer">
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button ng-click="checkGuest($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	                <button ng-click="addGuest($event.target)" class="btn btn-sm btn-primary" type="button">添加</button>
 	            </div>
 	        </div>
 	    </div>
@@ -180,14 +219,14 @@
 	                <div class="block-content">
 	                	<form class="form-horizontal" onsubmit="return false;">
 	                		<div class="form-group">
-	                           <textarea placeholder="详细记录" class="form-control" ng-model="guest_record">{{guest_record}}</textarea>
+	                           <textarea placeholder="详细记录" class="form-control" ng-model="add_record"></textarea>
 	                        </div>
 	                    </form>
 	                </div>
 	            </div>
 	            <div class="modal-footer">
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button ng-click="checkRecord($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	                <button ng-click="addRecord($event.target)" class="btn btn-sm btn-primary" type="button">添加</button>
 	            </div>
 	        </div>
 	    </div>
@@ -235,7 +274,7 @@
 	                        <div class="form-group">
 	                            <label class="col-lg-3 control-label">区</label>
 	                            <div class="col-lg-7">
-	                                <select class="form-control" request-area ng-model="edit_area">
+	                                <select class="form-control" request-area ng-model="edit_area_id">
 	                                	<option ng-repeat='area in areas' value="{{area.area_id}}">{{area.name}}</option>
 	                                </select>
 	                            </div>
@@ -250,8 +289,8 @@
 	                            <label class="col-lg-3 control-label">状态</label>
 	                            <div class="col-lg-7">
 	                                <select class="form-control" ng-model="edit_status">
-	                                	<option value="0">谈判中</option>
-	                                	<option value="1">成交</option>
+	                                	<option value="0">潜在客户</option>
+	                                	<option value="1">成交客户</option>
 	                                	<option value="2">已流失</option>
 	                                </select>
 	                            </div>
@@ -261,7 +300,7 @@
 	            </div>
 	            <div class="modal-footer">
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button ng-click="checkEditGuest($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>更新</button>
+	                <button ng-click="editGuest($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>更新</button>
 	            </div>
 	        </div>
 	    </div>
@@ -282,22 +321,35 @@
 	                </div>
 	                <div class="block-content">
 	                	<form class="form-horizontal" onsubmit="return false;">
-	                		<div class="form-group">
+	                		<div class="form-group" style="padding:0 10px">
 	                		   <label class="control-label">业务类型</label>
-	                           <select class="form-control" request-process-group ng-model="business_type">
+	                           <select class="form-control" ng-model="process_group_id">
 	                           		<option ng-repeat="p in process_group" value="{{ p.process_group_id }}">{{ p.name }}</option>
 	                           </select>
-	                           <label class="control-label">指定负责人</label>
-	                           <select class="form-control" request-accounting ng-model="business_accounting_id">
-	                           		<option ng-repeat="a in accountings" value="{{ a.accounting_id }}">{{ a.name }}</option>
-	                           </select>
+	                           <label class="control-label">对接会计</label>
+	                           <div class="row">
+		                           <div class="col-lg-6">
+			                           <select class="form-control" ng-model="department_id" ng-change="requestEmployee()">
+			                           		<option ng-repeat="d in department" value="{{ d.department_id }}">{{ d.name }}</option>
+			                           </select>
+			                       </div>
+			                       <div class="col-lg-6">
+			                           <select class="form-control" ng-model="employee_id">
+			                           		<option ng-repeat="e in employee" value="{{ e.employee_id }}">{{ e.name }}</option>
+			                           </select>
+			                       </div>
+		                       </div>
+	                           <label class="control-label">应收款</label>
+	                           <input class="form-control" ng-model="should_fee" />
+	                           <label class="control-label">已收款</label>
+	                           <input class="form-control" ng-model="have_fee" />
 	                        </div>
 	                    </form>
 	                </div>
 	            </div>
 	            <div class="modal-footer">
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button ng-click="checkAddBusiness($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	                <button ng-click="addBusiness($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
 	            </div>
 	        </div>
 	    </div>
@@ -305,7 +357,7 @@
     <!-- 添加工商 end   -->
     <!-- 添加代理记账 begin -->
     <div class="modal in" id="add-account" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
-	    <div class="modal-dialog modal-mx">
+	    <div class="modal-dialog modal-sm">
 	        <div class="modal-content">
 	            <div class="block block-themed block-transparent remove-margin-b">
 	                <div class="block-header bg-primary-dark">
@@ -319,17 +371,30 @@
 	                <div class="block-content">
 	                	<form class="form-horizontal" onsubmit="return false;">
 	                		<div class="form-group">
-	                           
+	                			<label>负责人</label>
+	                           <div class="row">
+		                           <div class="col-lg-6">
+			                           <select class="form-control" ng-model="department_id" ng-change="requestEmployee()">
+			                           		<option ng-repeat="d in department" value="{{ d.department_id }}">{{ d.name }}</option>
+			                           </select>
+			                       </div>
+			                       <div class="col-lg-6">
+			                           <select class="form-control" ng-model="accounting_employee_id">
+			                           		<option ng-repeat="e in employee" value="{{ e.employee_id }}">{{ e.name }}</option>
+			                           </select>
+			                       </div>
+		                       </div>
 	                        </div>
 	                    </form>
 	                </div>
 	            </div>
 	            <div class="modal-footer">
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button ng-click="checkAddAccounting($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+	                <button ng-click="addAccounting($event.target)" class="btn btn-sm btn-primary" type="button">添加</button>
 	            </div>
 	        </div>
 	    </div>
 	</div>
     <!-- 添加代理记账 end   -->
 </div>
+

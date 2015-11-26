@@ -1,30 +1,30 @@
-<div ng-controller="serverCtrl">
-    <div class="content bg-image" style="background-image: url('{{server.img}}');">
+<div>
+    <div class="content bg-image" style="background-image: url('assets/img/photos/photo8@2x.jpg');">
         <div class="push-50-t push-15 clearfix">
             <div class="push-15-r pull-left animated fadeIn">
                 <img class="img-avatar img-avatar-thumb" src="assets/img/avatars/avatar13.jpg" alt="">
             </div>
-            <h1 class="h2 text-white push-5-t animated zoomIn">{{server.name}}</h1>
-            <h2 class="h5 text-white-op animated zoomIn">{{server.department}}</h2>
+            <h1 class="h2 text-white push-5-t animated zoomIn">{{ name }}</h1>
+            <h2 class="h5 text-white-op animated zoomIn">{{department}}</h2>
         </div>
     </div>
     <div class="content bg-white border-b">
         <div class="row items-push text-uppercase">
             <div class="col-xs-6 col-sm-3">
                 <div class="font-w700 text-gray-darker animated fadeIn">名下客户</div>
-                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{server.all}}</a>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{count}}</a>
             </div>
             <div class="col-xs-6 col-sm-3">
                 <div class="font-w700 text-gray-darker animated fadeIn">谈判中</div>
-                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{server.negotiation}}</a>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{ing}}</a>
             </div>
             <div class="col-xs-6 col-sm-3">
                 <div class="font-w700 text-gray-darker animated fadeIn">已成交</div>
-                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{server.deal}}</a>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{deal}}</a>
             </div>
             <div class="col-xs-6 col-sm-3">
                 <div class="font-w700 text-gray-darker animated fadeIn">已流失</div>
-                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{server.loss}}</a>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{lose}}</a>
             </div>
         </div>
     </div>

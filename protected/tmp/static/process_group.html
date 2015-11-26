@@ -1,6 +1,6 @@
-<div class="row" ng-controller="processGroupCtrl">
+<div class="row">
 	<div class="col-sm-12 clearfix">
-		<button class="push-10 pull-right btn btn-info" data-toggle="modal" data-target="#add-process-group-dialog" type="button">添加</button>
+		<!-- <button class="push-10 pull-right btn btn-info" data-toggle="modal" data-target="#add-process-group-dialog" type="button">添加</button> -->
 		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
 			<thead class="bg-gray-light">
 				<th>序号</th>
@@ -11,9 +11,10 @@
 				<tr ng-repeat="u in process_groups">
 					<td>{{ $index+1 }}</td>
 					<td>
-						<a ng-click="initEditName(u.name)" data-toggle="modal" data-target="#edit-process-group-dialog">{{ u.name }}</a>
+						<!-- <a ng-click="log_group()" data-toggle="modal" data-target="#edit-process-group-dialog">{{ u.name }}</a> -->
+                        {{ u.name }}
 					</td>
-					<td>{{ u.date }}</td>
+					<td>{{ u.create_time }}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -38,13 +39,13 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-                <button ng-click="checkProcessGroup($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+                <button ng-click="add($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
             </div>
         </div>
     </div>
 </div>
 <!-- 添加流程组 end -->
-<!-- 添加流程组 begin -->
+<!-- 编辑流程组 begin -->
 <div class="modal in" id="edit-process-group-dialog" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -62,12 +63,13 @@
                     <input ng-model="edit_name" type="text" class="form-control push-10" />
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer clearfix">
+                <button class="btn btn-sm btn-default pull-left" ng-click="delete($event.target)">删除</button>
                 <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-                <button ng-click="checkProcessGroup($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>添加</button>
+                <button ng-click="edit($event.target)" class="btn btn-sm btn-primary" type="button"><i class="fa fa-check"></i>更新</button>
             </div>
         </div>
     </div>
 </div>
-<!-- 添加流程组 end -->
+<!-- 编辑流程组 end -->
 </div>

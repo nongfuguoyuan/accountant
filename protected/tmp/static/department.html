@@ -1,7 +1,37 @@
-<div class="row" ng-controller="departmentCtrl">
+<div class="row">
+
+    <aside id="zside-overlay">
+        <div id="side-overlay-scroll">
+            <div class="side-header side-content">
+                <button onclick="closeright()" class="btn btn-default pull-right" type="button" data-toggle="layout" data-action="side_overlay_close">
+                    <i class="fa fa-times"></i>
+                </button>
+                <span>
+                    <a class="item item-circle bg-default text-white-op center-block" data-toggle="theme" data-theme="default" href="javascript:void(0)">
+                        <i class="si si-map"></i>
+                    </a>
+                    <span class="font-w600 push-10-l">{{intro}}</span>
+                </span>
+            </div>
+            <div class="side-content remove-padding-t">
+                <div class="block">
+                    <p>成交客户</p>
+                    <p>正在追踪客户</p>
+                </div>
+            </div>
+            <div class="toolbar">
+                <div class="">
+                    <button class="btn btn-default" data-toggle="modal" data-target="#edit-employee">编辑成员</button>
+                    <button ng-click="updateStatus()" class="btn btn-default">设为离职</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+
 	<div class="col-lg-2 department-info">
 		<button class="btn btn-xs btn-default push-5-r push-10" data-toggle="modal" data-target="#edit-department" type="button"><i class="fa fa-pencil"></i>编辑部门</button>
-		<div class="menu-tree" data-type="show" load-menu-tree>
+		<div id="tree-show" class="menu-tree">
 		</div>
 	</div>
 	<div class="col-lg-10 col-sm-12">
@@ -29,11 +59,14 @@
 				<th>入职日期</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="u in employees">
+				<tr ng-repeat="u in employees" ng-click="initRight(u)">
 					<td>{{ $index+1 }}</td>
-					<td>{{ u.d_name }}</td>
 					<td>
-						<a ng-click="log_employee()" data-toggle="modal" data-target="#edit-employee">{{ u.name }}</a>
+                        <span ng-if="u.d_name==null">没有设定</span>
+                        <span ng-if="u.d_name!=null">{{ u.d_name }}</span>
+                    </td>
+					<td>
+						{{ u.name }}
 					</td>
 					<td ng-switch="u.sex">
                         <span ng-switch-when="0">女</span>
@@ -89,8 +122,8 @@
                             <div class="form-group">
                                 <label class="col-xs-12">部门</label>
                                 <div class="col-xs-12">
-                                    <select class="form-control" ng-model="e_department_id" request-all-department>
-                                    	<option ng-repeat="d in des" value="{{d.department_id}}">{{d.name}}</option>
+                                    <select class="form-control" ng-model="e_department_id">
+                                    	<option ng-repeat="d in alldepartment" value="{{d.department_id}}">{{d.name}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -124,11 +157,12 @@
 		                	<div class="btn-group push-10">
 	                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#apps-modal">添加</button>
 	                            <button class="btn btn-default" type="button" ng-click='showEditWindow()'>编辑</button>
-	                            <button class="btn btn-default" type="button" ng-click="deleteDepartment()">删除</button>
+	                            <button class="btn btn-default" type="button" ng-click="delete()">删除</button>
 	                        </div>
                         </div>
                         <div class="row">
-	                        <div data-type="select" class="menu-tree col-lg-6 col-lg-offset-3" load-menu-tree>
+	                        <div  id="tree-edit" class="menu-tree col-lg-6 col-lg-offset-3">
+                                
 	                        </div>
                         </div>
 	                </div>
@@ -155,6 +189,7 @@
                         <h3 class="block-title">添加部门</h3>
                     </div>
                     <div class="block-content">
+                        <p>>{{ head_name }}</p>
                         <form class="form-horizontal push-5-t" onsubmit="return false;">
                             <div class="form-group">
                                 <label class="col-xs-12">名称</label>
@@ -164,7 +199,7 @@
                             </div>
                             <div class="clearfix push-10 text-right">
                             	<button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-                            	<button ng-click="checkAddDepartment($event.target)" class="btn btn-primary btn-sm">添加</button>
+                            	<button ng-click="add($event.target)" class="btn btn-primary btn-sm">添加</button>
                             </div>
                         </form>
                     </div>
@@ -222,7 +257,7 @@
                             </div>
                             <div class="clearfix push-10 text-right">
                             	<button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-                            	<button ng-click="checkEditDepartment()" class="btn btn-primary btn-sm">更新</button>
+                            	<button ng-click="edit($event.target)" class="btn btn-primary btn-sm">更新</button>
                             </div>
                         </form>
                     </div>
@@ -256,8 +291,8 @@
                                 <label class="col-xs-12">性别</label>
                                 <div class="col-xs-12">
                                     <select class="form-control" ng-model="e_sex" ng-init="e_sex=1">
-                                    	<option value="0">男</option>
-                                    	<option value="1">女</option>
+                                    	<option value="0">女</option>
+                                    	<option value="1">男</option>
                                     </select>
                                 </div>
                             </div>
@@ -270,8 +305,8 @@
                             <div class="form-group">
                                 <label class="col-xs-12">部门</label>
                                 <div class="col-xs-12">
-                                    <select class="form-control" ng-model="e_department_id" request-all-department>
-                                    	<option ng-repeat="d in des" value="{{d.department_id}}">{{d.name}}</option>
+                                    <select class="form-control" ng-model="e_department_id">
+                                    	<option ng-repeat="d in alldepartment" value="{{d.department_id}}">{{d.name}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -280,7 +315,7 @@
 	            </div>
 	            <div class="modal-footer">
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button ng-click="checkEmployee($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+	                <button ng-click="addEmployee($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
 	            </div>
 	        </div>
 	    </div>

@@ -1,14 +1,18 @@
 <?php
-	require_once('zjhcontroller.php');
-
 	class DepartmentController extends ZjhController {
+
+		function findByEmpolyee(){
+
+			$employee_id = (int)$this->post['employee_id'];
+			return $this->load('department')->findByEmpolyee($employee_id);
+			
+		}
+
 		public function findAll(){
 			$result = $this->load('department')->findAll();
-			if(!$result){
-				$result = array();
-			}
-			return json_encode($result);
+			return $result;
 		}
+
 		private function bubbleSort($arr){
 			$l = count($arr)-2;
 			$i = 0;
@@ -45,8 +49,7 @@
 				foreach($arr as $key => $value){
 					if($value['parent_id'] == 0) $tree[] = $value;
 				}
-				// $this->json();
-				return json_encode($tree);
+				return $tree;
 			}else{
 				return false;
 			}
@@ -54,7 +57,6 @@
 		public function update(){
 			$post = $this->post;
 			$department_id = (int)$post['department_id'];
-			// $parent_id = (int)$post['parent_id'];
 			$name = $post['name'];
 			if(!validate('name',$name)){
 				$ret['tag'] = 'fail';
@@ -77,9 +79,7 @@
 			$name = $post['name'];
 			$ret = array();
 			if(!validate('name',$name)){
-				$ret['tag'] = 'fail';
-				$ret['info'] = '部门名称不符合要求';
-				return json_encode($ret);
+				return false;
 			}
 			return $this->load('department')->add(array(
 				'parent_id'=>$parent_id,

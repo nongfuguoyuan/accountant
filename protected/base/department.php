@@ -1,6 +1,10 @@
 <?php
-	require_once('model.php');
 	class Department extends Model{
+		
+		function findByEmpolyee($employee_id){
+			return $this->db->queryOne('select d.name from `department` d,`employee` e where e.department_id=d.department_id and e.employee_id=?',$employee_id);
+		}
+
 		function findall(){
 			return $this->db->query('select department_id,name,parent_id from `department`');
 		}

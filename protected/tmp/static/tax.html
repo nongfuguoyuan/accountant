@@ -1,0 +1,215 @@
+<div class="row">
+	<aside id="zside-overlay">
+        <div id="side-overlay-scroll">
+            <div class="side-header side-content">
+                <button ng-click="closewin()" class="btn btn-default pull-right" type="button" data-toggle="layout" data-action="side_overlay_close">
+                    <i class="fa fa-times"></i>
+                </button>
+                <span>
+                    <span class="font-w600">{{ intro }}</span>
+                </span>
+            </div>
+            <div class="side-content remove-padding-t">
+                <div class="block pull-r-l">
+                    <div class="block-header bg-gray-lighter">
+                    </div>
+                    <div class="block-content z-content">
+                    	<button ng-click="findList()" class="btn btn-minw btn-default" type="button" style="width:100%">详细信息</button>
+                    	<table ng-show="listshow" ng-init="listshow=false" class="push-10-t block-table text-center bg-gray-lighter border-b">
+                    		<thead>
+                    			<th>税种</th>
+                    			<th>金额</th>
+                    		</thead>
+                    		<tr ng-repeat="t in taxlist">
+                    			<td class="border-r" width="50%">
+                    				{{ t.name }}
+                    			</td>
+                    			<td width="50%">
+                    				{{ t.fee }}
+                    				<div class="btn-group">
+                                        <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Edit Client"><i class="fa fa-pencil"></i></button>
+                                        <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Remove Client"><i class="fa fa-times"></i></button>
+                                    </div>
+                    			</td>
+                    		</tr>
+                    	</table>
+                    	<ul class="list list-activity">
+                    		<!-- <li ng-repeat="f in follow_record" class="record-list">
+	                            <i class="fa fa-times push-2-t cursor" ng-click="deleteRecord(f.record_id,$event.target)"></i>
+	                            <div class="font-w600">第{{ follow_record.length - $index }}次</div>
+	                            <div><a href="javascript:void(0)">{{ f.create_time }}</a></div>
+	                            <div><small class="text-muted">{{ f.content }}</small></div>
+                            </li> -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar">
+            	<div class="push-10">
+	            	<button ng-click="initTaxtype()" class="btn btn-default" data-toggle="modal" data-target="#add-tax-collect">添加纪录</button>
+            	</div>
+            </div>
+        </div>
+    </aside>
+
+
+	<div class="col-sm-12">
+		<div class="clearfix push-10">
+			<label class="css-input switch switch-primary">
+		        <input type="checkbox" checked="checked"><span></span>只看自己
+		    </label>
+	    </div>
+
+		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
+			<thead class="bg-gray-light">
+				<th>序号</th>
+				<th>公司</th>
+				<th>姓名</th>
+				<th>电话</th>
+				<th>跟进人</th>
+				<th>地税</th>
+				<th>国税</th>
+				<th>最近缴纳月份</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="u in tax" ng-click="initRight(u)">
+					<td>{{ $index+1 }}</td>
+					<td>{{ u.company }}</td>
+					<td>{{ u.name }}</td>
+					<td>{{ u.phone }}</td>
+					<td>{{ u.accounting }}</td>
+					<td>
+						<span ng-if="u.nation == null">0</span>
+						<span ng-if="u.nation != null">{{ u.nation }}</span>
+					</td>
+					<td>
+						<span ng-if="u.local == null">0</span>
+						<span ng-if="u.local != null">{{ u.local }}</span>
+					</td>
+
+					<td>
+						<span ng-if="u.month == null">未开始纳税</span>
+						<span ng-if="u.month != null">{{ u.month }}</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- 添加纪录 begin -->
+	<div class="modal in" id="add-tax-collect" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-mx">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">添加税务记录</h3>
+	                </div>
+	                <div class="block-content">
+	                	<form class="form-horizontal" onsubmit="return false;">
+                            <div class="push-10-t">
+                            	<p class="push-10">日期</p>
+	                			<div class="row">
+	                				<div class="col-lg-5">
+										<select class="form-control" ng-model="add_year">
+			                				<option value="2015">2015</option>
+			                				<option value="2014">2014</option>
+			                			</select>
+		                			</div>
+		                			<div class="col-lg-5">
+		                				<select class="form-control" ng-model="add_month">
+				                			<option>1</option>
+				                			<option>2</option>
+				                			<option>3</option>
+				                			<option>4</option>
+				                			<option>5</option>
+				                			<option>6</option>
+				                			<option>7</option>
+				                			<option>8</option>
+				                			<option>9</option>
+				                			<option>10</option>
+				                			<option>11</option>
+				                			<option>12</option>
+				                		</select>
+		                			</div>
+	                			</div>
+	                		</div>
+	                		<div class="push-10-t push-20" id="add-nation">
+	                			<div class="input-group col-lg-10 push-10">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">国税</button>
+                                    </span>
+                                    <input class="form-control" id="nation-count" type="text" placeholder="总和">
+                                </div>
+	                			<div class="row push-10 not-delete">
+	                				<div class="col-lg-3">
+										<select class="form-control">
+			                				<option ng-repeat="t in nation" value="{{ t.tax_type_id }}">{{ t.name }}</option>
+			                			</select>
+		                			</div>
+		                			<div class="col-lg-7">
+		                				<input class="form-control" type="text"/>
+		                			</div>
+		                			<div class="col-lg-1">
+		                				<i onclick="taxAddInput(this)" class="fa push-10-t fa-plus"></i>
+		                			</div>
+		                			<div class="col-lg-1">
+		                				<i onclick="taxDeleteInput(this)" class="push-10-t fa fa-close"></i>
+		                			</div>
+	                			</div>
+	                		</div>
+	                		<div class="push-10-t push-20" id="add-local">
+	                			<div class="input-group col-lg-10 push-10">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">地税</button>
+                                    </span>
+                                    <input class="form-control" id="local-count" type="text" placeholder="总和">
+                                </div>
+	                			<div class="row push-10 not-delete">
+	                				<div class="col-lg-3">
+										<select class="form-control">
+			                				<option ng-repeat="t in local" value="{{ t.tax_type_id }}">{{ t.name }}</option>
+			                			</select>
+		                			</div>
+		                			<div class="col-lg-7">
+		                				<input class="form-control" type="text"/>
+		                			</div>
+									<div class="col-lg-1">
+		                				<i onclick="taxAddInput(this)" class="fa push-10-t fa-plus"></i>
+		                			</div>
+		                			<div class="col-lg-1">
+		                				<i onclick="taxDeleteInput(this)" class="push-10-t fa fa-close"></i>
+		                			</div>
+	                			</div>
+	                		</div>
+	                    </form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="add($event.target)" class="btn btn-sm btn-primary" type="button">添加</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 添加纪录 end -->
+	<script type="text/javascript">
+		
+		function taxAddInput(othis){
+			var ele = $(othis).parent().parent();
+			ele.clone(true).removeClass('not-delete').appendTo(ele.parent());
+		}
+
+		function taxDeleteInput(othis){
+			var ele = $(othis).parent().parent();
+			if(!ele.hasClass('not-delete')){
+				ele.remove();
+			}else{
+				layer.msg('不能删除');
+			}
+		}
+	</script>
+</div>
