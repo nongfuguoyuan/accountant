@@ -34,7 +34,7 @@ class GuestController extends \BasicController {
 	}
 	public function save($arr){
 		if((isset($arr['name'])&&isset($arr['phone']))||(isset($arr['name'])&&isset($arr['tel']))){
-			$info=null;
+			$data=null;
 			$arr1=array();
 			if(strlen($arr['phone'])==11){//判断手机号码长度
 				if(!$this->findbyphone(array('phone'=>$arr['phone']))){//判断手机号码是否存在
@@ -44,25 +44,25 @@ class GuestController extends \BasicController {
 						//获取插入的最新数据
 						$where='1=1';
 						$order=' guest_id desc';
-						$info=$this->findOne(0,1);
-						$info=$info['data'];
-						$arr1['info']=$info;
+						$data=$this->findOne(0,1);
+						$data=$data['data'];
+						$arr1['data']=$data;
 					}
 					
 				}else {
-					$info="手机号码已存在";
+					$data="手机号码已存在";
 					$tag=false;
 				}
 				
 			}else {
-				$info="手机号码长度不是11位";
+				$data="手机号码长度不是11位";
 				$tag=false;
 			}
 			
 		}else{
 			$tag=false;
 		}
-		$arr1=array('tag'=>$tag,'info'=>$info);
+		$arr1=array('tag'=>$tag,'data'=>$data);
 		return $arr1;
 	}
 	

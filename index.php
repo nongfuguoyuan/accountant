@@ -12,7 +12,3 @@ $ca=explode("/",$matches[2]);//controller and action id
 
 $main = new Main();
 $main->start($ca);
-
-
-
-

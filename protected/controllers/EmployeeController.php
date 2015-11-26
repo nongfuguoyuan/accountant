@@ -68,10 +68,19 @@ class EmployeeController extends ZjhController{
 		// return json_encode($result);
 	}
 
+	public function search(){
+		$post = $this->post;
+
+		$result = $this->load('employee')->search($post);
+		if(!$result){
+			$result = array();
+		}
+		return $result;
+	}
 	public function save(){
 		$post = $this->post;
-		$name = $post['name'];
-		$phone = $post['phone'];
+		$name = isset($post['name'])?$post['name']:null;
+		$phone = isset($post['phone'])?$post['phone']:null;
 		$sex = (int)$post['sex'];
 		$department_id = (int)$post['department_id'];
 		if(!validate('name',$name)){

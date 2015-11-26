@@ -11,6 +11,14 @@
 			return $this->db->queryOne('select e.name,e.sex,e.create_time,e.employee_id,d.name d_name,e.department_id,e.phone from `employee` e,`department` d where 
 				e.department_id=d.department_id and e.employee_id=?',$employee_id);
 		}
+		public function search($array){
+			$sql='select name,employee_id from `employee` where 
+				';
+			foreach ($array as $key => $value) {
+				$sql .= " $key like '%$value%'";
+			}
+			return $this->db->query($sql,array(),null);
+		}
 		public function add($params){
 			$result = $this->db->exec('insert into `employee` set 
 				name=:name,
