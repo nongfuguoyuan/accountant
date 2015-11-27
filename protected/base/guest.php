@@ -1,5 +1,14 @@
 <?php
 	class Guest extends Model{
+
+		function searchByPhone($phone){
+			return $this->db->query('select company,name,guest_id from `guest` where phone like "%"?"%" limit 5',$phone);
+		}
+
+		function searchByCom($com){
+			return $this->db->query('select company,name,guest_id from `guest` where company like "%"?"%" limit 5',$com);
+		}
+
 		function findById($guest_id){
 			return $this->db->queryOne('select 
 				g.guest_id,
@@ -44,12 +53,15 @@
 				on a.area_id = g.area_id
 				left join `resource` r
 				on r.resource_id = g.resource_id
+				order by g.guest_id desc
 			",array(),$page);
+
 			if($result){
 				return array('total'=>$this->db->count,'data'=>$result);
 			}else{
 				return false;
 			}
+			
 		}
 		function add($params){
 			$result = $this->db->exec('insert into `guest` set 

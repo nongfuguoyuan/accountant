@@ -4,6 +4,8 @@ session_start();
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, PUT');
+define('_HOST','http://192.168.10.105/accountant/');
+define('_DASHBOARD',_HOST.'protected/tmp/index.html');
 
 require 'autoload.php';
 require 'protected/base/model.php';
@@ -22,10 +24,10 @@ if($ca[2] && $ca[3]){
 	if($clazz == 'employee' && ($method == 'login' || $method == 'logout')){
 
 	}else{
-		// if(empty($_SESSION['user'])){
-		// 	echo '请登录';
-		// 	return;
-		// }
+		if(empty($_SESSION['user'])){
+			echo '请登录';
+			return;
+		}
 	}
 	
 	$main = new Main();

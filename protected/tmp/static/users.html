@@ -1,5 +1,5 @@
 <div class="row">
-
+	
 	<aside id="zside-overlay">
         <div id="side-overlay-scroll">
             <div class="side-header side-content">
@@ -14,7 +14,17 @@
             <div class="side-content remove-padding-t">
                 <div class="block pull-r-l">
                     <div class="block-header bg-gray-lighter">
-                        <!-- <h3 class="block-title">{{ company }}</h3> -->
+                        <h3 class="block-title text-center">
+                        	<button class="btn btn-minw btn-default" ng-click="getRecord($event.target)">历史跟踪记录</button>
+                        </h3>
+                        <ul class="list list-activity">
+                    		<li ng-repeat="f in follow_record" class="record-list">
+	                            <i class="fa fa-times push-2-t cursor" ng-click="deleteRecord(f.record_id,$event.target)"></i>
+	                            <div class="font-w600">第{{ follow_record.length - $index }}次</div>
+	                            <div><a href="javascript:void(0)">{{ f.create_time }}</a></div>
+	                            <div><small class="text-muted">{{ f.content }}</small></div>
+                            </li>
+                        </ul>
                     </div>
                     <div class="block-content z-content">
                     	<div ng-if="opens.length > 0">
@@ -30,14 +40,6 @@
 	                    		</li>
 	                    	</ul>
                     	</div>
-                    	<ul class="list list-activity">
-                    		<li ng-repeat="f in follow_record" class="record-list">
-	                            <i class="fa fa-times push-2-t cursor" ng-click="deleteRecord(f.record_id,$event.target)"></i>
-	                            <div class="font-w600">第{{ follow_record.length - $index }}次</div>
-	                            <div><a href="javascript:void(0)">{{ f.create_time }}</a></div>
-	                            <div><small class="text-muted">{{ f.content }}</small></div>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -69,6 +71,37 @@
 		    		</li>
 		    	</ul>
 		    </div>
+
+		    <div class="pull-left push-10-l rel call-date-control">
+				<input type="text" class="form-control input-sm" placeholder="日期" ng-model="whole"/>
+				<div class="date-select">
+					<div class="date-year">
+						<ul>
+							<li ng-click="initYear($event.target)">2014</li>
+							<li ng-click="initYear($event.target)">2015</li>
+							<li ng-click="initYear($event.target)">2016</li>
+						</ul>
+					</div>
+					<div class="date-month">
+						<ul>
+							<li><a ng-click="initMonth($event.target)">1</a></li>
+							<li><a ng-click="initMonth($event.target)">2</a></li>
+							<li><a ng-click="initMonth($event.target)">3</a></li>
+							<li><a ng-click="initMonth($event.target)">4</a></li>
+							<li><a ng-click="initMonth($event.target)">5</a></li>
+							<li><a ng-click="initMonth($event.target)">6</a></li>
+							<li><a ng-click="initMonth($event.target)">7</a></li>
+							<li><a ng-click="initMonth($event.target)">8</a></li>
+							<li><a ng-click="initMonth($event.target)">9</a></li>
+							<li><a ng-click="initMonth($event.target)">10</a></li>
+							<li><a ng-click="initMonth($event.target)">11</a></li>
+							<li><a ng-click="initMonth($event.target)">12</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
 		    <!-- <a ng-click="initResource()" class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-user">新建客户</a> -->
 	    </div>
 		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
@@ -79,6 +112,7 @@
 				<th>区</th>
 				<th>手机</th>
 				<th>跟进客服</th>
+				<th>跟进记录</th>
 			</thead>
 			<tbody>
 				<tr ng-click="initRight(u)" ng-repeat="u in guests">
@@ -98,10 +132,11 @@
 					<td>{{ u.a_name }}</td>
 					<td>{{ u.phone }}</td>
 					<td>{{ u.e_name }}</td>
+					<td>{{ u.record_count }}</td>
 				</tr>
 			</tbody>
 		</table>
-		<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
+		<div class="dataTables_paginate paging_simple_numbers">
 			<ul class="pagination pull-right">
 				<!--
 				<li class="paginate_button previous disabled" aria-controls="DataTables_Table_0" tabindex="0" id="DataTables_Table_0_previous"><a href="#"><i class="fa fa-angle-left"></i></a></li>
@@ -111,7 +146,9 @@
 				<li class="paginate_button " aria-controls="DataTables_Table_0" tabindex="0"><a href="#">4</a></li>
 				<li class="paginate_button next" aria-controls="DataTables_Table_0" tabindex="0" id="DataTables_Table_0_next"><a href="#"><i class="fa fa-angle-right"></i></a></li>
 				-->
-				<li class="paginate_button" ng-repeat="p in pagination"><a href="javascript:;" ng-click="getByPage($event.target)">{{ p }}</a></li>
+				<li class="paginate_button" ng-repeat="p in pagination" ng-repeat="current">
+					<a href="javascript:;" ng-class="{true: 'active', false: 'nothing'}[current==p]" data-current="{{p}}" ng-click="getPage($event.target)">{{ p }}</a>
+				</li>
 			</ul>
 		</div>
 	</div>

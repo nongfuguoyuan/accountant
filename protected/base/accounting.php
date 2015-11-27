@@ -3,8 +3,8 @@
 
 
 		//办理代理记账并且受理过（有人负责）的用户
-		function findHasAccounting(){
-			return $this->db->query("
+		function findHasAccounting($page){
+			$result = $this->db->query("
 				select 
 				g.guest_id,
 				g.name,
@@ -21,7 +21,10 @@
 				e.employee_id = a.employee_id
 				where g.guest_id = a.guest_id and
 				a.status = 1
-			");
+			",array(),$page);
+
+			if($result) return array('total'=>$this->db->count,'data'=>$result);
+			else return false;
 		}
 
 		function updateStatus($accounting_id){
@@ -29,7 +32,7 @@
 		}
 		
 		function find($page){
-			return $this->db->query("
+			$result =  $this->db->query("
 				select
 				g.guest_id,
 				g.company,
@@ -54,6 +57,9 @@
 				e.employee_id = a.employee_id and
 				g.employee_id = e2.employee_id
 			",array(),$page);
+
+			if($result) return array('total'=>$this->db->count,'data'=>$result);
+			else return false;
 		}
 
 		function add($params){

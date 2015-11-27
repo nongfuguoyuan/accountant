@@ -72,12 +72,10 @@
 			));
 		}
 		function find(){
-			$post = $this->post;
-			$page = $post['page'];
-			$pagenum = $post['pageNum'];
-			if(empty($page)) $page = 1;
-			if(empty($pagenum)) $pagenum = 100;
-			return $this->load('business')->find(array($page,$pagenum));
+
+			$page = $this->page();
+			return $this->load('business')->find(array($page));
+			
 		}
 		function save(){
 

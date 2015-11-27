@@ -60,8 +60,7 @@ class EmployeeController extends ZjhController{
 		if(empty($employee_id)) return false;
 		else return $this->load('employee')->updateStatus($employee_id,$status);
 	}
-
-
+	
 	function islogin(){
 		return var_dump($this->session);
 	}
@@ -75,7 +74,7 @@ class EmployeeController extends ZjhController{
 	public function logout(){
 		session_unset();
 		session_destroy();
-		header('Location:http://192.168.10.105/accountant/login.html');
+		header('Location:'._HOST.'login.html');
 	}
 	public function login(){
 		$post = $this->post;
@@ -91,19 +90,14 @@ class EmployeeController extends ZjhController{
 		$result = $this->load('employee')->login($phone,secret($pass));
 		if($result){
 			$this->session['user'] = $result;
-			header('Location:http://192.168.10.105/accountant/protected/tmp/index.html');
+			header('Location:'._DASHBOARD);
 		}else{
-			header('Location:http://192.168.10.105/accountant/login.html');
+			header('Location:'._HOST.'login.html');
 		}
 	}
 	public function find(){
-		$post = $this->post;
-		$page = $post['page'];
-		$pagenum = $post['pageNum'];
-		if(empty($page)) $page = 1;
-		if(empty($pagenum)) $pagenum = 100;
 
-		return $this->load('employee')->find(array($page,$pagenum));
+		return $this->load('employee')->find(array($this->page()));
 	}
 	public function findByDepartmentid(){
 		$department_id = (int)$this->post['department_id'];

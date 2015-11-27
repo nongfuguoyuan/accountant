@@ -63,6 +63,15 @@
 				</tr>
 			</tbody>
 		</table>
+
+		<div class="dataTables_paginate paging_simple_numbers">
+			<ul class="pagination pull-right">
+				<li class="paginate_button" ng-repeat="p in pagination" ng-repeat="current">
+					<a href="javascript:;" ng-class="{true: 'active', false: 'nothing'}[current==p]" data-current="{{p}}" ng-click="getPage($event.target)">{{ p }}</a>
+				</li>
+			</ul>
+		</div>
+		
 	</div>
 
 	<!-- 编辑进度 begin -->

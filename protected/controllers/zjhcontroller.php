@@ -1,5 +1,6 @@
 <?php
 	class ZjhController{
+
 		public function __construct(){
 			$post = &$_POST;
 			$get = &$_GET;
@@ -23,9 +24,20 @@
 			$this->session = &$_SESSION;
 			$this->json();
 		}
+		
+		public function page(){
+			$page = (int)$this->post['page'];
+			$pagenum = (int)$this->post['pageNum'];
+
+			if(empty($page)) $page = 1;
+
+			return $page;
+		}
+
 		public function json(){
 			header('Content-type:application/json');
 		}
+
 		public function load($model){
 			require_once('/../base/'.$model.".php");
 			$class = ucfirst($model);

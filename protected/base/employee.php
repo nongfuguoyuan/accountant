@@ -1,6 +1,7 @@
 <?php
 	class Employee extends Model{
 
+
 		function updateStatus($employee_id,$status){
 			return $this->db->exec('update `employee` set status=:status where employee_id=:employee_id',array(
 				'employee_id'=>$employee_id,
@@ -54,8 +55,8 @@
 				'
 			,array(),$page);
 
-			$count = $this->db->count;
-			return array('count'=>$count,'data'=>$result);
+			if($result) return array('total'=>$this->db->count,'data'=>$result);
+			else return false;
 		}
 		public function findById($employee_id){
 			return $this->db->queryOne('select 

@@ -19,7 +19,7 @@
 			
 		}
 		function find($page){
-			return $this->db->query('
+			$result =  $this->db->query('
 				select * from (
 				select 
 				b.business_id,
@@ -56,6 +56,9 @@
 				group by b.business_id
 				',
 				array(),$page);
+
+			if($result) return array('total'=>$this->db->count,'data'=>$result);
+			else return false;
 		}
 		function add($params){
 			$result =  $this->db->exec('insert into `business` set 

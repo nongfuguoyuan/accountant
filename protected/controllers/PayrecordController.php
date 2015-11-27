@@ -35,7 +35,8 @@
 		}
 
 		function find(){
-			return $this->load('payrecord')->find();
+
+			return $this->load('payrecord')->find(array($this->page()));
 		}
 
 		function update($params){

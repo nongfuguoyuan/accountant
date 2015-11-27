@@ -57,8 +57,8 @@
 			",$accounting_id);
 		}
 
-		function find(){
-			return $this->db->query("
+		function find($page){
+			$result = $this->db->query("
 				select 
 				g.company,
 				g.name,
@@ -84,7 +84,10 @@
 				a.employee_id = e2.employee_id and 
 				e.employee_id = g.employee_id
 				order by s.pay_record_id desc
-			");
+			",array(),$page);
+
+			if($result) return array('total'=>$this->db->count,'data'=>$result);
+			else return false;
 		}
 
 		function update($params){
