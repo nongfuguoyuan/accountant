@@ -75,12 +75,13 @@ class EmployeeController extends ZjhController{
 	public function logout(){
 		session_unset();
 		session_destroy();
-		header('Location:http://192.168.10.105/accountant/login.html');
+		header('Location:http://192.168.10.100/accountant/login.html');
 	}
 	public function login(){
 		$post = $this->post;
 		$phone = $post['phone'];
 		$pass = $post['pass'];
+		
 		if(!validate('phone',$phone)){
 			return false;
 		}
@@ -91,9 +92,9 @@ class EmployeeController extends ZjhController{
 		$result = $this->load('employee')->login($phone,secret($pass));
 		if($result){
 			$this->session['user'] = $result;
-			header('Location:http://192.168.10.105/accountant/protected/tmp/index.html');
+			header('Location:http://192.168.10.100/accountant/protected/tmp/index.html');
 		}else{
-			header('Location:http://192.168.10.105/accountant/login.html');
+			header('Location:http://192.168.10.100/accountant/login.html');
 		}
 	}
 	public function find(){

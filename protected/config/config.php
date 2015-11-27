@@ -7,3 +7,4 @@ define("COMPONENT_PATH",APP_PATH."/component");
 define("C_PATH",APP_PATH."/controllers");
 define("M_PATH",APP_PATH."/models");
 define("V_PATH",APP_PATH."/views");
+define("LOCATION","http://192.168.10.105/accountant/");

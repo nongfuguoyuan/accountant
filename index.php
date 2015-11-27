@@ -12,10 +12,10 @@ require 'protected/base/function.php';
 
 $ca = explode("/",$_SERVER['REQUEST_URI']);
 
-if($ca[3] && $ca[4]){
+if($ca[2] && $ca[3]){
 
-	$clazz = strtolower($ca[3]);
-	$method = strtolower($ca[4]);
+	$clazz = strtolower($ca[2]);
+	$method = strtolower($ca[3]);
 
 	if($clazz == 'employee' && ($method == 'login' || $method == 'logout')){
 

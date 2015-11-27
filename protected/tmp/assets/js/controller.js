@@ -1,6 +1,6 @@
 var myapp = angular.module('myapp',['ngRoute']),
 
-	_host = 'http://192.168.10.100/accountant/index.php/';
+	_host = 'http://192.168.10.100/accountant/';
 
 myapp.config(['$routeProvider',function($routeProvider){
 	$routeProvider
@@ -150,7 +150,6 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 
 		}
 	});
-
 
 	$scope.getEarly = dashboardService.getEarly($http,function(r){
 		$scope.todo_early = r.data;
@@ -2198,7 +2197,7 @@ myapp.controller('resourceCtrl',function($scope,$http,resourceService){
 });
 myapp.service('accountService',function(){
 	var obj = {
-		update:function(scope,fn){
+		update:function(scope,ele,http,fn){
 			return function(){
 				var old_pass = scope.old_pass,
 					new_pass = scope.new_pass,
@@ -2207,6 +2206,8 @@ myapp.service('accountService',function(){
 				if(!validate('pass',old_pass)){
 					layer.msg('老密码格式不正确');
 					return;
+				}else{
+					$post(http,_host+"employee/")
 				}
 				if(!validate('pass',new_pass)){
 					layer.msg('新密码格式不正确');
