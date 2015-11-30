@@ -6,7 +6,11 @@
 		}
 
 		function searchByCom($com){
-			return $this->db->query('select company,name,guest_id from `guest` where company like "%"?"%" limit 5',$com);
+			return $this->db->query('select company,name,guest_id from `guest` where company like "%"?"%" or name like "%"?"%" limit 5',array($com,$com));
+		}
+
+		function searchById($guest_id){
+			return $this->findById($guest_id);
 		}
 
 		function findById($guest_id){

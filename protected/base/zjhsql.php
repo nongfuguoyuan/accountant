@@ -4,7 +4,7 @@
       private $pdo;
       private $queryString;
       private $pagebar;
-      private $pagenum = 20;//默认每页信息条数
+      private $pagenum = 10;//默认每页信息条数
       private static $zjhobj;
       public $count;
 

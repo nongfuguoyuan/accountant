@@ -60,19 +60,19 @@
 	
 	<div class="col-sm-12">
 		<div class="clearfix push-10">
-			<label class="css-input switch switch-sm switch-primary pull-left push-5">
+			<!-- <label class="css-input switch switch-sm switch-primary pull-left push-5">
 		        只看自己<input type="checkbox" checked="checked"><span></span>
-		    </label>
-		    <div class="pull-left push-10-l rel">
-		    	<input placeholder="姓名/电话" ng-model="searchstr" class="form-control input-sm" type="text" search-users-real-time>
+		    </label> -->
+		    <div class="pull-left rel">
+		    	<input placeholder="公司/姓名/电话" ng-model="searchstr" class="form-control input-lg" type="text" search-users-real-time>
 		    	<ul class="search-result" id="active-ul">
-		    		<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{ r.guest_id }}" sure-search-result>
-		    			{{ r.name }}
+		    		<li ng-repeat='r in results' data-value="{{r.company}}" data-id="{{ r.guest_id }}" sure-search-result>
+		    			{{ r.company }} {{ r.name }}
 		    		</li>
 		    	</ul>
 		    </div>
 
-		    <div class="pull-left push-10-l rel call-date-control">
+		    <!-- <div class="pull-left push-10-l rel call-date-control">
 				<input type="text" class="form-control input-sm" placeholder="日期" ng-model="whole"/>
 				<div class="date-select">
 					<div class="date-year">
@@ -99,7 +99,7 @@
 						</ul>
 					</div>
 				</div>
-			</div>
+			</div> -->
 
 
 		    <!-- <a ng-click="initResource()" class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-user">新建客户</a> -->
@@ -132,7 +132,7 @@
 					<td>{{ u.a_name }}</td>
 					<td>{{ u.phone }}</td>
 					<td>{{ u.e_name }}</td>
-					<td>{{ u.record_count }}</td>
+					<td>{{ u.record_count }}次</td>
 				</tr>
 			</tbody>
 		</table>

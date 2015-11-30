@@ -1,10 +1,11 @@
 <?php
 	require('./protected/base/function.php');
-
-	$url = "http://localhost/accountant/index.php/";
-	// echo phppost($url."todo/findAll",array(
-		
-	// ));
+	header("Content-type: text/html; charset=utf8"); 
+	
+	$url = "http://localhost/accountant/";
+	echo phppost($url."roles/delete",array(
+		'roles_id'=>4
+	));
 	// echo phppost($url."business/find",array(
 	// 	'employee_id'=>33
 	// ));
@@ -20,5 +21,5 @@
 	// echo date('Y-m-d H:m:s');
 	// echo strtotime(date('Y-m-d H:m:s'))<strtotime('2016-1-1');
 
-	echo empty($haha);
+	// echo empty($haha);
 ?>

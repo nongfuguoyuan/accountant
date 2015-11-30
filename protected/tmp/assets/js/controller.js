@@ -209,16 +209,16 @@ myapp.directive('searchUsersRealTime',function($http,$route){
 	    			var str = scope.searchstr;
 		    		if(str.match(/^\d+$/)){
 		    			//按手机号查询
-		    			$post($http,_host+"guest/search",{"phone":str}).success(function(r){
+		    			$post($http,_host+"guest/searchByPhone",{"phone":str}).success(function(r){
 		    				if(r){
 		    					scope.results = r;
 		    				}else{
 		    					scope.results = [{}];
 		    				}
 		    			});
-		    		}else if(str.match(/^[^\d]+$/)){
-		    			//默认为按姓名查询
-		    			$post($http,_host+"guest/search",{"name":str}).success(function(r){
+		    		}else if(str.match(/^[^\d\w]+$/)){
+		    			//默认为按公司/姓名查询
+		    			$post($http,_host+"guest/searchByCom",{"com":str}).success(function(r){
 		    				// console.log(r);
 		    				if(r){
 		    					scope.results = r;
@@ -250,23 +250,14 @@ myapp.directive('sureSearchResult',function(userService,$http){
 		restrict:'A',
 		link:function(scope, ele, attrs){
 			ele.bind('click',function(){
-				var user_id = attrs.id;
-				scope.$parent.searchstr = scope.r.name;
-				scope.$parent.results = [{}];
-				$.post(_host+"guest/findbyid",{'guest_id':user_id},function(r){
-					// console.log(r);
-					r = eval("("+r+")");
-					scope.$parent.guests = r.data;
+				var guest_id = attrs.id;
+				scope.$parent.searchstr = scope.r.company+"/"+scope.r.name;
+				scope.$parent.results = [];
+				$.post(_host+"guest/searchById",{'guest_id':guest_id},function(r){
+					scope.$parent.guests = [r];
+					scope.$parent.pagination = [];//清空分页
 					scope.$parent.$apply();
 				});
-				// (function(scope){
-				// 	$post($http,_host+"guest/findbyid",{'guest_id':user_id}).success(function(r){
-				// 		// scope.$parent.guests = r.data;
-				// 		// scope.$parent.$apply();
-				// 		console.log(scope);
-				// 	});
-				// })(scope);
-				//search
 			});
 		}
 	};
@@ -2023,40 +2014,252 @@ myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService
 	};
 });
 
-myapp.service('rolesService',function(){
+myapp.service('rolesService',function($http){
 	var obj = {
-		get:function(){
-			return [{
-				role_id:1,
-				name:'客服'
-			}];
+		get:function(fn){
+			$post($http,_host+"roles/find",{}).success(function(r){
+				obj.data = r;
+				fn(r);
+			});
 		},
-		update:function(){
-
+		add:function(name,fn){
+			if(typeof name != 'undefined' && name.length > 0){
+				$post($http,_host+"roles/save",{
+					'name':name,
+					'permission':obj.select_add
+				}).success(function(r){
+					if(r != 'false'){
+						if(!obj.data){
+							obj.data = [];
+						}
+						obj.data.splice(0,0,r);
+						fn();
+					}else{
+						layer.msg('添加失败');
+					}
+				});
+			}else{
+				layer.msg('角色名称格式不正确');
+			}
 		},
-		delete:function(){
-
-		},
-		getPermissions:function(fn){
-			return function(){
-				if(typeof fn == 'function'){
-					var data = ['server/index','accounting/index'];
-					fn(data);
+		permissionList:function(roles_id,fn){
+			$post($http,_host+'roles/permissionList',{'roles_id':roles_id}).success(function(r){
+				if(r != 'false'){
+					fn(r);
 				}
-			};
+			});
+		},
+		edit:function(name,fn){
+			if(typeof name != 'undefined' && name.length > 0){
+				layer.load();
+				$post($http,_host+"roles/update",{'roles_id':obj.roles_id,'name':name,'permission':obj.select_edit}).success(function(r){
+					layer.closeAll('loading');
+					console.log(r);
+					if(r != 'false'){
+						obj.data.forEach(function(ele,index){
+							if(ele.roles_id == r.roles_id){
+								obj.data[index] = r;
+							}
+						});
+						fn();
+					}else{
+						layer.msg('更新失败');
+					}
+				});
+			}else{
+				layer.msg('名字不符合要求');
+			}
+		},
+		initPermission:function(fn){
+			if(!obj.permissions){
+				$post($http,_host+"roles/allPermission",{}).success(function(r){
+					if(r){
+						obj.permissions = r;
+						fn(r);
+					}
+				});
+			}else{
+				fn(obj.permissions);
+			}
+		},
+		in_array:function(key,arr){
+			var tag = false;
+			if(typeof arr == 'undefined' || arr.length == 0){
+				return false;
+			}else{
+				arr.forEach(function(ele,index){
+					if(ele == key){
+						tag = true;
+						return;
+					}
+				});
+			}
+			return tag;
+		},
+		delete:function(fn){
+			$post($http,_host+"roles/delete",{'roles_id':obj.roles_id}).success(function(r){
+				if(r == 1){
+					var arr = [];
+					obj.data.forEach(function(ele,index){
+						if(ele.roles_id != obj.roles_id){
+							arr.push(ele);
+						}
+					});
+					obj.data = arr;
+					fn();
+				}
+			});
 		}
 	};
 	return obj;
 });
 myapp.controller('rolesCtrl',function($scope,$http,rolesService){
-	$scope.roles = rolesService.get();
-	$scope.getPermissions = rolesService.getPermissions(function(data){
-		$scope.permissions = data;
+
+	rolesService.get(function(r){
+		$scope.roles = rolesService.data;
 	});
-	$scope.pushCheck = function(permission,othis){
-		// console.log(permission,othis.checked);
+
+	$scope.closeWin = function(){
+		closeright(function(){
+			rolesService.rightwin = false;
+		});
+	};
+
+	$scope.initPermission = function(){
+		rolesService.initPermission(function(r){
+			var arr = [];
+			for(el in r){
+				arr.push({
+					'key':el,
+					'value':r[el]
+				});
+			}
+			$scope.permissions = arr;
+		});
+	};
+
+	$scope.initEdit = function(){
+		rolesService.initPermission(function(permissions){
+			rolesService.permissionList(rolesService.roles_id,function(r){
+				var arr = [];
+				for(p in permissions){
+					arr.push({
+						'key':p,
+						'value':permissions[p],
+						'select':rolesService.in_array(p,r)
+					});
+				}
+				$scope.edit_permissions = arr;
+				rolesService.select_edit = r;
+				$scope.e_name = rolesService.name;
+			});
+		});
+	};
+
+	$scope.select_edit = function(key,othis){
+		if(othis.checked){
+			if(!rolesService.select_edit){
+				rolesService.select_edit = [];
+			}
+			rolesService.select_edit.push(key);
+		}else{
+			var arr = [];
+			rolesService.select_edit.forEach(function(ele,index){
+				if(ele != key){
+					arr.push(ele);
+				}
+			});
+			rolesService.select_edit = arr;
+		}
+		
+	};
+
+	$scope.delete = function(){
+		layer.msg('确定删除？', {
+		    time: 0
+		    ,btn: ['确定', '取消']
+		    ,yes: function(index){
+		        layer.close(index);
+				rolesService.delete(function(r){
+					$scope.roles = rolesService.data;
+					closeright(function(){
+						rolesService.rightwin = false;
+					});
+				});
+		    }
+		});
 	}
+
+	$scope.select_add = function(key,othis){
+		if(othis.checked){
+			if(!rolesService.select_add){
+				rolesService.select_add = [];
+			}
+			rolesService.select_add.push(key);
+		}else{
+			var arr = [];
+			rolesService.select_add.forEach(function(ele,index){
+				if(ele != key){
+					arr.push(ele);
+				}
+			});
+			rolesService.select_add = arr;
+		}
+	};
+
+	$scope.add = function(othis){		
+		rolesService.add($scope.add_name,function(){
+			$scope.roles = rolesService.data;
+			$(othis).prev().trigger('click');
+		});
+	};
+
+	//请求权限列表
+	function permission_list(roles_id){
+		rolesService.permissionList(roles_id,function(r){
+			$scope.permission_list = r;
+		});
+	}
+
+	$scope.edit = function(othis){
+		rolesService.edit($scope.e_name,function(){
+			$scope.roles = rolesService.data;
+			permission_list(rolesService.roles_id);
+			$(othis).prev().trigger('click');
+		});
+	};
+
+	$scope.initRight = function(u){
+
+		$scope.intro = u.name;
+		rolesService.name = u.name;
+
+		if(rolesService.roles_id != u.roles_id){
+
+			callright(function(){
+				rolesService.rightwin = true;
+				permission_list(u.roles_id);
+			});
+
+			rolesService.roles_id = u.roles_id;
+
+		}else{
+			if(rolesService.rightwin == true){
+				closeright(function(){
+					rolesService.rightwin = false;
+				});
+			}else{
+				callright(function(){
+					rolesService.rightwin = true;
+					permission_list(u.roles_id);
+				});
+			}
+		}
+
+	};
+	
 });
+
 myapp.service('resourceService',function(){
 	var obj = {
 		'data':[],

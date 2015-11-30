@@ -15,6 +15,11 @@ class GuestController extends ZjhController {
 		
 	}
 
+	function searchById(){
+		$guest_id = (int)$this->post['guest_id'];
+		return $this->load('guest')->searchById($guest_id);
+	}
+
 	function save(){
 		$post = $this->post;
 		$company = $post['company'];
@@ -110,12 +115,6 @@ class GuestController extends ZjhController {
 	}
 	function delete(){
 		return $this->load('guest')->delete((int)$this->post['guest_id']);
-	}
-	function findName(){
-
-	}
-	function search(){
-
 	}
 	
 }
