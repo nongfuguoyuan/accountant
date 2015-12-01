@@ -43,20 +43,18 @@
                 <div class="border-b push-30">
                     <h2 class="push-10">{{todo_count}}<span class="h5 font-w400 text-muted">个事项</span></h2>
                 </div>
-                <table ng-show="show_todo" ng-model="show_todo" class="table table-striped table-vcenter">
+                <table ng-show="show_todo" class="table table-striped table-vcenter">
                     <thead>
-                        <tr>
-                            <th><i class="fa fa-suitcase text-gray"></i>事项名称</th>
+                        <tr>  
+                            <th><i class=""></i>事项内容</th>
                             <th class="text-center hidden-xs" style="width: 15%;"><i class="fa fa-ticket text-gray"></i>发起人</th>
                             <th class="text-center hidden-xs hidden-sm" style="width: 15%;"><i class="fa fa-bar-chart text-gray"></i>接收人</th>
                             <th class="text-right" style="width: 15%; min-width: 110px;"><i class="fa fa-trophy text-gray"></i>日期</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="t in todos">
-                            <td>
-                                {{t.task}}
-                            </td>
+                        <tr ng-repeat="t in todos"> 
+                            <td>{{t.task_content}}</td>
                             <td class="text-center hidden-xs">{{t.sender}}</td>
                             <td class="text-center hidden-xs hidden-sm">{{t.accepter}}</td>
                             <td class="text-primary text-right">
@@ -72,10 +70,10 @@
                 <div class="border-b push-30">
                     <h2 class="push-10">{{todo_count_early}}<span class="h5 font-w400 text-muted">个事项</span></h2>
                 </div>
-                <table ng-show="show_todo_early" ng-model="show_todo_early" class="table table-striped table-vcenter">
+                <table  ng-model="show_todo_early" class="table table-striped table-vcenter">
                     <thead>
-                        <tr>
-                            <th><i class="fa fa-suitcase text-gray"></i>事项名称</th>
+                        <tr>  
+                            <th><i class=""></i>事项内容</th>
                             <th class="text-center hidden-xs" style="width: 15%;"><i class="fa fa-ticket text-gray"></i>发起人</th>
                             <th class="text-center hidden-xs hidden-sm" style="width: 15%;"><i class="fa fa-bar-chart text-gray"></i>接收人</th>
                             <th class="text-right" style="width: 15%; min-width: 110px;"><i class="fa fa-trophy text-gray"></i>日期</th>
@@ -83,9 +81,8 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="t in todo_early">
-                            <td>
-                                {{t.task}}
-                            </td>
+                            
+                            <td>{{t.task_content}}</td>
                             <td class="text-center hidden-xs">{{t.sender}}</td>
                             <td class="text-center hidden-xs hidden-sm">{{t.accepter}}</td>
                             <td class="text-primary text-right">

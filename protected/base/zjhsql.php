@@ -65,11 +65,13 @@
                $stmt->bindParam($key+1,$params[$key],$this->datatype($params[$key]));
             }
          }
+
          try{
             $stmt->execute();
             $this->queryString = $stmt->queryString;
+
             return $stmt;
-         }catch(PDOException  $e){
+         }catch(PDOException $e){
             if($this->pdo->getAttribute(PDO::ATTR_AUTOCOMMIT) == 0){//正在进行事务
                throw new PDOException("tranction is processing,execute error", 1);
             }else{
@@ -113,15 +115,19 @@
          $current = $page[0] <= 0 ? 1 : $page[0] > $page_num ? $page_num : $page[0];
 
          $page_arr = array();//装页码的数组
-         $pagebar = '';//最终页码的html
+         $pagebar = '<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate"><ul class="pagination pull-right">';
+         //最终页码的html
 
          for($i = $current-2,$len = $current+2;$i<$len;$i++){
             if($i <= 0 || $i > $page_num) continue;
             $page_arr[] = $i;
             if($i == $current){
-               $pagebar = $pagebar.'<a class="active" href="'.$url.$i.'">'.$i."</a>";
+               $pagebar.='<li class="paginate_button ng-scope" ng-repeat="p in pagination"><a href="javascript:;" ng-click="getByPage($event.target)" class="ng-binding active">';
+               $pagebar.=$i.'</a></li>';
+               //$pagebar = $pagebar.'<a class="active" href="'.$url.$i.'">'.$i."</a>";
             }else{
-               $pagebar = $pagebar.'<a href="'.$url.$i.'">'.$i."</a>";
+               $pagebar .='<li class="paginate_button ng-scope" ng-repeat="p in pagination"><a href="javascript:;" ng-click="getByPage($event.target)" class="ng-binding active">'.$i.'</a></li>';
+               //$pagebar = $pagebar.'<a href="'.$url.$i.'">'.$i."</a>";
             }
          }
          if($page_arr[0] > 1){
@@ -157,8 +163,10 @@
          if(empty($params)){
             return $this->pdo->exec($sql);//返回执行条数
          }else{
+
             $stmt = $this->prepare($sql,$params);
-            return $stmt->rowCount();
+            $tag=$stmt->rowCount();
+            return $tag;
          }
       }
       function queryString(){

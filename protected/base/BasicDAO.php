@@ -192,7 +192,7 @@ class BasicDAO implements \IBasicDAO {
 		$start = $start>0?$start:0;
 		$limit = ($start+$pageNum)<$count?$pageNum:($count-$start);
 		if($start<$count&&$limit>0){
-			$arr1['total']=floor($count/$pageNum)+1;//总页数
+			$arr1['count']=ceil($count/$pageNum);//总页数
 			$arr=array_slice($arr, $start, $limit);
 			$arr1['data']=$arr;
 		

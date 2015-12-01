@@ -3,6 +3,7 @@ class Main {
 	
 	function start($clazz,$method){
 		
+
 		if($this->filter($clazz,$method) == false){
 			return 'No Permission';
 		}
@@ -34,6 +35,7 @@ class Main {
 				return (in_array($clazz,$permission) || in_array($clazz."/".$method,$permission));
 			}
 		}
+
 	}
 	
 	function getControll($controll){

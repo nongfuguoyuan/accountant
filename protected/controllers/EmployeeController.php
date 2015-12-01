@@ -107,10 +107,12 @@ class EmployeeController extends ZjhController{
 			}
 			
 			$this->session['user'] = $result;
+
 			
 			header('Location:'._DASHBOARD);
 		}else{
 			header('Location:'._HOST.'login.html');
+
 		}
 	}
 
@@ -124,10 +126,19 @@ class EmployeeController extends ZjhController{
 		return $this->load('employee')->findByDepartmentid($department_id);
 	}
 
+	public function search(){
+		$post = $this->post;
+
+		$result = $this->load('employee')->search($post);
+		if(!$result){
+			$result = array();
+		}
+		return $result;
+	}
 	public function save(){
 		$post = $this->post;
-		$name = $post['name'];
-		$phone = $post['phone'];
+		$name = isset($post['name'])?$post['name']:null;
+		$phone = isset($post['phone'])?$post['phone']:null;
 		$sex = (int)$post['sex'];
 		$department_id = (int)$post['department_id'];
 		$roles_id = (int)$post['roles_id'];

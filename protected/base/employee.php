@@ -96,6 +96,17 @@
 				where employee_id=?
 				',$employee_id);
 		}
+		/*author:zgj 
+		*date:2015-12-1
+		*/
+		public function search($array){
+			$sql='select name,employee_id from `employee` where 
+				';
+			foreach ($array as $key => $value) {
+				$sql .= " $key like '%$value%'";
+			}
+			return $this->db->query($sql,array(),null);
+		}
 
 		public function add($params){
 			$result = $this->db->exec('insert into `employee` set 
