@@ -5,6 +5,10 @@
 			return $this->db->query('select roles_id,name from `roles`');
 		}
 
+		function findAllName(){
+			return $this->db->query('select roles_id,name from `roles`');
+		}
+
 		function permissionList($roles_id){
 
 			return $this->db->queryOne('select permission from `roles` where roles_id=?',$roles_id);

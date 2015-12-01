@@ -6,6 +6,10 @@ class RolesController extends ZjhController {
 		return $this->load('roles')->find();
 	}
 
+	function findAllName(){
+		return $this->load('roles')->findAllName();
+	}
+
 	function permissionList(){
 		$roles_id = (int)$this->post['roles_id'];
 		

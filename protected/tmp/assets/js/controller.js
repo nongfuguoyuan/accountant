@@ -1,5 +1,4 @@
-var myapp = angular.module('myapp',['ngRoute']),
-	_host = 'http://192.168.10.105/accountant/';
+var myapp = angular.module('myapp',['ngRoute']);
 
 myapp.config(['$routeProvider',function($routeProvider){
 	$routeProvider
@@ -14,6 +13,10 @@ myapp.config(['$routeProvider',function($routeProvider){
 		templateUrl:'static/users.html',
 		controller:'userCtrl'
 	})
+	.when('/_users',{
+		templateUrl:'static/_users.html',
+		controller:'_userCtrl'
+	})
 	.when('/process_group',{
 		templateUrl:'static/process_group.html',
 		controller:'processGroupCtrl'
@@ -26,13 +29,25 @@ myapp.config(['$routeProvider',function($routeProvider){
 		templateUrl:'static/business.html',
 		controller:'businessCtrl'
 	})
+	.when('/_business',{
+		templateUrl:'static/_business.html',
+		controller:'_businessCtrl'
+	})
 	.when('/accounting',{
 		templateUrl:'static/accounting.html',
 		controller:'accountingCtrl'
 	})
+	.when('/_accounting',{
+		templateUrl:'static/_accounting.html',
+		controller:'_accountingCtrl'
+	})
 	.when('/tax',{
 		templateUrl:'static/tax.html',
 		controller:'taxCtrl'
+	})
+	.when('/_tax',{
+		templateUrl:'static/_tax.html',
+		controller:'_taxCtrl'
 	})
 	.when('/department',{
 		templateUrl:'static/department.html',
@@ -57,6 +72,10 @@ myapp.config(['$routeProvider',function($routeProvider){
 	.when('/pay_record',{
 		templateUrl:'static/pay_record.html',
 		controller:'payrecordCtrl'
+	})
+	.when('/_pay_record',{
+		templateUrl:'static/_pay_record.html',
+		controller:'_payrecordCtrl'
 	})
 	.when('/todo',{
 		templateUrl:'static/todo.html',
@@ -127,7 +146,6 @@ myapp.service('dashboardService',function($http){
 myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 
 	$scope.todos = dashboardService.getTodo($http);
-
 	//get session
 	$post($http,_host+"employee/session",{}).success(function(r){
 		if(r != 'false'){
@@ -635,26 +653,10 @@ myapp.service('userService',function($http){
 	return obj;
 });
 
-// myapp.directive('requestDate',function($http){
-// 	return {
-// 		// 're':'A',
-// 		link:function(scope,ele,attr){
-// 			$http.get("http://192.168.10.105/accountant/protected/tmp/static/date_template.html").success(function(r){
-// 				// $scope.date_template = r;
-// 				var script = $("<script>");
-// 				var func = function(){
-// 					console.log(2);
-// 				};
-// 				// script.text(func.toString());
-// 				ele.html(r);
-// 				ele.append(script);
-
-// 			});
-// 		}
-// 	};
-// });
 myapp.controller('userCtrl',function($scope,$http,userService,businessService,accountingService){
 
+	// initPermission(_permission);
+	// console.log(_permission);
 	userService.rightwin = false;
 
 	$scope.initResource = userService.initResource($http,function(data){
@@ -1308,7 +1310,7 @@ myapp.service('taxService',function($http){
 			
 			if(/(^\d+[.]?\d$)/.test(fee)){
 				layer.load();
-				$post($http,_host+"taxcollect/updateById",{'tax_collect_id':obj.tax_collect_id,'fee':fee}).success(function(r){
+				$post($http,_host+"taxcollect/update",{'tax_collect_id':obj.tax_collect_id,'fee':fee}).success(function(r){
 					layer.closeAll('loading');
 					if(r != 'false'){
 						obj.taxlist.forEach(function(ele,index){
@@ -1653,8 +1655,10 @@ myapp.service('employeeService',function($http){
 			var name = scope.e_name,
 				phone = scope.e_phone,
 				sex = scope.e_sex,
+				roles_id = scope.e_roles_id || 0,
 				department_id = scope.e_department_id;
-
+			// console.log(name,phone,sex,roles_id,department_id);
+			// return;
 			if(!validate('name',name)){
 				layer.msg('姓名不符合要求');
 				return;
@@ -1668,8 +1672,10 @@ myapp.service('employeeService',function($http){
 				'name':name,
 				'phone':phone,
 				'sex':sex,
+				'roles_id':roles_id,
 				'department_id':department_id
 			}).success(function(r){
+
 				layer.closeAll('loading');
 				if(r){
 					obj.data.splice(0,0,r);
@@ -1698,8 +1704,10 @@ myapp.service('employeeService',function($http){
 				'phone':phone,
 				'sex':scope.e_sex,
 				'department_id':scope.e_department_id,
+				'roles_id':scope.e_roles_id,
 				'employee_id':obj.employee_id
 			}).success(function(r){
+				
 				if(r){
 					obj.data.forEach(function(ele,index){
 						if(ele.employee_id == r.employee_id){
@@ -1818,8 +1826,10 @@ myapp.service('departmentService',function($http){
 	};
 	return obj;
 });
-myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService,employeeService){
+myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService,employeeService,rolesService){
 
+	//权限
+	initPermission(_permission);
 	//部门下拉列表
 	function loadSelect(){
 		$post($http,_host+"department/findAll",{}).success(function(r){
@@ -1926,14 +1936,7 @@ myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService
 		});
 	};
 
-	// $scope.getEmployee = employeeService.get({'page':1,"pageNum":'20'},function(r){
-	// 	$scope.employees = employeeService.data;
-	// 	// var page_arr = [];
-	// 	// for(var i = 0;i<r.count;i++){
-	// 	// 	page_arr.push(i+1);
-	// 	// }
-	// 	// $scope.pagination = page_arr;
-	// });
+	
 	void function (current,fn){
 		var arg = arguments;
 		employeeService.get({"page":current},function(r){
@@ -2011,6 +2014,16 @@ myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService
 		departmentService.delete(function(){
 			loadtree();
 		});
+	};
+
+	$scope.initRoles = function(){
+		if(!rolesService.allname){
+			rolesService.findAllName(function(){
+				$scope.roles = rolesService.allname;	
+			});
+		}else{
+			$scope.roles = rolesService.allname;
+		}
 	};
 });
 
@@ -2106,6 +2119,14 @@ myapp.service('rolesService',function($http){
 						}
 					});
 					obj.data = arr;
+					fn();
+				}
+			});
+		},
+		findAllName:function(fn){
+			$post($http,_host+'roles/findAllName',{}).success(function(r){
+				if(r){
+					obj.allname = r;
 					fn();
 				}
 			});

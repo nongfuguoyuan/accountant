@@ -39,6 +39,10 @@
         <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
         <!-- <link rel="stylesheet" id="css-theme" href="assets/css/themes/flat.min.css"> -->
         <!-- END Stylesheets -->
+        <script type="text/javascript">
+            _permission = [];
+            _host = 'http://192.168.10.105/accountant/';
+        </script>
     </head>
     <body>
         <!-- Page Container -->
@@ -162,10 +166,10 @@
                                 <li>
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="si si-grid"></i><span class="sidebar-mini-hide">管理客户</span></a>
                                     <ul>
-                                        <li>
+                                        <li data-permission="guest/_find">
                                             <a href="#/_users">自己名下</a>
                                         </li>
-                                        <li>
+                                        <li data-permission="guest/find">
                                             <a href="#/users">所有客户</a>
                                         </li>
                                     </ul>
@@ -174,18 +178,50 @@
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="#"><i class="si si-note"></i><span class="sidebar-mini-hide">客户统计</span></a>
                                 </li> -->
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">任务</span></li>
-                                <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/business"><i class="fa fa-briefcase"></i><span class="sidebar-mini-hide">工商</span></a>
+                                <li data-permission="business/find">
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-briefcase"></i><span class="sidebar-mini-hide">工商</span></a>
+                                    <ul>
+                                        <li data-permission="business/_find">
+                                            <a href="#/_business">自己负责</a>
+                                        </li>
+                                        <li data-permission="business/find">
+                                            <a href="#/business">所有客户</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/accounting"><i class="si si-magic-wand"></i><span class="sidebar-mini-hide">代理记账</span></a>
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="si si-magic-wand"></i><span class="sidebar-mini-hide">代理记账</span></a>
+                                    <ul>
+                                        <li data-permission="accounting/_find">
+                                            <a href="#/_accounting">自己负责</a>
+                                        </li>
+                                        <li data-permission="accounting/find">
+                                            <a href="#/accounting">所有客户</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">财务</span></li>
                                 <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/tax"><i class="fa fa-money"></i><span class="sidebar-mini-hide">财务报表</span></a>
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-money"></i><span class="sidebar-mini-hide">财务报表</span></a>
+                                    <ul>
+                                        <li data-permission="taxcollect/_find">
+                                            <a href="#/_tax">自己负责</a>
+                                        </li>
+                                        <li data-permission="taxcollect/find">
+                                            <a href="#/tax">所有客户</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/pay_record"><i class="si si-wallet"></i><span class="sidebar-mini-hide">缴费记录</span></a>
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="si si-wallet"></i><span class="sidebar-mini-hide">缴费记录</span></a>
+                                    <ul>
+                                        <li data-permission="payrecord/_find">
+                                            <a href="#/_pay_record">自己负责</a>
+                                        </li>
+                                        <li data-permission="payrecord/find">
+                                            <a href="#/pay_record">所有客户</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">TODO</span></li>
                                 <li>
@@ -195,11 +231,11 @@
                                 <li>
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="#/department"><i class="fa fa-users"></i><span class="sidebar-mini-hide">部门</span></a>
                                 </li>
-                                <li>
+                                <li data-permission="roles">
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="#/roles"><i class="fa-user-secret fa"></i><span class="sidebar-mini-hide">角色</span></a>
                                 </li>
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">系统</span></li>
-                                <li>
+                                <li data-permission="processgroup">
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-windows"></i><span class="sidebar-mini-hide">系统设置</span></a>
                                     <ul>
                                         <li>
@@ -445,9 +481,24 @@
         <script src="assets/js/angular1.3.js"></script>
         <script src="assets/js/angular-route.js"></script>
         <script src='assets/js/controller.js'></script>
+
+        <script src='assets/js/controller/_users.js'></script>
+        <script src='assets/js/controller/_business.js'></script>
+        <script src='assets/js/controller/_accounting.js'></script>
+        <script src='assets/js/controller/_pay_record.js'></script>
+        <script src='assets/js/controller/_tax.js'></script>
+
         <script src='assets/js/validate.js'></script>
         <script src='assets/js/laydate/laydate.js'></script>
         <script>
+
+            $(document).ready(function(){
+                $.post(_host+'employee/permission',{},function(r){
+                    _permission = r;
+                    initPermission(_permission);
+                });
+            });
+
             $(function () {
                 // Init page helpers (Slick Slider plugin)
                 App.initHelpers('slick');

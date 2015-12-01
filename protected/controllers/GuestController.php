@@ -15,10 +15,10 @@ class GuestController extends ZjhController {
 		
 	}
 
-	function searchById(){
-		$guest_id = (int)$this->post['guest_id'];
-		return $this->load('guest')->searchById($guest_id);
-	}
+	// function searchById(){
+	// 	$guest_id = (int)$this->post['guest_id'];
+	// 	return $this->load('guest')->searchById($guest_id);
+	// }
 
 	function save(){
 		$post = $this->post;
@@ -67,6 +67,20 @@ class GuestController extends ZjhController {
 	function find(){
 		$page = $this->page();
 		$result =  $this->load('guest')->find(array($page));
+		foreach($result['data'] as $key => $value){
+			$guest_id = (int)$value['guest_id'];
+			$result2 = $this->load('record')->findCount($guest_id);
+			$result['data'][$key]['record_count'] = empty($result2) ? 0:$result2['count'];
+		}
+		
+		return $result;
+	}
+	function _find(){
+		$page = $this->page();
+		$employee_id = (int)$this->session['user']['employee_id'];
+		
+		$result =  $this->load('guest')->_find($employee_id,array($page));
+		
 		foreach($result['data'] as $key => $value){
 			$guest_id = (int)$value['guest_id'];
 			$result2 = $this->load('record')->findCount($guest_id);

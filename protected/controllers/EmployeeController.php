@@ -76,10 +76,20 @@ class EmployeeController extends ZjhController{
 		session_destroy();
 		header('Location:'._HOST.'login.html');
 	}
+
+	function permission(){
+		if(empty($this->session['user']['permissions'])){
+			return array();
+		}else{
+			return $this->session['user']['permissions'];
+		}
+	}
+
 	public function login(){
 		$post = $this->post;
 		$phone = $post['phone'];
 		$pass = $post['pass'];
+
 		if(!validate('phone',$phone)){
 			return false;
 		}
@@ -88,17 +98,27 @@ class EmployeeController extends ZjhController{
 		}
 
 		$result = $this->load('employee')->login($phone,secret($pass));
+
 		if($result){
+			$per = $result['permissions'];
+			
+			if(!empty($per)){
+				$result['permissions'] = unserialize($per);
+			}
+			
 			$this->session['user'] = $result;
+			
 			header('Location:'._DASHBOARD);
 		}else{
 			header('Location:'._HOST.'login.html');
 		}
 	}
+
 	public function find(){
 
 		return $this->load('employee')->find(array($this->page()));
 	}
+
 	public function findByDepartmentid(){
 		$department_id = (int)$this->post['department_id'];
 		return $this->load('employee')->findByDepartmentid($department_id);
@@ -110,20 +130,31 @@ class EmployeeController extends ZjhController{
 		$phone = $post['phone'];
 		$sex = (int)$post['sex'];
 		$department_id = (int)$post['department_id'];
+		$roles_id = (int)$post['roles_id'];
+
 		if(!validate('name',$name)){
 			return false;
 		}
 		if(!validate('phone',$phone)){
 			return false;
 		}
-		return $this->load('employee')->add(array(
+
+
+		$lastid = $this->load('employee')->add(array(
 			'name'=>$name,
 			'pass'=>secret('000000'),
 			'phone'=>$phone,
 			'sex'=>$sex,
+			'roles_id'=>$roles_id,
 			'create_time'=>timenow(),
 			'department_id'=>$department_id
 		));
+
+		if($lastid){
+			return $this->load('employee')->findById($lastid);
+		}else{
+			return false;
+		}
 
 	}
 	public function update(){
@@ -133,6 +164,7 @@ class EmployeeController extends ZjhController{
 		$sex = (int)$post['sex'];
 		$department_id = (int)$post['department_id'];
 		$employee_id = (int)$post['employee_id'];
+		$roles_id = (int)$post['roles_id'];
 
 		if(!validate('name',$name)){
 			return false;
@@ -140,11 +172,13 @@ class EmployeeController extends ZjhController{
 		if(!validate('phone',$phone)){
 			return false;
 		}
+
 		$result =  $this->load('employee')->update(array(
 			'name'=>$name,
 			'phone'=>$phone,
 			'sex'=>$sex,
 			'department_id'=>$department_id,
+			'roles_id'=>$roles_id,
 			'employee_id'=>$employee_id
 		));
 		if($result){

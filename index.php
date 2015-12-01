@@ -22,16 +22,6 @@ if($ca[2] && $ca[3]){
 
 	$clazz = strtolower($ca[2]);
 	$method = strtolower($ca[3]);
-
-	if($clazz == 'employee' && ($method == 'login' || $method == 'logout')){
-
-	}else{
-		// if(empty($_SESSION['user'])){
-		// 	echo '请登录';
-		// 	return;
-		// }
-	}
-	
 	$main = new Main();
 	echo $main->start($clazz,$method);
 

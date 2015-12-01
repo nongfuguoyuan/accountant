@@ -59,7 +59,7 @@
 	</div>
     <!-- 编辑角色 begin -->
     <div class="modal in" id="edit-role" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
-        <div class="modal-sm modal-dialog">
+        <div class="modal-xm modal-dialog">
             <div class="modal-content">
                 <div class="block block-themed block-transparent remove-margin-b">
                     <div class="block-header bg-primary-dark">
@@ -79,8 +79,10 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-xs-12">权限</label>
-                                <label ng-repeat="p in edit_permissions" class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db">
+                                <div class="col-xs-12">
+                                    权限(建议*号必须选中)
+                                </div>
+                                <label class="col-xs-12" ng-repeat="p in edit_permissions" class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db">
                                     <span ng-if="p.select == true">
                                         <input checked="checked" ng-click="select_edit(p.key,$event.target)" type="checkbox"><span></span>{{p.key}}
                                         <span class="push-5-l">
@@ -110,7 +112,7 @@
     <!-- 编辑角色 end -->
 	<!-- 添加角色 begin -->
 	<div class="modal in" id="add-new-role" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
-	    <div class="modal-sm modal-dialog">
+	    <div class="modal-xm modal-dialog">
 	        <div class="modal-content">
 	            <div class="block block-themed block-transparent remove-margin-b">
 	                <div class="block-header bg-primary-dark">
@@ -130,14 +132,24 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-xs-12">权限</label>
                                 <div class="col-xs-12">
+                                    权限(建议*号必须选中)
+                                    <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db" type="checkbox">
+                                        所有
+                                        <input onclick="toggleAll(this)" type="checkbox"><span></span>
+                                    </label>
+                                    <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db" type="checkbox">
+                                        综合
+                                        <input onclick="toggleClass(this)" type="checkbox"><span></span>
+                                    </label>
+                                </div>
+                                <div class="col-xs-12" id="all-permission">
                                     <label ng-repeat="p in permissions" class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db">
-                                        <input ng-click="select_add(p.key,$event.target)" type="checkbox"><span></span>{{p.key}} 
+                                        <input data-key="{{p.key}}" ng-click="select_add(p.key,$event.target)" type="checkbox"><span></span>{{p.key}}
                                         <span class="push-5-l">
                                             {{p.value}}
                                         </span>
-                                    </label>   
+                                    </label>
                                 </div>
                             </div>
                         </form>
@@ -151,4 +163,50 @@
 	    </div>
 	</div>
 	<!-- 添加角色 end -->
+    <script>
+        
+        function toggleAll(othis){
+            var checks = $("#all-permission").find('input');
+            
+            if(othis.checked){
+
+                for(var i = 0,len = checks.length;i<len;i++){
+                    var ch = checks[i];
+                    ch.checked = true;
+                }
+
+            }else{
+                for(var i = 0,len = checks.length;i<len;i++){
+                    var ch = checks[i];
+                    ch.checked = false;
+                }
+            }
+        }
+
+        function toggleClass(othis){
+            var checks = $("#all-permission").find('input');
+            
+            if(othis.checked){
+
+                for(var i = 0,len = checks.length;i<len;i++){
+                    var ch = checks.eq(i);
+                    var key = ch.attr('data-key');
+                    if(key.indexOf('/') < 0){
+                        ch.get(0).checked = true;
+                    }
+                }
+
+            }else{
+                
+                for(var i = 0,len = checks.length;i<len;i++){
+                    var ch = checks.eq(i);
+                    var key = ch.attr('data-key');
+                    if(key.indexOf('/') < 0){
+                        ch.get(0).checked = false;
+                    }
+                }
+
+            }
+        }
+    </script>
 </div>

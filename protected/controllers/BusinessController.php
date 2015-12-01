@@ -71,12 +71,19 @@
 				'business_id'=>$business_id
 			));
 		}
-		function find(){
+		function _find(){
 
 			$page = $this->page();
-			return $this->load('business')->find(array($page));
+			$employee_id = (int)$this->session['user']['employee_id'];
+			return $this->load('business')->_find($employee_id,array($page));
 			
 		}
+
+		function find(){
+			$page = $this->page();
+			return $this->load('business')->find(array($page));
+		}
+		
 		function save(){
 
 			$post = $this->post;

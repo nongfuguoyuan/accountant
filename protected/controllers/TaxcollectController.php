@@ -2,9 +2,8 @@
 	
 	class TaxcollectController extends ZjhController{
 
-		function findTotal($parent_id){// 1== 国税 2==地税
+		// 1== 国税 2==地税
 
-		}
 		function findList(){
 			$post = $this->post;
 			$year = (int)$post['year'];
@@ -13,7 +12,7 @@
 			
 			return $this->load('taxcollect')->findByGuestid($year,$month,$guest_id);
 		}
-		function updateById(){
+		function update(){
 			$tax_collect_id = (int)$this->post['tax_collect_id'];
 			$fee = (float)$this->post['fee'];
 
@@ -60,12 +59,33 @@
 			return array('total'=>$total,'data'=>$guests);
 
 		}
-		//最近缴纳的月份
-		function currentMonth(){
 
-		}
+		function _find(){
+			//找出所有代理记账用户
+			$page = $this->page();
+			$employee_id = (int)$this->session['user']['employee_id'];
 
-		function findById(){
+			$guests = $this->load('accounting')->_findHasAccounting($employee_id,array($page));
+			return $guests;
+			if($guests){
+				$total = $guests['total'];
+				$guests = $guests['data'];
+			}
+
+			foreach($guests as $key => $value){
+				$guest_id = (int)$value['guest_id'];
+				//国税
+				$nation = $this->load('taxcount')->findCount($guest_id,1);
+				//地税
+				$local = $this->load('taxcount')->findCount($guest_id,2);
+
+				$guests[$key]['nation'] = empty($nation) ? 0 : $nation['fee'];
+				$guests[$key]['local'] = empty($local) ? 0 : $local['fee'];
+				$guests[$key]['month'] = empty($nation) ? null : $nation['month'];
+				$guests[$key]['year'] = empty($nation) ? null : $nation['year'];
+			}
+
+			return array('total'=>$total,'data'=>$guests);
 
 		}
 

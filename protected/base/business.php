@@ -18,6 +18,91 @@
 		function findById($business_id){
 			
 		}
+
+		function _find($employee_id,$page){
+			$result = $this->db->query('select * from (
+				select 
+				b.business_id,
+				pg.process_group_id,
+				pg.name pg_name,
+				g.company,
+				g.name,
+				g.phone,
+				g.tel,
+				e2.name server,
+				e.name accounting,
+				b.status,
+				b.should_fee,
+				b.have_fee,
+				p.name p_name,
+				DATE_FORMAT(b.create_time ,"%Y-%m-%d") create_time
+				from 
+				`guest` g,
+				`employee` e2,
+				`business` b
+				left join 
+				`process_group` pg
+				on b.process_group_id = pg.process_group_id
+				left join `employee` e
+				on b.employee_id = e.employee_id 
+				left join `progress` pr 
+				on pr.business_id = b.business_id 
+				left join  `process` p
+				on p.process_id = pr.process_id
+				where 
+				g.employee_id = e2.employee_id
+				and b.guest_id = g.guest_id 
+				and b.employee_id = ?
+				order by pr.progress_id desc) b 
+				group by b.business_id',$employee_id,$page);
+
+			if($result){
+				return array('total'=>$this->db->count,'data'=>$result);
+			}
+
+			$result = $this->db->query('select * from (
+				select 
+				b.business_id,
+				pg.process_group_id,
+				pg.name pg_name,
+				g.company,
+				g.name,
+				g.phone,
+				g.tel,
+				e2.name server,
+				e.name accounting,
+				b.status,
+				b.should_fee,
+				b.have_fee,
+				p.name p_name,
+				DATE_FORMAT(b.create_time ,"%Y-%m-%d") create_time
+				from 
+				`guest` g,
+				`employee` e2,
+				`business` b
+				left join 
+				`process_group` pg
+				on b.process_group_id = pg.process_group_id
+				left join `employee` e
+				on b.employee_id = e.employee_id 
+				left join `progress` pr 
+				on pr.business_id = b.business_id 
+				left join  `process` p
+				on p.process_id = pr.process_id
+				where 
+				g.employee_id = e2.employee_id
+				and b.guest_id = g.guest_id 
+				and g.employee_id = ?
+				order by pr.progress_id desc) b 
+				group by b.business_id',$employee_id,$page);
+
+			if($result){
+				return array('total'=>$this->db->count,'data'=>$result);
+			}else{
+				return array('total'=>0,'data'=>array());
+			}
+
+		}
 		function find($page){
 			$result =  $this->db->query('
 				select * from (

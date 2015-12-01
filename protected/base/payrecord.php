@@ -90,6 +90,76 @@
 			else return false;
 		}
 
+		function _find($employee_id,$page){
+			$result = $this->db->query("
+				select 
+				g.company,
+				g.name,
+				g.phone,
+				s.money,
+				s.pay_record_id,
+				e.name server,
+				e2.name accounting,
+				DATE_FORMAT(s.create_time,'%Y-%m-%d') create_time,
+				DATE_FORMAT(s.deadline,'%Y-%m-%d') deadline,
+				a.accounting_id
+				 from
+				`guest` g,
+				`employee` e,
+				`employee` e2,
+				`accounting` a
+				left join
+				(select max(deadline) deadline,accounting_id,money,create_time,pay_record_id from `pay_record` group by accounting_id) s
+				on
+				s.accounting_id = a.accounting_id
+				where
+				a.guest_id = g.guest_id and
+				a.employee_id = e2.employee_id and 
+				e.employee_id = g.employee_id and
+				a.employee_id = ?
+				order by s.pay_record_id desc
+			",$employee_id,$page);
+
+			if($result){
+				return array('total'=>$this->db->count,'data'=>$result);
+			}
+
+			$result = $this->db->query("
+				select 
+				g.company,
+				g.name,
+				g.phone,
+				s.money,
+				s.pay_record_id,
+				e.name server,
+				e2.name accounting,
+				DATE_FORMAT(s.create_time,'%Y-%m-%d') create_time,
+				DATE_FORMAT(s.deadline,'%Y-%m-%d') deadline,
+				a.accounting_id
+				 from
+				`guest` g,
+				`employee` e,
+				`employee` e2,
+				`accounting` a
+				left join
+				(select max(deadline) deadline,accounting_id,money,create_time,pay_record_id from `pay_record` group by accounting_id) s
+				on
+				s.accounting_id = a.accounting_id
+				where
+				a.guest_id = g.guest_id and
+				a.employee_id = e2.employee_id and 
+				e.employee_id = g.employee_id and
+				g.employee_id = ?
+				order by s.pay_record_id desc
+			",$employee_id,$page);
+
+			if($result){
+				return array('total'=>$this->db->count,'data'=>$result);
+			}else{
+				return array('total'=>0,'data'=>array());
+			}
+		}
+
 		function update($params){
 
 		}

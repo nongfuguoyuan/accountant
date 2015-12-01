@@ -30,6 +30,42 @@ function $post(http,url,params){
 	});
 }
 
+function in_array(a,arr){
+	var tag = false;
+	arr.forEach(function(ele){
+		if(ele == a){
+			tag = true;
+			return;
+		}
+	});
+	return tag;
+}
+
+function initPermission(permissions){
+	var ele = $("[data-permission]");
+	// console.log(permissions);
+	for(var i = 0,len = ele.length;i<len;i++){
+		var el = ele.eq(i);
+		var pers = el.attr('data-permission').trim();
+		// console.log(pers);
+		if(pers.length > 0){
+			var arr = pers.split("/");
+			if(arr.length == 1){
+				if(!in_array(arr[0],permissions)){
+					el.hide();
+				}		
+			}
+			if(arr.length > 1){
+				if(!in_array(arr[0],permissions) && !in_array(pers,permissions)){
+					// console.log(pers);
+					el.hide();
+				}
+			}
+		}
+		
+	}
+}
+
 var dateComponent = {
 	initYear:function($scope,othis){
 		var year = $(othis).text() || '',
