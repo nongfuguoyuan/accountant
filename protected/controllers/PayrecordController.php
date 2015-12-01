@@ -35,11 +35,15 @@
 		}
 
 		function find(){
-			return $this->load('payrecord')->find();
+
+			return $this->load('payrecord')->find(array($this->page()));
 		}
 
-		function update($params){
+		function _find(){
 
+			$employee_id = (int)$this->session['user']['employee_id'];
+
+			return $this->load('payrecord')->_find($employee_id,array($this->page()));
 		}
 
 		function delete($pay_record_id){
@@ -48,7 +52,4 @@
 			else return $this->load('payrecord')->delete($pay_record_id);
 		}
 
-		function findById($pay_record_id){
-			
-		}
 	}

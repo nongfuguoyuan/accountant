@@ -36,10 +36,13 @@
 
         <!-- OneUI CSS framework -->
         <link rel="stylesheet" id="css-main" href="assets/css/oneui.css">
-
         <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
         <!-- <link rel="stylesheet" id="css-theme" href="assets/css/themes/flat.min.css"> -->
         <!-- END Stylesheets -->
+        <script type="text/javascript">
+            _permission = [];
+            _host = 'http://192.168.10.105/accountant/';
+        </script>
     </head>
     <body>
         <!-- Page Container -->
@@ -161,24 +164,64 @@
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="#/add_user"><i class="si si-badge"></i><span class="sidebar-mini-hide">新建客户</span></a>
                                 </li> -->
                                 <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/users"><i class="si si-grid"></i><span class="sidebar-mini-hide">管理客户</span></a>
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="si si-grid"></i><span class="sidebar-mini-hide">管理客户</span></a>
+                                    <ul>
+                                        <li data-permission="guest/_find">
+                                            <a href="#/_users">自己名下</a>
+                                        </li>
+                                        <li data-permission="guest/find">
+                                            <a href="#/users">所有客户</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <!-- <li>
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="#"><i class="si si-note"></i><span class="sidebar-mini-hide">客户统计</span></a>
                                 </li> -->
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">任务</span></li>
-                                <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/business"><i class="fa fa-briefcase"></i><span class="sidebar-mini-hide">工商</span></a>
+                                <li data-permission="business/find">
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-briefcase"></i><span class="sidebar-mini-hide">工商</span></a>
+                                    <ul>
+                                        <li data-permission="business/_find">
+                                            <a href="#/_business">自己负责</a>
+                                        </li>
+                                        <li data-permission="business/find">
+                                            <a href="#/business">所有客户</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/accounting"><i class="si si-magic-wand"></i><span class="sidebar-mini-hide">代理记账</span></a>
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="si si-magic-wand"></i><span class="sidebar-mini-hide">代理记账</span></a>
+                                    <ul>
+                                        <li data-permission="accounting/_find">
+                                            <a href="#/_accounting">自己负责</a>
+                                        </li>
+                                        <li data-permission="accounting/find">
+                                            <a href="#/accounting">所有客户</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">财务</span></li>
                                 <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/tax"><i class="fa fa-money"></i><span class="sidebar-mini-hide">财务报表</span></a>
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-money"></i><span class="sidebar-mini-hide">财务报表</span></a>
+                                    <ul>
+                                        <li data-permission="taxcollect/_find">
+                                            <a href="#/_tax">自己负责</a>
+                                        </li>
+                                        <li data-permission="taxcollect/find">
+                                            <a href="#/tax">所有客户</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/pay_record"><i class="si si-wallet"></i><span class="sidebar-mini-hide">缴费记录</span></a>
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="si si-wallet"></i><span class="sidebar-mini-hide">缴费记录</span></a>
+                                    <ul>
+                                        <li data-permission="payrecord/_find">
+                                            <a href="#/_pay_record">自己负责</a>
+                                        </li>
+                                        <li data-permission="payrecord/find">
+                                            <a href="#/pay_record">所有客户</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">TODO</span></li>
                                 <li>
@@ -188,11 +231,11 @@
                                 <li>
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="#/department"><i class="fa fa-users"></i><span class="sidebar-mini-hide">部门</span></a>
                                 </li>
-                                <li>
+                                <li data-permission="roles">
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="#/roles"><i class="fa-user-secret fa"></i><span class="sidebar-mini-hide">角色</span></a>
                                 </li>
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">系统</span></li>
-                                <li>
+                                <li data-permission="processgroup">
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-windows"></i><span class="sidebar-mini-hide">系统设置</span></a>
                                     <ul>
                                         <li>
@@ -216,7 +259,7 @@
                                             <a href="#/account">修改密码</a>
                                         </li>
                                         <li>
-                                            <a href="http://192.168.10.100/accountant/employee/logout">注销</a>
+                                            <a onclick="gologout()">注销</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -311,8 +354,15 @@
                     <li class="js-header-search header-search">
                         <form class="form-horizontal" action="base_pages_search.html" method="post">
                             <div class="form-material form-material-primary input-group remove-margin-t remove-margin-b">
-                                <input class="form-control" type="text" id="base-material-text" name="base-material-text" placeholder="Search..">
+                                <input onkeyup="overallSearch(this,event)" class="form-control" type="text" id="base-material-text" name="base-material-text" placeholder="搜索">
                                 <span class="input-group-addon"><i class="si si-magnifier"></i></span>
+                                <div id="overall-search">
+                                   <!--  <ul>
+                                        <li>dfslk</li>
+                                        <li>dfslk</li>
+                                        <li>dfslk</li>
+                                    </ul> -->
+                                </div>
                             </div>
                         </form>
                     </li>
@@ -383,7 +433,30 @@
             </div>
         </div>
         <!-- END Apps Modal -->
-
+        <a id="call-base-info" data-toggle="modal" data-target="#guest-base-info">ha</a>
+        <div ng-app="base_info" class="modal in" id="guest-base-info" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+            <div class="modal-dialog modal-xm">
+                <div class="modal-content">
+                    <div class="block block-themed block-transparent remove-margin-b">
+                        <div class="block-header bg-primary-dark">
+                            <ul class="block-options">
+                                <li>
+                                    <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                                </li>
+                            </ul>
+                            <h3 class="block-title">基本信息</h3>
+                        </div>
+                        <div class="block-content push-20">
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                        <!-- <button ng-click="editOne($event.target)" class="btn btn-sm btn-primary" type="button">更新</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- OneUI Core JS: jQuery, Bootstrap, slimScroll, scrollLock, Appear, CountTo, Placeholder, Cookie and App.js -->
         <script src="assets/js/core/jquery.min.js"></script>
         <script src="assets/js/core/bootstrap.min.js"></script>
@@ -408,9 +481,24 @@
         <script src="assets/js/angular1.3.js"></script>
         <script src="assets/js/angular-route.js"></script>
         <script src='assets/js/controller.js'></script>
+
+        <script src='assets/js/controller/_users.js'></script>
+        <script src='assets/js/controller/_business.js'></script>
+        <script src='assets/js/controller/_accounting.js'></script>
+        <script src='assets/js/controller/_pay_record.js'></script>
+        <script src='assets/js/controller/_tax.js'></script>
+
         <script src='assets/js/validate.js'></script>
         <script src='assets/js/laydate/laydate.js'></script>
         <script>
+
+            $(document).ready(function(){
+                $.post(_host+'employee/permission',{},function(r){
+                    _permission = r;
+                    initPermission(_permission);
+                });
+            });
+
             $(function () {
                 // Init page helpers (Slick Slider plugin)
                 App.initHelpers('slick');
@@ -422,6 +510,91 @@
             //     maxmin: true,
             //     content: 'tmp/add_user.html'
             // });
+            function buildLi(arr,fn){
+                if(typeof arr != 'undefined' && arr.length > 0){
+                    var ul = $("<ul>");
+                    arr.forEach(function(ele,index){
+                        var li = $('<li>').text(ele.company);
+                        (function(li,ele){
+                            li.bind('click',function(){
+                                if(typeof fn == 'function') fn(ele);
+                            });
+                        })(li,ele);
+                        ul.append(li);
+                    });
+                    return ul;
+                }else{
+                    return false;
+                }
+            }
+
+
+            function overallSearch(othis,e){
+
+                var ele = $('#overall-search'),
+                    value = othis.value.trim(),
+                    key = e.keyCode,
+                    sureme = function(obj){
+                        othis.value = obj.company
+                        //find
+                        ele.empty();
+                        $("#call-base-info").trigger('click');
+                    };
+
+                // if(key == '40'){//down
+                //     if(index < len -1){
+                //         lis.removeClass('active');
+                //         lis.eq(index+1).addClass('active');
+                //     }
+                // }
+                // if(key == '38'){//up
+                //     if(index > 0){
+                //         lis.removeClass('active');
+                //         lis.eq(index-1).addClass('active');
+                //     }
+                // }
+                // if(key == '13'){//enter
+                //     var value = $(ele).val();
+                //     if(value){
+                //         $(active).trigger('click'); 
+                //     }else{
+                //         $route.reload();
+                //     }
+                // }
+
+
+                if(/^1[35789]\d*$/.test(value)){
+                    //phone
+                    $.post('http://192.168.10.105/accountant/guest/searchByPhone',{'phone':value},function(r){
+                        if(r){
+                            var ul = buildLi(r,sureme);
+                            if(ul){
+                                ele.empty().append(ul);
+                            }else{
+                                ele.empty();
+                            }
+                        }else{
+                            ele.empty();
+                        }
+                    });
+                }else if(/^[^\d\w]+$/.test(value)){
+                    //company
+                    $.post('http://192.168.10.105/accountant/guest/searchByCom',{'com':value},function(r){
+                        if(r){
+                            var ul = buildLi(r,sureme);
+                            if(ul){
+                                ele.empty().append(ul);
+                            }else{
+                                ele.empty();
+                            }
+                        }else{
+                            ele.empty();
+                        }
+                    });
+                }else{
+                    ele.empty();
+                }
+            }
         </script>
     </body>
 </html>

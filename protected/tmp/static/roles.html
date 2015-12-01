@@ -1,28 +1,65 @@
 <div class="row">
+    
+        <aside id="zside-overlay">
+        <div id="side-overlay-scroll">
+            <div class="side-header side-content">
+                <button ng-click="closeWin()" class="btn btn-default pull-right" type="button" data-toggle="layout" data-action="side_overlay_close">
+                    <i class="fa fa-times"></i>
+                </button>
+                <span>
+                    <!-- <span class="font-w600 push-10-l">{{company}}</span> -->
+                    <div class="push-10-l">{{ intro }}</div>
+                </span>
+            </div>
+            <div class="side-content remove-padding-t">
+                <div class="block pull-r-l">
+                    <div class="block-header bg-gray-lighter">
+                        <h3 class="block-title text-center">
+                        </h3>
+                        <ul class="list list-activity">
+                            <li ng-repeat="f in follow_record" class="record-list">
+                                <i class="fa fa-times push-2-t cursor" ng-click="deleteRecord(f.record_id,$event.target)"></i>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="block-content z-content">
+                        <p>权限列表</p>
+                        <ul>
+                            <li ng-repeat="p in permission_list">{{ p }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar">
+                <div class="push-10">
+                    <button ng-click="initEdit()" class="btn btn-default" data-toggle="modal" data-target="#edit-role">编辑角色</button>
+                    <button ng-click="delete()" class="btn btn-default">删除角色</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+
 	<div class="col-sm-12">
 		<div class="clearfix push-10">
-		    <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-role" ng-click="getPermissions()">添加角色</a>
+		    <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-role" ng-click="initPermission()">添加角色</a>
 	    </div>
 		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
 			<thead class="bg-gray-light">
 				<th>序号</th>
 				<th>角色</th>
-				<th>权限</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="u in roles">
+				<tr ng-repeat="u in roles" ng-click="initRight(u)">
 					<td>{{ $index+1 }}</td>
 					<td>{{ u.name }}</td>
-					<td>
-                        <a data-toggle="modal" data-target="#edit-role">详情</a>               
-                    </td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
     <!-- 编辑角色 begin -->
     <div class="modal in" id="edit-role" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
-        <div class="modal-sm modal-dialog">
+        <div class="modal-xm modal-dialog">
             <div class="modal-content">
                 <div class="block block-themed block-transparent remove-margin-b">
                     <div class="block-header bg-primary-dark">
@@ -42,19 +79,32 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-xs-12">权限</label>
                                 <div class="col-xs-12">
-                                    <label ng-repeat="p in permissions" class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db">
-                                        <input ng-click="pushCheck(p,$event.target)" type="checkbox"><span></span>{{p}}
-                                    </label>
+                                    权限(建议*号必须选中)
                                 </div>
+                                <label class="col-xs-12" ng-repeat="p in edit_permissions" class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db">
+                                    <span ng-if="p.select == true">
+                                        <input checked="checked" ng-click="select_edit(p.key,$event.target)" type="checkbox"><span></span>{{p.key}}
+                                        <span class="push-5-l">
+                                            {{p.value}}
+                                        </span>
+                                    </span>
+
+                                    <span ng-if="p.select == false">
+                                        <input ng-click="select_edit(p.key,$event.target)" type="checkbox"><span></span>{{p.key}}
+                                        <span class="push-5-l">
+                                            {{p.value}}
+                                        </span>
+                                    </span>
+
+                                </label>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-                    <button ng-click="checkAddRole($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+                    <button ng-click="edit($event.target)" class="btn btn-sm btn-primary">更新</button>
                 </div>
             </div>
         </div>
@@ -62,7 +112,7 @@
     <!-- 编辑角色 end -->
 	<!-- 添加角色 begin -->
 	<div class="modal in" id="add-new-role" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
-	    <div class="modal-sm modal-dialog">
+	    <div class="modal-xm modal-dialog">
 	        <div class="modal-content">
 	            <div class="block block-themed block-transparent remove-margin-b">
 	                <div class="block-header bg-primary-dark">
@@ -78,14 +128,27 @@
                             <div class="form-group">
                                 <label class="col-xs-12">角色名称</label>
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" ng-model="e_name">
+                                    <input class="form-control" type="text" ng-model="add_name">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-xs-12">权限</label>
                                 <div class="col-xs-12">
+                                    权限(建议*号必须选中)
+                                    <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db" type="checkbox">
+                                        所有
+                                        <input onclick="toggleAll(this)" type="checkbox"><span></span>
+                                    </label>
+                                    <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db" type="checkbox">
+                                        综合
+                                        <input onclick="toggleClass(this)" type="checkbox"><span></span>
+                                    </label>
+                                </div>
+                                <div class="col-xs-12" id="all-permission">
                                     <label ng-repeat="p in permissions" class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db">
-                                        <input ng-click="pushCheck(p,$event.target)" type="checkbox"><span></span>{{p}}
+                                        <input data-key="{{p.key}}" ng-click="select_add(p.key,$event.target)" type="checkbox"><span></span>{{p.key}}
+                                        <span class="push-5-l">
+                                            {{p.value}}
+                                        </span>
                                     </label>
                                 </div>
                             </div>
@@ -94,10 +157,56 @@
 	            </div>
 	            <div class="modal-footer">
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button ng-click="checkAddRole($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+	                <button ng-click="add($event.target)" class="btn btn-sm btn-primary">添加</button>
 	            </div>
 	        </div>
 	    </div>
 	</div>
 	<!-- 添加角色 end -->
+    <script>
+        
+        function toggleAll(othis){
+            var checks = $("#all-permission").find('input');
+            
+            if(othis.checked){
+
+                for(var i = 0,len = checks.length;i<len;i++){
+                    var ch = checks[i];
+                    ch.checked = true;
+                }
+
+            }else{
+                for(var i = 0,len = checks.length;i<len;i++){
+                    var ch = checks[i];
+                    ch.checked = false;
+                }
+            }
+        }
+
+        function toggleClass(othis){
+            var checks = $("#all-permission").find('input');
+            
+            if(othis.checked){
+
+                for(var i = 0,len = checks.length;i<len;i++){
+                    var ch = checks.eq(i);
+                    var key = ch.attr('data-key');
+                    if(key.indexOf('/') < 0){
+                        ch.get(0).checked = true;
+                    }
+                }
+
+            }else{
+                
+                for(var i = 0,len = checks.length;i<len;i++){
+                    var ch = checks.eq(i);
+                    var key = ch.attr('data-key');
+                    if(key.indexOf('/') < 0){
+                        ch.get(0).checked = false;
+                    }
+                }
+
+            }
+        }
+    </script>
 </div>

@@ -14,6 +14,13 @@
 			if($result) return $this->db->lastId();
 			else return false;
 		}
+
+		function updateById($tax_collect_id,$fee){
+
+			return $this->db->exec('update `tax_collect` set fee=? where tax_collect_id=?',array($fee,$tax_collect_id));
+
+		}
+
 		function findByGuestid($year,$month,$guest_id){
 			return $this->db->query("select
 				t.tax_collect_id,
@@ -55,12 +62,23 @@
 		// 		array($parent_id,$guest_id));
 		// }
 
-		function delete($taxcollect_id){
+		function delete($tax_collect_id){
 			return $this->db->exec('delete from `tax_collect` where tax_collect_id=?',$tax_collect_id);
 		}
 
-		function findById(){
-			// return $this->db->query();
+		function findById($tax_collect_id){
+			return $this->db->queryOne("select 
+				t.tax_collect_id,
+				y.name,
+				t.fee
+				from 
+				`tax_collect` t,
+				`tax_type` y
+				where
+				t.tax_type_id = y.tax_type_id
+				and 
+				t.tax_collect_id = ?",
+				$tax_collect_id);
 		}
 	}
 ?>

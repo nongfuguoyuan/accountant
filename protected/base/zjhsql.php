@@ -4,7 +4,7 @@
       private $pdo;
       private $queryString;
       private $pagebar;
-      private $pagenum = 15;//默认每页信息条数
+      private $pagenum = 10;//默认每页信息条数
       private static $zjhobj;
       public $count;
 
@@ -152,7 +152,9 @@
             trigger_error('you are not executing select statement , please call exec function!');
             return;
          }
-         
+         //add by zjh special for this finance system
+         if(!empty($page)) $page[1] = $this->pagenum;
+
          $stmt = $this->prepare($sql,$params,$page);
          $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
          return $data;

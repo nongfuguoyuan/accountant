@@ -1,6 +1,25 @@
 <?php
 class GuestController extends ZjhController {
 
+	function searchByPhone(){
+
+		$phone = $this->post['phone'];
+		return $this->load('guest')->searchByPhone($phone);
+
+	}
+
+	function searchByCom(){
+
+		$com = $this->post['com'];
+		return $this->load('guest')->searchByCom($com);
+		
+	}
+
+	// function searchById(){
+	// 	$guest_id = (int)$this->post['guest_id'];
+	// 	return $this->load('guest')->searchById($guest_id);
+	// }
+
 	function save(){
 		$post = $this->post;
 		$company = $post['company'];
@@ -23,18 +42,7 @@ class GuestController extends ZjhController {
 		if(empty($employee_id)){
 			return false;
 		}
-		// return array(
-		// 	"company"=>$company,
-		// 	"name"=>$name,
-		// 	"phone"=>$phone,
-		// 	"job"=>$job,
-		// 	"area_id"=>$area_id,
-		// 	"address"=>$address,
-		// 	"resource_id"=>$resource_id,
-		// 	"employee_id"=>$employee_id,
-		// 	"tel"=>$tel,
-		// 	"status"=>$status
-		// );
+		
 		$lastid = $this->load('guest')->add(array(
 			"company"=>$company,
 			"name"=>$name,
@@ -47,7 +55,7 @@ class GuestController extends ZjhController {
 			"tel"=>$tel,
 			"status"=>$status
 		));
-		// return $lastid;
+		
 		if($lastid){
 			return $this->load('guest')->findById($lastid);
 		}else{
@@ -57,13 +65,29 @@ class GuestController extends ZjhController {
 	}
 	
 	function find(){
-		$post = $this->post;
-		$page = $post['page'];
-		$pagenum = $post['pageNum'];
-		if(empty($page)) $page = 1;
-		if(empty($pagenum)) $pagenum = 20;
-		return $this->load('guest')->find(array($page,$pagenum));
-
+		$page = $this->page();
+		$result =  $this->load('guest')->find(array($page));
+		foreach($result['data'] as $key => $value){
+			$guest_id = (int)$value['guest_id'];
+			$result2 = $this->load('record')->findCount($guest_id);
+			$result['data'][$key]['record_count'] = empty($result2) ? 0:$result2['count'];
+		}
+		
+		return $result;
+	}
+	function _find(){
+		$page = $this->page();
+		$employee_id = (int)$this->session['user']['employee_id'];
+		
+		$result =  $this->load('guest')->_find($employee_id,array($page));
+		
+		foreach($result['data'] as $key => $value){
+			$guest_id = (int)$value['guest_id'];
+			$result2 = $this->load('record')->findCount($guest_id);
+			$result['data'][$key]['record_count'] = empty($result2) ? 0:$result2['count'];
+		}
+		
+		return $result;
 	}
 
 	function update(){
@@ -105,12 +129,6 @@ class GuestController extends ZjhController {
 	}
 	function delete(){
 		return $this->load('guest')->delete((int)$this->post['guest_id']);
-	}
-	function findName(){
-
-	}
-	function search(){
-
 	}
 	
 }

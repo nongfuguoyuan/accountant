@@ -1,3 +1,6 @@
+function gologout(){
+	window.location.href = _host+"employee/logout";
+}
 function callright(fn){
 	$("#zside-overlay").stop().animate({'right':'0'},200,'swing',function(){
 		if(typeof fn == 'function') fn();
@@ -25,6 +28,103 @@ function $post(http,url,params){
 	    data: $.param(params),
 	    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 	});
+}
+
+function in_array(a,arr){
+	var tag = false;
+	arr.forEach(function(ele){
+		if(ele == a){
+			tag = true;
+			return;
+		}
+	});
+	return tag;
+}
+
+function initPermission(permissions){
+	var ele = $("[data-permission]");
+	// console.log(permissions);
+	for(var i = 0,len = ele.length;i<len;i++){
+		var el = ele.eq(i);
+		var pers = el.attr('data-permission').trim();
+		// console.log(pers);
+		if(pers.length > 0){
+			var arr = pers.split("/");
+			if(arr.length == 1){
+				if(!in_array(arr[0],permissions)){
+					el.hide();
+				}		
+			}
+			if(arr.length > 1){
+				if(!in_array(arr[0],permissions) && !in_array(pers,permissions)){
+					// console.log(pers);
+					el.hide();
+				}
+			}
+		}
+		
+	}
+}
+
+var dateComponent = {
+	initYear:function($scope,othis){
+		var year = $(othis).text() || '',
+			whole = $scope.whole || '';
+
+		year = year.trim();
+		whole = whole.trim();
+
+		var arr = whole.split('/');
+
+		if(arr.length <= 1){
+			$scope.whole = year;
+		}
+
+		if(arr.length == 2){
+			$scope.whole = year+'/'+arr[1];
+		}
+	},
+	initMonth:function($scope,othis){
+		var month = $(othis).text() || '',
+			whole = $scope.whole || '';
+
+		month = month.trim();
+		whole = whole.trim();
+
+		var arr = whole.split('/');
+
+		if(arr.length <= 1){
+			var year = new Date().getFullYear();
+			$scope.whole = year+"/"+month;
+		}
+
+		if(arr.length == 2){
+			$scope.whole = arr[0]+'/'+month;
+		}
+	},
+	initWhole:(new Date().getFullYear()+"/"+(new Date().getMonth()+1))
+};
+
+function pageit(current,total,fn){
+	if(typeof total == 'undefined') return [];
+	if(current > total) return [];
+	var arr = [];
+	for(var i = current-2;i<=current+2;i++){
+		if(i > 0 && i <= total){
+			arr.push(i);	
+		}
+	}
+	if(arr.length > 0){
+		if(arr[0] > 3){
+			// arr.splice(0,0,'...');
+			arr.splice(0,0,1);
+		}
+		if(arr[arr.length - 1] < total-2){
+			// arr.push("...");
+			arr.push(total);
+		}
+	}
+	return arr;
 }
 
 function validate(model,str){

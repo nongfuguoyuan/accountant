@@ -15,6 +15,10 @@
 			if($result) return $this->db->lastId();
 			else return false;
 		}
+		//根据用户查询其有几条跟进记录
+		function findCount($guest_id){
+			return $this->db->queryOne("select count(*) count from `record` where guest_id = ?",$guest_id);
+		}
 
 		function findById($record_id){
 			return $this->db->queryOne("select 

@@ -1,5 +1,6 @@
 <?php
 	class AccountingController extends ZjhController{
+
 		function save(){
 			$post = $this->post;
 			$guest_id = (int)$post['guest_id'];
@@ -38,16 +39,20 @@
 			if($result) return $this->load('accounting')->findById($accounting_id);
 			else return false;
 		}
+
 		function updateStatus(){
 			return $this->load('accounting')->updateStatus((int)$this->post['accounting_id']);
 		}
+
 		function find(){
-			$page = $this->post['page'];	
-			$pagenum = $this->post['pageNum'];
-			if(empty($page)) $page = 1;
-			if(empty($pagenum)) $pagenum = 20;
-			return $this->load('accounting')->find(array($page,$pagenum));
+			return $this->load('accounting')->find(array($this->page()));
 		}
+
+		function _find(){
+			$employee_id = (int)$this->session['user']['employee_id'];
+			return $this->load('accounting')->_find($employee_id,array($this->page()));
+		}
+
 		function delete(){
 			$accounting_id = (int)$this->post['accounting_id'];
 			return $this->load('accounting')->delete($accounting_id);

@@ -1,5 +1,18 @@
 <?php
 	class Guest extends Model{
+
+		function searchByPhone($phone){
+			return $this->db->query('select company,name,guest_id from `guest` where phone like "%"?"%" limit 5',$phone);
+		}
+
+		function searchByCom($com){
+			return $this->db->query('select company,name,guest_id from `guest` where company like "%"?"%" or name like "%"?"%" limit 5',array($com,$com));
+		}
+
+		function searchById($guest_id){
+			return $this->findById($guest_id);
+		}
+
 		function findById($guest_id){
 			return $this->db->queryOne('select 
 				g.guest_id,
@@ -44,13 +57,49 @@
 				on a.area_id = g.area_id
 				left join `resource` r
 				on r.resource_id = g.resource_id
+				order by g.guest_id desc
 			",array(),$page);
+
+			if($result){
+				return array('total'=>$this->db->count,'data'=>$result);
+			}else{
+				return false;
+			}
+			
+		}
+
+		function _find($employee_id,$page){
+			$result =  $this->db->query("
+				select 
+				g.guest_id,
+				g.name,
+				g.phone,
+				g.address,
+				g.company,
+				g.tel,
+				g.status,
+				g.create_time,
+				r.description,
+				e.name e_name,
+				a.name a_name
+				from `guest` g
+				left join `employee` e
+				on e.employee_id = g.employee_id
+				left join `area` a
+				on a.area_id = g.area_id
+				left join `resource` r
+				on r.resource_id = g.resource_id
+				where g.employee_id = ?
+				order by g.guest_id desc
+			",$employee_id,$page);
+
 			if($result){
 				return array('total'=>$this->db->count,'data'=>$result);
 			}else{
 				return false;
 			}
 		}
+
 		function add($params){
 			$result = $this->db->exec('insert into `guest` set 
 				company=:company,

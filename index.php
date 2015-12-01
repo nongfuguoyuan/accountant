@@ -5,34 +5,34 @@ header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, PUT');
 
-require_once 'autoload.php';
+define('_HOST','http://192.168.10.105/accountant/');
+define('_DASHBOARD',_HOST.'protected/tmp/index.html');
+// define('CONFIG',"D:/dev/");
+
+require 'autoload.php';
 require 'protected/base/model.php';
 require 'protected/controllers/zjhcontroller.php';
 require 'protected/base/function.php';
 
 $ca = explode("/",$_SERVER['REQUEST_URI']);
 
-if($ca[2] && $ca[2]){
+
+
+if($ca[2] && $ca[3]){
+
 
 	$clazz = strtolower($ca[2]);
 	$method = strtolower($ca[3]);
-
-	if($clazz == 'employee' && ($method == 'login' || $method == 'logout')){
-
-	}else{
-		// if(empty($_SESSION['user'])){
-		// 	echo '请登录';
-		// 	return;
-		// }
-	}
-	
 	$main = new Main();
-	
 	echo $main->start($clazz,$method);
-	
+
 }else{
 
 	echo 'class or method you call is not exists';
 
 }
+
+
+
+
 

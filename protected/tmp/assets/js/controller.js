@@ -1,6 +1,4 @@
-var myapp = angular.module('myapp',['ngRoute']),
-
-	_host = 'http://192.168.10.100/accountant/';
+var myapp = angular.module('myapp',['ngRoute']);
 
 myapp.config(['$routeProvider',function($routeProvider){
 	$routeProvider
@@ -15,6 +13,10 @@ myapp.config(['$routeProvider',function($routeProvider){
 		templateUrl:'static/users.html',
 		controller:'userCtrl'
 	})
+	.when('/_users',{
+		templateUrl:'static/_users.html',
+		controller:'_userCtrl'
+	})
 	.when('/process_group',{
 		templateUrl:'static/process_group.html',
 		controller:'processGroupCtrl'
@@ -27,13 +29,25 @@ myapp.config(['$routeProvider',function($routeProvider){
 		templateUrl:'static/business.html',
 		controller:'businessCtrl'
 	})
+	.when('/_business',{
+		templateUrl:'static/_business.html',
+		controller:'_businessCtrl'
+	})
 	.when('/accounting',{
 		templateUrl:'static/accounting.html',
 		controller:'accountingCtrl'
 	})
+	.when('/_accounting',{
+		templateUrl:'static/_accounting.html',
+		controller:'_accountingCtrl'
+	})
 	.when('/tax',{
 		templateUrl:'static/tax.html',
 		controller:'taxCtrl'
+	})
+	.when('/_tax',{
+		templateUrl:'static/_tax.html',
+		controller:'_taxCtrl'
 	})
 	.when('/department',{
 		templateUrl:'static/department.html',
@@ -58,6 +72,10 @@ myapp.config(['$routeProvider',function($routeProvider){
 	.when('/pay_record',{
 		templateUrl:'static/pay_record.html',
 		controller:'payrecordCtrl'
+	})
+	.when('/_pay_record',{
+		templateUrl:'static/_pay_record.html',
+		controller:'_payrecordCtrl'
 	})
 	.when('/todo',{
 		templateUrl:'static/todo.html',
@@ -111,15 +129,7 @@ myapp.service('dashboardService',function($http){
 });
 myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 
-	dashboardService.getTodo($http,function(r){
-		$scope.todos=r.data;
-		console.log(r);
-		$scope.todo_count=r.total;
-		if(r.total > 0){
-			$scope.show_todo = true;
-		}
-		console.log($scope.show_todo);
-	});
+	$scope.todos = dashboardService.getTodo($http);
 
 	//get session
 	$post($http,_host+"employee/session",{}).success(function(r){
@@ -147,10 +157,18 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 				$scope.department = r.name;
 			});
 
-
 		}
 	});
 
+
+	// $scope.todo_count = $scope.todos.length;
+	// if($scope.todo_count > 0){
+	// 	$scope.show_todo = true;
+	// }
+	// $scope.getEarly = dashboardService.getEarly($http,function(data){
+	// 	$scope.todo_early = data;
+	// 	$scope.todo_count_early = data.length;
+	// 	if(data.length > 0){
 	$scope.getEarly = dashboardService.getEarly($http,function(r){
 		$scope.todo_early = r.data;
 		$scope.todo_count_early = r.total;
@@ -199,16 +217,16 @@ myapp.directive('searchUsersRealTime',function($http,$route){
 	    			var str = scope.searchstr;
 		    		if(str.match(/^\d+$/)){
 		    			//按手机号查询
-		    			$post($http,_host+"guest/search",{"phone":str}).success(function(r){
+		    			$post($http,_host+"guest/searchByPhone",{"phone":str}).success(function(r){
 		    				if(r){
 		    					scope.results = r;
 		    				}else{
 		    					scope.results = [{}];
 		    				}
 		    			});
-		    		}else if(str.match(/^[^\d]+$/)){
-		    			//默认为按姓名查询
-		    			$post($http,_host+"guest/search",{"name":str}).success(function(r){
+		    		}else if(str.match(/^[^\d\w]+$/)){
+		    			//默认为按公司/姓名查询
+		    			$post($http,_host+"guest/searchByCom",{"com":str}).success(function(r){
 		    				// console.log(r);
 		    				if(r){
 		    					scope.results = r;
@@ -270,23 +288,14 @@ myapp.directive('sureSearchResult',function(userService,$http){
 		restrict:'A',
 		link:function(scope, ele, attrs){
 			ele.bind('click',function(){
-				var user_id = attrs.id;
-				scope.$parent.searchstr = scope.r.name;
-				scope.$parent.results = [{}];
-				$.post(_host+"guest/findbyid",{'guest_id':user_id},function(r){
-					// console.log(r);
-					r = eval("("+r+")");
-					scope.$parent.guests = r.data;
+				var guest_id = attrs.id;
+				scope.$parent.searchstr = scope.r.company+"/"+scope.r.name;
+				scope.$parent.results = [];
+				$.post(_host+"guest/searchById",{'guest_id':guest_id},function(r){
+					scope.$parent.guests = [r];
+					scope.$parent.pagination = [];//清空分页
 					scope.$parent.$apply();
 				});
-				// (function(scope){
-				// 	$post($http,_host+"guest/findbyid",{'guest_id':user_id}).success(function(r){
-				// 		// scope.$parent.guests = r.data;
-				// 		// scope.$parent.$apply();
-				// 		console.log(scope);
-				// 	});
-				// })(scope);
-				//search
 			});
 		}
 	};
@@ -647,9 +656,8 @@ myapp.controller('processGroupCtrl',function($scope,$http,processGroupService){
 
 myapp.service('userService',function($http){
 	var obj = {
-		data:[],
-		get:function(http,params,fn){
-			$post(http,_host+"guest/find",params).success(function(r){
+		get:function(params,fn){
+			$post($http,_host+"guest/find",params).success(function(r){
 				obj.data = r.data;
 				fn(r);
 			});
@@ -749,9 +757,11 @@ myapp.service('userService',function($http){
 		},
 		showFollowDetail:function(guest_id,fn){
 			$post($http,_host+"record/find",{"guest_id":guest_id}).success(function(r){
-				if(r){
+				if(r.length > 0){
 					obj.follow_record = r;
 					fn();
+				}else{
+					layer.msg('没有跟踪记录');
 				}
 			});
 		},
@@ -801,34 +811,52 @@ myapp.service('userService',function($http){
 
 myapp.controller('userCtrl',function($scope,$http,userService,businessService,accountingService){
 
+	// initPermission(_permission);
+	// console.log(_permission);
 	userService.rightwin = false;
 
 	$scope.initResource = userService.initResource($http,function(data){
 		$scope.resource = data;
 	});
 
-	userService.get($http,{page:1,pageNum:10},function(r){
-		$scope.guests = r.data;
-		if(r.count > 1){
-			// var arr = ['<'];
-			var arr = [];
-			for(var i = 0;i<r.count;i++){
-				arr.push(i+1);
+	$scope.whole = dateComponent.initWhole;
+
+	$scope.initYear = function(othis){
+		dateComponent.initYear($scope,othis);
+	}
+
+	$scope.initMonth= function(othis){
+		dateComponent.initMonth($scope,othis);
+	}
+
+	//初始化用户页面
+	void function (current,fn){
+		var arg = arguments;
+		userService.get({"page":current},function(r){
+			$scope.guests = r.data;
+			var pagination = pageit(current,r.total);
+			if(pagination.length > 0){
+				$scope.pagination = pagination;
+				$scope.current = current;
+				$scope.getPage = function(othis){
+					var want_current = $(othis).attr('data-current');
+					if(want_current != current){
+						layer.load();
+						arg.callee(want_current,fn);
+					}
+				};
 			}
-			// arr.push('>');
-			$scope.pagination = arr;
-			// var pageLi = $('.pagination').children();
-			// if(pageLi[1]){
-			// 	console.log($(pageLi[1]).children());
-			// 	$(pageLi[1]).children().addClass('active');
-			// }
-			
-		}
+			fn();
+		});
+	}(1,function(){
+		layer.closeAll('loading');
+
 	});
+
+
 	//按页码获取
 	$scope.getByPage = function(othis){
-
-		userService.get($http,{page:this.p,pageNum:10},function(r){
+		userService.get($http,{page:this.p},function(r){
 			$scope.guests = r.data;
 			$(othis).addClass('active');
 		});
@@ -847,9 +875,11 @@ myapp.controller('userCtrl',function($scope,$http,userService,businessService,ac
 			$scope.guests = userService.data;
 		});
 	};
+
 	$scope.initGuestid = function(){
 		userService.initGuestid = this.u.guest_id;
 	};
+
 	//添加跟进记录
 	$scope.addRecord = function(othis){
 		userService.addRecord($scope,function(){
@@ -878,6 +908,7 @@ myapp.controller('userCtrl',function($scope,$http,userService,businessService,ac
 	$scope.requestEmployee = businessService.requestEmployee($http,$scope,function(r){
 		$scope.employee = r;
 	});
+
 	//添加工商
 	$scope.addBusiness = function(ele){
 		businessService.add($scope,function(){
@@ -894,9 +925,11 @@ myapp.controller('userCtrl',function($scope,$http,userService,businessService,ac
 		$scope.select_id = userService.select_id;
 		// console.log(userService.select_id);
 	};
+
 	$scope.initRight = function(u){
 
 		businessService.guest_id = u.guest_id;
+		$scope.follow_record = [];
 
 		if(userService.guest_id != u.guest_id){
 			callright(function(){
@@ -915,13 +948,16 @@ myapp.controller('userCtrl',function($scope,$http,userService,businessService,ac
 			$scope.edit_status = u.status;
 			$scope.edit_area_id = u.area_id;
 
-			userService.showFollowDetail(u.guest_id,function(){
-				$scope.follow_record = userService.follow_record;
-			});
 			userService.guest_id = u.guest_id;
+
 			businessService.findOpen(u.guest_id,function(r){
-				$scope.opens = r;
+				if(r){
+					$scope.opens = r;
+				}else{
+
+				}
 			});
+
 		}else{
 			if(userService.rightwin == true){
 				closeright(function(){
@@ -936,6 +972,12 @@ myapp.controller('userCtrl',function($scope,$http,userService,businessService,ac
 				});
 			}
 		}
+	};
+
+	$scope.getRecord = function(othis){
+		userService.showFollowDetail(userService.guest_id,function(){
+			$scope.follow_record = userService.follow_record;
+		});
 	};
 
 	$scope.deleteRecord = function(record_id){
@@ -1152,11 +1194,11 @@ myapp.service('progressService',function($http){
 
 myapp.service('businessService',function($http){
 	var obj = {
-		get:function(fn){
-			$post($http,_host+"business/find",{}).success(function(r){
+		get:function(params,fn){
+			$post($http,_host+"business/find",params).success(function(r){
 				if(r != 'false'){
-					obj.data = r;
-					fn();
+					obj.data = r.data;
+					fn(r);
 				}
 			});
 		},
@@ -1235,8 +1277,26 @@ myapp.service('businessService',function($http){
 
 myapp.controller('businessCtrl',function($scope,$http,businessService,progressService,processService){
 	
-	businessService.get(function(){
-		$scope.business = businessService.data;
+	void function (current,fn){
+		var arg = arguments;
+		businessService.get({"page":current},function(r){
+			$scope.business = businessService.data;
+			var pagination = pageit(current,r.total);
+			if(pagination.length > 0){
+				$scope.pagination = pagination;
+				$scope.current = current;
+				$scope.getPage = function(othis){
+					var want_current = $(othis).attr('data-current');
+					if(want_current != current){
+						layer.load();
+						arg.callee(want_current,fn);
+					}
+				};
+			}
+			fn();
+		});
+	}(1,function(){
+		layer.closeAll('loading');
 	});
 
 	$scope.updateStatus = function(business_id){
@@ -1297,10 +1357,10 @@ myapp.controller('businessCtrl',function($scope,$http,businessService,progressSe
 
 myapp.service('accountingService',function($http){
 	var obj = {
-		get:function(fn){
-			$post($http,_host+"accounting/find",{'page':1,'pageNum':100}).success(function(r){
+		get:function(params,fn){
+			$post($http,_host+"accounting/find",params).success(function(r){
 				if(r){
-					obj.data = r;
+					obj.data = r.data;
 					fn(r);
 				}
 			});
@@ -1334,9 +1394,28 @@ myapp.controller('accountingCtrl',function($scope,$http,accountingService){
 	var now = new Date();
 	$scope.today = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate();
 
-	accountingService.get(function(){
-		$scope.accounting = accountingService.data;
+	void function (current,fn){
+		var arg = arguments;
+		accountingService.get({"page":current},function(r){
+			$scope.accounting = r.data;
+			var pagination = pageit(current,r.total);
+			if(pagination.length > 0){
+				$scope.pagination = pagination;
+				$scope.current = current;
+				$scope.getPage = function(othis){
+					var want_current = $(othis).attr('data-current');
+					if(want_current != current){
+						layer.load();
+						arg.callee(want_current,fn);
+					}
+				};
+			}
+			fn();
+		});
+	}(1,function(){
+		layer.closeAll('loading');
 	});
+	
 
 	$scope.updateStatus = function(accounting_id){
 		// console.log(accounting_id);
@@ -1349,22 +1428,21 @@ myapp.controller('accountingCtrl',function($scope,$http,accountingService){
 
 myapp.service('taxService',function($http){
 	var obj = {
-		get:function(fn){
-			$post($http,_host+"taxcollect/find",{}).success(function(r){
+		get:function(params,fn){
+			$post($http,_host+"taxcollect/find",params).success(function(r){
 				if(r){
 					obj.data = r;
-					fn();
+					fn(r);
 				}
 			});
 		},
 		add:function(data,fn){
 			$post($http,_host+"taxcollect/save",{'data':data}).success(function(r){
-				console.log(r);
-				// if(r != 'false'){
-				// 	fn();
-				// }else{
-				// 	layer.msg('添加失败');
-				// }
+				if(r == 1){
+					fn();
+				}else{
+					layer.msg('添加失败');
+				}
 			});
 		},
 		initTaxtype:function(parent_id,fn){
@@ -1378,7 +1456,86 @@ myapp.service('taxService',function($http){
 		},
 		findList:function(params,fn){
 			$post($http,_host+"taxcollect/findList",params).success(function(r){
-				if(r) fn(r);
+				if(r){
+					obj.taxlist = r;
+					fn();
+				}
+			});
+		},
+		editOne:function(scope,fn){
+			var fee = scope.e_one_fee;
+			
+			if(/(^\d+[.]?\d$)/.test(fee)){
+				layer.load();
+				$post($http,_host+"taxcollect/update",{'tax_collect_id':obj.tax_collect_id,'fee':fee}).success(function(r){
+					layer.closeAll('loading');
+					if(r != 'false'){
+						obj.taxlist.forEach(function(ele,index){
+							if(ele.tax_collect_id == obj.tax_collect_id){
+								obj.taxlist[index] = r;
+							}
+						});
+						fn();
+					}else{
+						layer.msg('没有更新');
+					}
+				});
+			}else{
+				layer.msg('请输入正确的税额');
+			}
+		},
+		deleteOne:function(tax_collect_id,fn){
+			$post($http,_host+"taxcollect/delete",{'tax_collect_id':tax_collect_id}).success(function(r){
+				if(r == 1){
+					var arr = [];
+					obj.taxlist.forEach(function(ele,index){
+						if(ele.tax_collect_id != tax_collect_id){
+							arr.push(ele);
+						}
+					});
+					obj.taxlist = arr;
+					fn();
+				}else{
+					layer.msg('删除失败');
+				}
+			});
+		},
+		addCount:function(scope,fn){
+			var nation = scope.nation_count,
+				local = scope.local_count,
+				year = scope.add_count_year,
+				month = scope.add_count_month;
+
+			if(!/^20\d{2}$/.test(year)){
+				layer.msg('年份不正确');
+				return;
+			}
+			if(!/^\d{1,2}$/.test(month)){
+				layer.msg('月份不正确');
+				return;
+			}
+			if(!/^\d+[.]?\d$/.test(nation)){
+				layer.msg('国税金额不正确');
+				return;
+			}
+			if(!/^\d+[.]?\d$/.test(local)){
+				layer.msg('地税金额不正确');
+				return;
+			}
+
+			if(typeof obj.guest_id == 'undefined'){
+				layer.msg('不能添加');
+				return;
+			}
+
+			$post($http,_host+"taxcount/save",{
+				'guest_id':obj.guest_id,
+				'year':year,
+				'month':month,
+				'nation':nation,
+				'local':local
+			}).success(function(r){
+				console.log(r);
 			});
 		}
 	};
@@ -1387,8 +1544,30 @@ myapp.service('taxService',function($http){
 
 myapp.controller('taxCtrl',function($scope,taxService){
 
-	taxService.get(function(){
-		$scope.tax = taxService.data;
+	// taxService.get(function(){
+	// 	$scope.tax = taxService.data;
+	// });
+
+	void function (current,fn){
+		var arg = arguments;
+		taxService.get({"page":current},function(r){
+			$scope.tax = r.data;
+			var pagination = pageit(current,r.total);
+			if(pagination.length > 0){
+				$scope.pagination = pagination;
+				$scope.current = current;
+				$scope.getPage = function(othis){
+					var want_current = $(othis).attr('data-current');
+					if(want_current != current){
+						layer.load();
+						arg.callee(want_current,fn);
+					}
+				};
+			}
+			fn();
+		});
+	}(1,function(){
+		layer.closeAll('loading');
 	});
 
 	$scope.closewin = function(){
@@ -1406,13 +1585,38 @@ myapp.controller('taxCtrl',function($scope,taxService){
 		});
 	};
 
+	$scope.initOne = function(u){
+		taxService.tax_collect_id = u.tax_collect_id;
+		$scope.e_one_fee = u.fee;
+		$scope.one_name = u.name;
+	};
+
+	$scope.editOne = function(othis){
+		taxService.editOne($scope,function(){
+			$scope.taxlist = taxService.taxlist;
+			$(othis).prev().trigger('click');
+		});
+	};
+
+	$scope.deleteOne = function(tax_collect_id){
+		layer.msg('确定删除？', {
+		    time: 0
+		    ,btn: ['确定', '取消']
+		    ,yes: function(index){
+		        layer.close(index);
+				taxService.deleteOne(tax_collect_id,function(){
+					$scope.taxlist = taxService.taxlist;
+				});
+		    }
+		});
+
+	};
+
 	$scope.add = function(othis){
 		var year = $scope.add_year,
 			month = $scope.add_month,
 			nation = $("#add-nation").find('.row'),
-			local = $("#add-local").find('.row'),
-			nationCount = $("#nation-count").val(),
-			localCount = $("#local-count").val();
+			local = $("#add-local").find('.row');
 
 		
 		if(!/^20\d{2}$/.test(year)){
@@ -1423,14 +1627,7 @@ myapp.controller('taxCtrl',function($scope,taxService){
 			layer.msg('月份不正确');
 			return;
 		}
-		if(!/(^\d+$)|(^\d{1,}[.]\d{1,}$)/.test(nationCount)){
-			layer.msg('税总和不正确');
-			return;
-		}
-		if(!/(^\d+$)|(^\d{1,}[.]\d{1,}$)/.test(localCount)){
-			layer.msg('税总和不正确');
-			return;
-		}
+		
 		if(!taxService.guest_id){
 			layer.msg('缺少guest_id');
 			return;
@@ -1467,23 +1664,32 @@ myapp.controller('taxCtrl',function($scope,taxService){
 			'guest_id':taxService.guest_id,
 			'year':year,
 			'month':month,
-			'nationCount':nationCount,
-			'localCount':localCount,
 			'nationData':nation_arr,
 			'localData':local_arr
 		};
 
 		taxService.add(data,function(){
+			if(taxService.year != null && taxService.month != null){
+				taxService.findList({'year':taxService.year,'month':taxService.month,'guest_id':taxService.guest_id},function(r){
+					$scope.listshow = true;
+					$scope.taxlist = taxService.taxlist;
+				});	
+			}
 			$(othis).prev().trigger('click');
 		});
 	}
 
+	$scope.addCount = function(othis){
+		taxService.addCount($scope,function(){
+
+		});
+	}
 	
 	$scope.findList = function(){
 		if(taxService.year != null && taxService.month != null){
 			taxService.findList({'year':taxService.year,'month':taxService.month,'guest_id':taxService.guest_id},function(r){
 				$scope.listshow = true;
-				$scope.taxlist = r;
+				$scope.taxlist = taxService.taxlist;
 			});	
 		}else{
 			layer.msg('没有详细记录');
@@ -1496,6 +1702,11 @@ myapp.controller('taxCtrl',function($scope,taxService){
 		taxService.year = u.year;
 		taxService.month = u.month;
 		taxService.guest_id = u.guest_id;
+
+		if(taxService.year == null || taxService.month == null){
+			$scope.taxlist = [];
+			$scope.listshow = false;
+		}
 
 		if(taxService.guest_id != u.guest_id){
 			callright(function(){
@@ -1693,7 +1904,7 @@ myapp.service('employeeService',function($http){
 			$post($http,_host+"employee/find",params).success(function(r){
 				if(r){
 					obj.data = r.data;
-					fn();
+					fn(r);
 				}
 			});
 		},
@@ -1709,8 +1920,10 @@ myapp.service('employeeService',function($http){
 			var name = scope.e_name,
 				phone = scope.e_phone,
 				sex = scope.e_sex,
+				roles_id = scope.e_roles_id || 0,
 				department_id = scope.e_department_id;
-
+			// console.log(name,phone,sex,roles_id,department_id);
+			// return;
 			if(!validate('name',name)){
 				layer.msg('姓名不符合要求');
 				return;
@@ -1724,8 +1937,10 @@ myapp.service('employeeService',function($http){
 				'name':name,
 				'phone':phone,
 				'sex':sex,
+				'roles_id':roles_id,
 				'department_id':department_id
 			}).success(function(r){
+
 				layer.closeAll('loading');
 				if(r){
 					obj.data.splice(0,0,r);
@@ -1754,8 +1969,10 @@ myapp.service('employeeService',function($http){
 				'phone':phone,
 				'sex':scope.e_sex,
 				'department_id':scope.e_department_id,
+				'roles_id':scope.e_roles_id,
 				'employee_id':obj.employee_id
 			}).success(function(r){
+				
 				if(r){
 					obj.data.forEach(function(ele,index){
 						if(ele.employee_id == r.employee_id){
@@ -1874,8 +2091,10 @@ myapp.service('departmentService',function($http){
 	};
 	return obj;
 });
-myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService,employeeService){
+myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService,employeeService,rolesService){
 
+	//权限
+	initPermission(_permission);
 	//部门下拉列表
 	function loadSelect(){
 		$post($http,_host+"department/findAll",{}).success(function(r){
@@ -1982,18 +2201,28 @@ myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService
 		});
 	};
 
-	$scope.getEmployee = employeeService.get({'page':1,"pageNum":'20'},function(r){
-		$scope.employees = employeeService.data;
-		// var page_arr = [];
-		// for(var i = 0;i<r.count;i++){
-		// 	page_arr.push(i+1);
-		// }
-		// $scope.pagination = page_arr;
+	
+	void function (current,fn){
+		var arg = arguments;
+		employeeService.get({"page":current},function(r){
+			$scope.employees = r.data;
+			var pagination = pageit(current,r.total);
+			if(pagination.length > 0){
+				$scope.pagination = pagination;
+				$scope.current = current;
+				$scope.getPage = function(othis){
+					var want_current = $(othis).attr('data-current');
+					if(want_current != current){
+						layer.load();
+						arg.callee(want_current,fn);
+					}
+				};
+			}
+			fn();
+		});
+	}(1,function(){
+		layer.closeAll('loading');
 	});
-
-	$scope.getByPage = function($http,fn){
-
-	};
 
 	$scope.showEditWindow = function(){
 		if(departmentService.select){
@@ -2051,42 +2280,272 @@ myapp.controller('departmentCtrl',function($scope,$http,$route,departmentService
 			loadtree();
 		});
 	};
+
+	$scope.initRoles = function(){
+		if(!rolesService.allname){
+			rolesService.findAllName(function(){
+				$scope.roles = rolesService.allname;	
+			});
+		}else{
+			$scope.roles = rolesService.allname;
+		}
+	};
 });
 
-myapp.service('rolesService',function(){
+myapp.service('rolesService',function($http){
 	var obj = {
-		get:function(){
-			return [{
-				role_id:1,
-				name:'客服'
-			}];
+		get:function(fn){
+			$post($http,_host+"roles/find",{}).success(function(r){
+				obj.data = r;
+				fn(r);
+			});
 		},
-		update:function(){
-
+		add:function(name,fn){
+			if(typeof name != 'undefined' && name.length > 0){
+				$post($http,_host+"roles/save",{
+					'name':name,
+					'permission':obj.select_add
+				}).success(function(r){
+					if(r != 'false'){
+						if(!obj.data){
+							obj.data = [];
+						}
+						obj.data.splice(0,0,r);
+						fn();
+					}else{
+						layer.msg('添加失败');
+					}
+				});
+			}else{
+				layer.msg('角色名称格式不正确');
+			}
 		},
-		delete:function(){
-
-		},
-		getPermissions:function(fn){
-			return function(){
-				if(typeof fn == 'function'){
-					var data = ['server/index','accounting/index'];
-					fn(data);
+		permissionList:function(roles_id,fn){
+			$post($http,_host+'roles/permissionList',{'roles_id':roles_id}).success(function(r){
+				if(r != 'false'){
+					fn(r);
 				}
-			};
+			});
+		},
+		edit:function(name,fn){
+			if(typeof name != 'undefined' && name.length > 0){
+				layer.load();
+				$post($http,_host+"roles/update",{'roles_id':obj.roles_id,'name':name,'permission':obj.select_edit}).success(function(r){
+					layer.closeAll('loading');
+					console.log(r);
+					if(r != 'false'){
+						obj.data.forEach(function(ele,index){
+							if(ele.roles_id == r.roles_id){
+								obj.data[index] = r;
+							}
+						});
+						fn();
+					}else{
+						layer.msg('更新失败');
+					}
+				});
+			}else{
+				layer.msg('名字不符合要求');
+			}
+		},
+		initPermission:function(fn){
+			if(!obj.permissions){
+				$post($http,_host+"roles/allPermission",{}).success(function(r){
+					if(r){
+						obj.permissions = r;
+						fn(r);
+					}
+				});
+			}else{
+				fn(obj.permissions);
+			}
+		},
+		in_array:function(key,arr){
+			var tag = false;
+			if(typeof arr == 'undefined' || arr.length == 0){
+				return false;
+			}else{
+				arr.forEach(function(ele,index){
+					if(ele == key){
+						tag = true;
+						return;
+					}
+				});
+			}
+			return tag;
+		},
+		delete:function(fn){
+			$post($http,_host+"roles/delete",{'roles_id':obj.roles_id}).success(function(r){
+				if(r == 1){
+					var arr = [];
+					obj.data.forEach(function(ele,index){
+						if(ele.roles_id != obj.roles_id){
+							arr.push(ele);
+						}
+					});
+					obj.data = arr;
+					fn();
+				}
+			});
+		},
+		findAllName:function(fn){
+			$post($http,_host+'roles/findAllName',{}).success(function(r){
+				if(r){
+					obj.allname = r;
+					fn();
+				}
+			});
 		}
 	};
 	return obj;
 });
 myapp.controller('rolesCtrl',function($scope,$http,rolesService){
-	$scope.roles = rolesService.get();
-	$scope.getPermissions = rolesService.getPermissions(function(data){
-		$scope.permissions = data;
+
+	rolesService.get(function(r){
+		$scope.roles = rolesService.data;
 	});
-	$scope.pushCheck = function(permission,othis){
-		// console.log(permission,othis.checked);
+
+	$scope.closeWin = function(){
+		closeright(function(){
+			rolesService.rightwin = false;
+		});
+	};
+
+	$scope.initPermission = function(){
+		rolesService.initPermission(function(r){
+			var arr = [];
+			for(el in r){
+				arr.push({
+					'key':el,
+					'value':r[el]
+				});
+			}
+			$scope.permissions = arr;
+		});
+	};
+
+	$scope.initEdit = function(){
+		rolesService.initPermission(function(permissions){
+			rolesService.permissionList(rolesService.roles_id,function(r){
+				var arr = [];
+				for(p in permissions){
+					arr.push({
+						'key':p,
+						'value':permissions[p],
+						'select':rolesService.in_array(p,r)
+					});
+				}
+				$scope.edit_permissions = arr;
+				rolesService.select_edit = r;
+				$scope.e_name = rolesService.name;
+			});
+		});
+	};
+
+	$scope.select_edit = function(key,othis){
+		if(othis.checked){
+			if(!rolesService.select_edit){
+				rolesService.select_edit = [];
+			}
+			rolesService.select_edit.push(key);
+		}else{
+			var arr = [];
+			rolesService.select_edit.forEach(function(ele,index){
+				if(ele != key){
+					arr.push(ele);
+				}
+			});
+			rolesService.select_edit = arr;
+		}
+		
+	};
+
+	$scope.delete = function(){
+		layer.msg('确定删除？', {
+		    time: 0
+		    ,btn: ['确定', '取消']
+		    ,yes: function(index){
+		        layer.close(index);
+				rolesService.delete(function(r){
+					$scope.roles = rolesService.data;
+					closeright(function(){
+						rolesService.rightwin = false;
+					});
+				});
+		    }
+		});
 	}
+
+	$scope.select_add = function(key,othis){
+		if(othis.checked){
+			if(!rolesService.select_add){
+				rolesService.select_add = [];
+			}
+			rolesService.select_add.push(key);
+		}else{
+			var arr = [];
+			rolesService.select_add.forEach(function(ele,index){
+				if(ele != key){
+					arr.push(ele);
+				}
+			});
+			rolesService.select_add = arr;
+		}
+	};
+
+	$scope.add = function(othis){		
+		rolesService.add($scope.add_name,function(){
+			$scope.roles = rolesService.data;
+			$(othis).prev().trigger('click');
+		});
+	};
+
+	//请求权限列表
+	function permission_list(roles_id){
+		rolesService.permissionList(roles_id,function(r){
+			$scope.permission_list = r;
+		});
+	}
+
+	$scope.edit = function(othis){
+		rolesService.edit($scope.e_name,function(){
+			$scope.roles = rolesService.data;
+			permission_list(rolesService.roles_id);
+			$(othis).prev().trigger('click');
+		});
+	};
+
+	$scope.initRight = function(u){
+
+		$scope.intro = u.name;
+		rolesService.name = u.name;
+
+		if(rolesService.roles_id != u.roles_id){
+
+			callright(function(){
+				rolesService.rightwin = true;
+				permission_list(u.roles_id);
+			});
+
+			rolesService.roles_id = u.roles_id;
+
+		}else{
+			if(rolesService.rightwin == true){
+				closeright(function(){
+					rolesService.rightwin = false;
+				});
+			}else{
+				callright(function(){
+					rolesService.rightwin = true;
+					permission_list(u.roles_id);
+				});
+			}
+		}
+
+	};
+	
 });
+
 myapp.service('resourceService',function(){
 	var obj = {
 		'data':[],
@@ -2367,8 +2826,8 @@ myapp.directive('requestProcessGroup',function($http){
 
 myapp.service('payrecordService',function($http){
 	var obj = {
-		get:function(fn){
-			$post($http,_host+"payrecord/find",{}).success(function(r){
+		get:function(params,fn){
+			$post($http,_host+"payrecord/find",params).success(function(r){
 				if(r) obj.data = r;
 				fn(r);
 			});
@@ -2436,8 +2895,29 @@ myapp.controller('payrecordCtrl',function($scope,payrecordService){
 	var now = new Date();
 	$scope.today = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate();
 
-	payrecordService.get(function(){
-		$scope.payrecord = payrecordService.data;
+	// payrecordService.get(function(){
+	// 	$scope.payrecord = payrecordService.data;
+	// });
+	void function (current,fn){
+		var arg = arguments;
+		payrecordService.get({"page":current},function(r){
+			$scope.payrecord = r.data;
+			var pagination = pageit(current,r.total);
+			if(pagination.length > 0){
+				$scope.pagination = pagination;
+				$scope.current = current;
+				$scope.getPage = function(othis){
+					var want_current = $(othis).attr('data-current');
+					if(want_current != current){
+						layer.load();
+						arg.callee(want_current,fn);
+					}
+				};
+			}
+			fn();
+		});
+	}(1,function(){
+		layer.closeAll('loading');
 	});
 
 	$scope.initRight = function(u){

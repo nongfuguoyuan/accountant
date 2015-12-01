@@ -71,14 +71,19 @@
 				'business_id'=>$business_id
 			));
 		}
-		function find(){
-			$post = $this->post;
-			$page = $post['page'];
-			$pagenum = $post['pageNum'];
-			if(empty($page)) $page = 1;
-			if(empty($pagenum)) $pagenum = 100;
-			return $this->load('business')->find(array($page,$pagenum));
+		function _find(){
+
+			$page = $this->page();
+			$employee_id = (int)$this->session['user']['employee_id'];
+			return $this->load('business')->_find($employee_id,array($page));
+			
 		}
+
+		function find(){
+			$page = $this->page();
+			return $this->load('business')->find(array($page));
+		}
+		
 		function save(){
 
 			$post = $this->post;
