@@ -41,7 +41,7 @@
         <!-- END Stylesheets -->
         <script type="text/javascript">
             _permission = [];
-            _host = 'http://192.168.10.105/accountant/';
+            _host = 'http://192.168.10.100/accountant/';
         </script>
     </head>
     <body>
@@ -565,7 +565,7 @@
 
                 if(/^1[35789]\d*$/.test(value)){
                     //phone
-                    $.post('http://192.168.10.105/accountant/guest/searchByPhone',{'phone':value},function(r){
+                    $.post(_host+'accountant/guest/searchByPhone',{'phone':value},function(r){
                         if(r){
                             var ul = buildLi(r,sureme);
                             if(ul){
@@ -579,7 +579,7 @@
                     });
                 }else if(/^[^\d\w]+$/.test(value)){
                     //company
-                    $.post('http://192.168.10.105/accountant/guest/searchByCom',{'com':value},function(r){
+                    $.post(_host+'accountant/guest/searchByCom',{'com':value},function(r){
                         if(r){
                             var ul = buildLi(r,sureme);
                             if(ul){

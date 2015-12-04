@@ -4,9 +4,10 @@ class Main {
 	function start($clazz,$method){
 		
 
-		if($this->filter($clazz,$method) == false){
-			return 'No Permission';
-		}
+		// if($this->filter($clazz,$method) == false){
+		// 	// return 'No Permission';
+		// 	return json_encode(array());
+		// }
 
 		try{
 

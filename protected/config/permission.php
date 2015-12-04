@@ -34,7 +34,7 @@
 		'dashboard'				=> '*仪表盘(管理面板)',
 
 		'department'			=> '部门（所有权限）',
-		'department/findByEmpolyee'=> '显示部门用户',
+		'department/findByEmployee'=> '显示部门用户',
 		'department/findAll'	=> '显示所有部门',
 		'department/findMenu'	=> '显示部门列表',
 

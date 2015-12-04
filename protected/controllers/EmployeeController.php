@@ -84,7 +84,24 @@ class EmployeeController extends ZjhController{
 			return $this->session['user']['permissions'];
 		}
 	}
-
+	/*author:zgj 
+	*date:2015-12-3
+	*修改密码
+	*/
+	public function changePass(){
+		$post = $this->post;
+		$oldPass = isset($post['oldPass'])?$post['oldPass']:null;
+		$newPass = isset($post['newPass'])?$post['newPass']:null;
+		$employee_id=$this->session['user']['employee_id'];
+		$user = $this->load('employee')->findPass($employee_id);
+		$pass = $user[0]['password'];
+		if($pass == secret($oldPass)){
+			$r = $this->load('employee')->changePass(secret($newPass),$employee_id);
+		}else{
+			$r = array('info'=>'老密码不对!');
+		}
+		return $r;
+	}
 	public function login(){
 		$post = $this->post;
 		$phone = $post['phone'];

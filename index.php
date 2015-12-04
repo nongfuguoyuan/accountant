@@ -5,7 +5,7 @@ header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, PUT');
 
-define('_HOST','http://192.168.10.105/accountant/');
+define('_HOST','http://192.168.10.100/accountant/');
 define('_DASHBOARD',_HOST.'protected/tmp/index.html');
 // define('CONFIG',"D:/dev/");
 

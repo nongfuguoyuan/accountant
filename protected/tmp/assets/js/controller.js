@@ -106,20 +106,19 @@ myapp.service('dashboardService',function($http){
 			});
 		},
 		getDepartment:function(fn){
-			$post($http,_host+"department/findByEmpolyee",{'employee_id':obj.employee_id}).success(function(r){
+			$post($http,_host+"department/findByEmployee",{'employee_id':obj.employee_id}).success(function(r){
 				fn(r);
 			});
 		},
 		
-		getTodo:function(http,fn){
-			$post(http,_host+'todo/todoNotice',{'accepter':'34'}).success(function(r){
-				
+		getTodo:function(fn){
+			$post($http,_host+'todo/todoNotice',{'accepter':obj.employee_id}).success(function(r){	
 				fn(r);
-			})
+			});
 			
 		},
-		getEarly:function(http,fn){
-			$post(http,_host+'todo/todoEarly',{'accepter':'34'}).success(function(r){
+		getEarly:function(fn){
+			$post($http,_host+'todo/todoEarly',{'accepter':obj.employee_id}).success(function(r){
 				fn(r);
 			})
 			
@@ -128,15 +127,12 @@ myapp.service('dashboardService',function($http){
 	return obj;
 });
 myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
-
-	$scope.todos = dashboardService.getTodo($http);
-
+	
 	//get session
 	$post($http,_host+"employee/session",{}).success(function(r){
 		if(r != 'false'){
 			$scope.name = r.user.name;
 			dashboardService.employee_id = r.user.employee_id;
-			dashboardService.department = '客服';
 			dashboardService.getCount(function(r){
 				$scope.count = r.count;
 			});
@@ -156,26 +152,25 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 			dashboardService.getDepartment(function(r){
 				$scope.department = r.name;
 			});
+			//zgj add 2015-12-2 
+			dashboardService.getTodo(function(r){
+				$scope.todos = r.data;
+				$scope.todo_count = r.total;
+				if($scope.todo_count > 0){
+					$scope.show_todo = true;
+				}
+			});
+			dashboardService.getEarly(function(r){
+				$scope.todo_early = r.data;
+				$scope.todo_count_early = r.total;
+				if($scope.todo_count_early > 0){
+					$scope.show_todo_early = true;
+				}
+			});
 
 		}
 	});
-
-
-	// $scope.todo_count = $scope.todos.length;
-	// if($scope.todo_count > 0){
-	// 	$scope.show_todo = true;
-	// }
-	// $scope.getEarly = dashboardService.getEarly($http,function(data){
-	// 	$scope.todo_early = data;
-	// 	$scope.todo_count_early = data.length;
-	// 	if(data.length > 0){
-	$scope.getEarly = dashboardService.getEarly($http,function(r){
-		$scope.todo_early = r.data;
-		$scope.todo_count_early = r.total;
-		if($scope.todo_count_early > 0){
-			$scope.show_todo_early = true;
-		}
-	});
+	
 });
 /*实时查询*/
 myapp.directive('searchUsersRealTime',function($http,$route){
@@ -1728,13 +1723,12 @@ myapp.controller('taxCtrl',function($scope,taxService){
 
 });
 
-myapp.service('todoService',function(){
+myapp.service('todoService',function($http){
 	var obj = {
 		"hasSelect":[],
 		data:[],
-		getTodo:function(http,fn){
-			$post(http,_host+"todo/findAll",{'page':'1','pageNum':'15'}).success(function(r){
-				obj.data = r.data;
+		get:function(params,fn){
+			$post($http,_host+"todo/findAll",params).success(function(r){
 				fn(r);
 			});	
 		},
@@ -1757,9 +1751,9 @@ myapp.service('todoService',function(){
 				var task_content = $scope.add_task_content,
 					date_start=$("#date_start_task").val(),
 					date_end=$("#date_end_task").val(),
-					sender=33,
+					sender=obj.sender,
 					accepter=obj.employee_id;
-					console.log(task_content);
+					console.log(sender);
 					layer.load();
 					if(task_content!==undefined){
 						$post(http,_host+"todo/save",{
@@ -1786,16 +1780,15 @@ myapp.service('todoService',function(){
 			}
 		},
 		editTask:function(http,$scope,fn){
-			return function(othis){
-				
+			return function(othis){			
 				var todo_id=obj.todo_id,
 					task_content = $scope.edit_task_content,
 					date_start=$("#date_start_task1").val(),
 					date_end=$("#date_end_task1").val(),
-					sender=33,
+					sender=obj.sender,
 					accepter=obj.employee_id;
 					layer.load();
-					
+					console.log(sender);
 					$post(http,_host+"todo/update",{
 						'todo_id':todo_id,
 						'task_content':task_content,
@@ -1820,15 +1813,40 @@ myapp.service('todoService',function(){
 					});
 			}
 		}
-
 	};
 	return obj;
 });
 myapp.controller('todoCtrl',function($scope,$http,todoService){
 
-	todoService.getTodo($http,function(r){
-		$scope.todos = todoService.data;
-		});
+	$post($http,_host+"employee/session",{}).success(function(r){
+		if(r != 'false'){
+			todoService.sender=r.user.employee_id;
+			
+		}
+	});
+	//zgj 2015-12-2 添加分页
+	void function (current,fn){
+		var arg = arguments;
+		todoService.get({"page":current},function(r){
+			$scope.todos = r.data;
+			var pagination = pageit(current,r.total);
+			if(pagination.length > 0){
+				$scope.pagination = pagination;
+				$scope.current = current;
+				$scope.getPage = function(othis){
+					var want_current = $(othis).attr('data-current');
+					if(want_current != current){
+						layer.load();
+						arg.callee(want_current,fn);
+					}
+				}
+			}
+			fn();
+		})
+	}(1,function(){
+		layer.closeAll('loading');
+	});
+	
 	$scope.sendSubTodo = function(){
 		$scope.copytask = this.u.task;
 	};
@@ -2654,9 +2672,9 @@ myapp.controller('resourceCtrl',function($scope,$http,resourceService){
 		resourceService.select_id = this.u.resource_id;
 	};
 });
-myapp.service('accountService',function(){
+myapp.service('accountService',function($http){
 	var obj = {
-		update:function(scope,ele,http,fn){
+		update:function(scope,fn){
 			return function(){
 				var old_pass = scope.old_pass,
 					new_pass = scope.new_pass,
@@ -2665,8 +2683,6 @@ myapp.service('accountService',function(){
 				if(!validate('pass',old_pass)){
 					layer.msg('老密码格式不正确');
 					return;
-				}else{
-					$post(http,_host+"employee/")
 				}
 				if(!validate('pass',new_pass)){
 					layer.msg('新密码格式不正确');
@@ -2676,26 +2692,30 @@ myapp.service('accountService',function(){
 					layer.msg('两次输入密码不相同');
 					return;
 				}
+				$post($http,_host+'employee/changePass',{'oldPass':old_pass,'newPass':new_pass}).success(function(r){
+					fn(r);
+				})
 				//send
-				layer.load();
-				setTimeout(function(){
-					layer.closeAll('loading');
-					layer.msg('修改成功');
-					if(typeof fn == 'function'){
-						fn();
-					}
-				},1000);
+				
 			};
 		}
 	};
 	return obj;
 });
 myapp.controller('accountCtrl',function($scope,$http,accountService){
-	$scope.checkPass = accountService.update($scope,function(){
+	$scope.checkPass = accountService.update($scope,function(r){
 		$scope.old_pass = '';
 		$scope.new_pass = '';
 		$scope.repeat_pass = '';
-		$scope.$apply();
+		if(r==1){
+			setTimeout(function(){
+				layer.msg('修改成功');
+			},1000);	
+		}else{
+			setTimeout(function(){
+				layer.msg(r.info);
+			},1000);
+		}
 	});
 });
 myapp.service('taxTypeService',function($http){
