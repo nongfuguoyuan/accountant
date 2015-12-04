@@ -1,38 +1,85 @@
 <?php
 class Main {
-	
-	function start($clazz,$method){
-		
 
-		if($this->filter($clazz,$method) == false){
-			return 'No Permission';
+	private $clazz;
+	private $method;
+
+	function __construct(){
+
+		$uri = explode("/",$_SERVER['REQUEST_URI']);
+
+		if($uri[2] == end($uri)){
+
+			$this->clazz = "tourist";
+			$this->method = strtolower($uri[2]);
+
+		}else if($uri[2] && $uri[3]){
+			
+			$this->clazz = strtolower($uri[2]);
+			$this->method = strtolower($uri[3]);
+
+		}
+	}
+
+	function dispatch(){
+		$file = C_PATH.ucfirst($this->clazz)."Controller.php";
+		if(file_exists($file)){
+			require($file);
+			$class = ucfirst($this->clazz)."Controller";
+			$controller = new $class();
+			if(is_callable(array($controller,$this->method))){
+				$ret = call_user_func(array($controller,$this->method));
+				if(is_array($ret) || is_bool($ret)){
+					return json_encode($ret);
+				}else{
+					return $ret;//return value is string type
+				}
+			}else{
+				return "can not call method you request";
+			}
+		}else{
+			trigger_error("can not find controller file");
 		}
 
-		try{
+	}
 
-			$clazz = ucfirst($clazz)."Controller";
-			$controller = $this->getControll($clazz);
-			$result = $controller->$method();
-			return json_encode($result);
-
-		}catch(Exception $e){
-			return "No This Url Exists";
-			exit;
+	function start(){
+		
+		if(empty($this->clazz) || empty($this->method)){
+			return 'can not find file you request!';
+		}else{
+			
+			if($this->filter($this->clazz,$this->method)){
+				return $this->dispatch();
+			}else{
+				return "no permission";
+				return json_encode(array());
+			}
 		}
 	}
 
 	function filter($clazz,$method){
+		
+		global $publicPermission;
+
 		$clazz = strtolower($clazz);
 		$method = strtolower($method);
 		$permission = $_SESSION['user']['permissions'];
 
-		if($clazz == 'employee' && ($method == 'login' || $method == 'logout')){
+		if($clazz == 'tourist'){
 			return true;
 		}else{
 			if(empty($_SESSION['user'])){
 				return 'Please Login First';
 			}else{
-				return (in_array($clazz,$permission) || in_array($clazz."/".$method,$permission));
+
+				$pub = array_map('strtolower',array_keys($publicPermission));
+
+				if(in_array($clazz,$pub) || in_array($clazz."/".$method,$pub)){
+					return true;
+				}else{
+					return (in_array($clazz,$permission) || in_array($clazz."/".$method,$permission));
+				}
 			}
 		}
 

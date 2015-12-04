@@ -80,20 +80,21 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    权限(建议*号必须选中)
+                                    权限
                                 </div>
                                 <label class="col-xs-12" ng-repeat="p in edit_permissions" class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db">
                                     <span ng-if="p.select == true">
-                                        <input checked="checked" ng-click="select_edit(p.key,$event.target)" type="checkbox"><span></span>{{p.key}}
+                                        <input checked="checked" ng-click="select_edit(p.key,$event.target)" type="checkbox"><span></span>{{p.value}}
                                         <span class="push-5-l">
-                                            {{p.value}}
+                                            {{p.key}}
                                         </span>
                                     </span>
 
                                     <span ng-if="p.select == false">
-                                        <input ng-click="select_edit(p.key,$event.target)" type="checkbox"><span></span>{{p.key}}
+                                        <input ng-click="select_edit(p.key,$event.target)" type="checkbox"><span></span>
+                                        {{p.value}}
                                         <span class="push-5-l">
-                                            {{p.value}}
+                                        {{p.key}}
                                         </span>
                                     </span>
 
@@ -133,15 +134,15 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    权限(建议*号必须选中)
-                                    <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db" type="checkbox">
+                                    权限
+                                    <!-- <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db" type="checkbox">
                                         所有
                                         <input onclick="toggleAll(this)" type="checkbox"><span></span>
                                     </label>
                                     <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db" type="checkbox">
                                         综合
                                         <input onclick="toggleClass(this)" type="checkbox"><span></span>
-                                    </label>
+                                    </label> -->
                                 </div>
                                 <div class="col-xs-12" id="all-permission">
                                     <label ng-repeat="p in permissions" class="css-input css-checkbox css-checkbox-sm css-checkbox-primary db">

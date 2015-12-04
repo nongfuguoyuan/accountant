@@ -1,10 +1,38 @@
 <?php
-	require('./protected/base/function.php');
-	header("Content-type: text/html; charset=utf8"); 
+	// require('./protected/base/function.php');
+	// header("Content-type: text/html; charset=utf8"); 
 	
-	$url = "http://localhost/accountant/";
-	var_dump(unserialize("a:16:{i:0;s:5:\"guest\";i:1;s:4:\"area\";i:2;s:8:\"business\";i:3;s:9:\"dashboard\";i:4;s:10:\"department\";i:5;s:8:\"employee\";i:6;s:9:\"payrecord\";i:7;s:12:\"processgroup\";i:8;s:7:\"process\";i:9;s:6:\"record\";i:10;s:8:\"resource\";i:11;s:4:\"roles\";i:12;s:3:\"tax\";i:13;s:8:\"taxcount\";i:14;s:7:\"taxtype\";i:15;s:4:\"todo\";}"
-	));
+	// $url = "http://localhost/accountant/";
+	// ob_start();
+	// require("login.html");
+
+	// $output = ob_get_contents();
+	// ob_end_clean();
+	// echo $output;
+	if(version_compare(PHP_VERSION, "5.3.0", "<")) die("require PHP > 5.3.0!");
+	error_reporting(E_ERROR);
+	session_start();
+
+	function init(){
+		$url = "http://localhost/accountant/";
+		extract(array(1,2));
+		ob_start();
+		require("login.html");
+		$output = ob_get_contents();
+		ob_end_clean();
+		return $output;
+	}
+
+	// echo init();
+	// echo json_encode(array(1,2,3,4));
+	$arr = array(1);
+	echo end($arr);
+	echo $arr[0];
+
+
+
+
+
 	// echo phppost($url."roles/delete",array(
 	// 	'roles_id'=>4
 	// ));

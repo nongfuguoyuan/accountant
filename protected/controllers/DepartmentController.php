@@ -1,10 +1,10 @@
 <?php
 	class DepartmentController extends ZjhController {
 
-		function findByEmpolyee(){
+		function findByEmployee(){
 
 			$employee_id = (int)$this->post['employee_id'];
-			return $this->load('department')->findByEmpolyee($employee_id);
+			return $this->load('department')->findByEmployee($employee_id);
 			
 		}
 

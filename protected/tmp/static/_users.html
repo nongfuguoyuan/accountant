@@ -63,9 +63,10 @@
 		        只看自己<input type="checkbox" checked="checked"><span></span>
 		    </label> -->
 		    <div class="pull-left rel">
-		    	<input placeholder="公司/姓名/电话" ng-model="searchstr" class="form-control input-lg" type="text" search-users-real-time>
+		    	<input ng-keyup="searchByPhoneCom($event.target,$event)" placeholder="公司/姓名/电话" ng-model="searchstr" class="form-control input-lg" type="text" >
+		    	<!-- search-users-real-time -->
 		    	<ul class="search-result" id="active-ul">
-		    		<li ng-repeat='r in results' data-value="{{r.company}}" data-id="{{ r.guest_id }}" sure-search-result>
+		    		<li ng-repeat='r in results' data-value="{{r.company}}" data-id="{{ r.guest_id }}">
 		    			{{ r.company }} {{ r.name }}
 		    		</li>
 		    	</ul>

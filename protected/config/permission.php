@@ -9,8 +9,6 @@
 		'guest/searchByPhone' 	=> '客户/按电话搜索',
 		'guest/searchByCom'     => '客户/按公司名搜索',
 
-		'area'					=> '*查找地区',
-
 		'accounting'			=> '代理记账（所有权限）',
 		'accounting/save'		=> '添加代理记账任务',
 		'accounting/update'		=> '更新代理记账信息',
@@ -19,7 +17,7 @@
 		'accounting/_find'		=> '查看自己名下代理记账用户',
 		'accounting/delete'		=> '删除代理记账任务',
 
-		'progress'				=> "*进度",
+		'progress'				=> "工商业务进度（所有权限）",
 
 		'business'				=> '工商注册（所有权限）',
 		'business/_find'		=> '查看自己名下工商用户',
@@ -31,14 +29,19 @@
 		'business/update'		=> '更新工商用户信息',
 		'business/delete'		=> '删除工商用户',
 
-		'dashboard'				=> '*仪表盘(管理面板)',
+		
 
 		'department'			=> '部门（所有权限）',
-		'department/findByEmpolyee'=> '显示部门用户',
-		'department/findAll'	=> '显示所有部门',
-		'department/findMenu'	=> '显示部门列表',
+		'department/save'			=> '添加部门',
+		'department/update'			=> '更新部门',
+		'department/delete'			=> '删除部门',
+		
 
 		'employee'				=> '员工(所有权限)',
+		"employee/updateStatus" => '更新员工状态（为离职）',
+		"employee/save"			=>	'添加员工',
+		"employee/update"		=>	'更新员工信息',
+		"employee/delete"		=>	'删除员工',
 
 		'payrecord'				=> '缴费记录(所有权限)',
 		'payrecord/_find'		=> '自己名下用户最近月份缴费总额',
@@ -47,15 +50,15 @@
 		'payrecord/delete'		=> '删除用户缴费记录',
 		'payrecord/find'		=> '所有用户最近月份缴费总额',
 
-		'processgroup'			=> '*流程组(所有权限)',
+		'processgroup'			=> '流程组(所有权限)',
 
-		'process'				=> '*查看流程',
+		'process'				=> '流程(所有权限)',
 
-		'record'				=> '*追踪记录（所有权限）',
+		'record'				=> '追踪记录（所有权限）',
 
-		'resource'				=> '*客户来源（所有权限）',
+		'resource'				=> '客户来源（所有权限）',
 
-		'roles'					=> '角色（权限）设置',
+		'roles'					=> '权限设置',
 
 		'taxcollect'			=> '缴税记录（所有权限）',
 		'taxcollect/_find'		=> '自己用户名下缴税记录',
@@ -68,6 +71,28 @@
 		'taxcount'				=> '税务统计(所有权限)',
 		'taxcount/save'			=> '添加税务统计',
 		'taxtype'				=> '税务类型设置',
+
 		'todo'					=> '任务（所有权限）'
 	);
+
+	//所有人都该具备的权限
+
+	$publicPermission = array(
+		'dashboard'				=> '仪表盘(管理面板)',
+		'area'					=> '查找地区',
+		'tourist'				=> '登录/登入首页/注销/等',
+		"employee/session" 		=>	'员工查看是否登陆',
+		"employee/permission"	=>	'员工查看权限',
+		"employee/find"			=>	'员工查看其他员工信息',
+		"employee/findByDepartmentid"=>	'按部门查看员工',
+		'department/findByEmployee'=> '显示部门用户',
+		'department/findAll'	=> '显示所有部门',
+		'department/findMenu'	=> '显示部门列表',
+		'processgroup/find'=> '流程组整个流程',
+		'processgroup/findNameById'=> '流程组整个流程',
+		'processgroup/find'		=> '流程组整个流程',
+		'processgroup/findByid'	=> '流程组整个流程',
+		'processgroup/findByName'=> '流程组整个流程'
+	);
+
  ?>

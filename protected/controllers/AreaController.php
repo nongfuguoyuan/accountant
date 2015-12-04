@@ -1,17 +1,9 @@
 <?php
 
-class AreaController extends \BasicController {
+class AreaController extends ZjhController{
 	
-	public function __construct($tableName=__CLASS__){
-		
-		parent::__construct($tableName);
-	}
-	
-	public function findAll(){
-
-		$objs=parent::findAll();
-		$objs=$objs['data'];
-		return $objs;
+	function find(){
+		return $this->load("area")->find();
 	}
 }
 
