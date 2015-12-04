@@ -24,6 +24,28 @@
 			$this->session = &$_SESSION;
 			$this->json();
 		}
+
+		public function redirect($uri){
+			header("Location:"._HOST.$uri);
+			exit;
+		}
+
+		public function html(){
+			header("Content-type:text/html;charset=utf-8");
+		}
+		public function view($file,$data=array()){
+			$this->html();
+			extract($data);
+			ob_start();
+			if(file_exists($file)){
+				require($file);
+			}else{
+				trigger_error('can not find static file!');
+			}
+			$output = ob_get_contents();
+			ob_end_clean();
+			return $output;
+		}
 		
 		public function page(){
 			$page = (int)$this->post['page'];

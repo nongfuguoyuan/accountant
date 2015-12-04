@@ -32,7 +32,9 @@ class RolesController extends ZjhController {
 	}
 
 	function allPermission(){
-		require_once("/../config/permission.php");
+		
+		global $permissions;
+
 		return $permissions;
 	}
 	

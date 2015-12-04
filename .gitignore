@@ -1,6 +1,7 @@
 /.htaccess
 /*.html
-test.php
+/test.php
+/login.html
 /.settings
 /.project
 /.project.sumlime-workspace

@@ -1,5 +1,5 @@
 function gologout(){
-	window.location.href = _host+"employee/logout";
+	window.location.href = _host+"logout";
 }
 function callright(fn){
 	$("#zside-overlay").stop().animate({'right':'0'},200,'swing',function(){

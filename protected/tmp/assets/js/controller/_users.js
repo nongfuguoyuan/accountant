@@ -6,6 +6,9 @@ myapp.service('_userService',function($http){
 				fn(r);
 			});
 		},
+		getById:function(guest_id){
+			
+		},
 		deleteGuest:function(fn){
 			$post($http,_host+"guest/_delete",{'guest_id':obj.guest_id}).success(function(r){
 				if(r){
@@ -148,6 +151,9 @@ myapp.service('_userService',function($http){
 					fn();
 				}
 			});
+		},
+		searchByPhoneCom:function(){
+
 		}
 	};
 	return obj;
@@ -160,6 +166,69 @@ myapp.controller('_userCtrl',function($scope,$http,_userService,businessService,
 	$scope.initResource = _userService.initResource($http,function(data){
 		$scope.resource = data;
 	});
+
+	$scope.searchByPhoneCom = function(othis,e){
+		var key = e.keyCode;
+		if(key == 40 || key == 38 || key == 13){
+			var ul = $("#active-ul");
+    		var lis = ul.children();
+    		var len = lis.length;
+    		
+    		if(len > 0){
+    			var active = ul.find('.active');
+    			var index = $(active).index();
+    			if(key == '40'){//down
+    				if(index < len -1){
+    					lis.removeClass('active');
+    					lis.eq(index+1).addClass('active');
+    				}
+	    		}
+	    		if(key == '38'){//up
+	    			if(index > 0){
+	    				lis.removeClass('active');
+	    				lis.eq(index-1).addClass('active');
+	    			}
+	    		}
+	    		if(key == '13'){//enter
+	    			var value = $(ele).val();
+	    			if(value){
+	    				$(active).trigger('click');	
+	    			}else{
+	    				$route.reload();
+	    			}
+	    		}
+    		}
+		}else{
+			var str = $scope.searchstr;
+    		if(str.match(/^\d+$/)){
+    			//按手机号查询
+    			$post($http,_host+"guest/searchByPhone",{"phone":str}).success(function(r){
+    				if(r){
+    					$scope.results = r;
+    				}else{
+    					$scope.results = [{}];
+    				}
+    			});
+    		}else if(str.match(/^[^\d\w]+$/)){
+    			//默认为按公司/姓名查询
+    			$post($http,_host+"guest/searchByCom",{"com":str}).success(function(r){
+    				// console.log(r);
+    				if(r){
+    					$scope.results = r;
+    				}else{
+    					$scope.results = [{}];
+    				}
+    			});
+    		}
+    		// if(typeof scope.results == 'undefined' || scope.results.length == 0){
+    		// 	scope.results = [{}];
+    		// }
+    		// if(scope.results.length > 0){
+    		// 	$("#active-ul").first().addClass('active');
+    		// }
+    		// scope.$apply();
+		}
+	};
 
 	$scope.whole = dateComponent.initWhole;
 

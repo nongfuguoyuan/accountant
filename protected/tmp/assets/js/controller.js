@@ -3,82 +3,82 @@ var myapp = angular.module('myapp',['ngRoute']);
 myapp.config(['$routeProvider',function($routeProvider){
 	$routeProvider
 	.when('/',{
-		templateUrl:'static/dashboard.html',
+		templateUrl:_static+"dashboard.html",
 		controller:'dashboardCtrl'
 	})
 	.when('/add_user',{
-		templateUrl:'static/add_user.html'
+		templateUrl:_static+'add_user.html'
 	})
 	.when('/users',{
-		templateUrl:'static/users.html',
+		templateUrl:_static+'users.html',
 		controller:'userCtrl'
 	})
 	.when('/_users',{
-		templateUrl:'static/_users.html',
+		templateUrl:_static+'_users.html',
 		controller:'_userCtrl'
 	})
 	.when('/process_group',{
-		templateUrl:'static/process_group.html',
+		templateUrl:_static+'process_group.html',
 		controller:'processGroupCtrl'
 	})
 	.when('/process',{
-		templateUrl:'static/process.html',
+		templateUrl:_static+'process.html',
 		controller:'processCtrl'
 	})
 	.when('/business',{
-		templateUrl:'static/business.html',
+		templateUrl:_static+'business.html',
 		controller:'businessCtrl'
 	})
 	.when('/_business',{
-		templateUrl:'static/_business.html',
+		templateUrl:_static+'_business.html',
 		controller:'_businessCtrl'
 	})
 	.when('/accounting',{
-		templateUrl:'static/accounting.html',
+		templateUrl:_static+'accounting.html',
 		controller:'accountingCtrl'
 	})
 	.when('/_accounting',{
-		templateUrl:'static/_accounting.html',
+		templateUrl:_static+'_accounting.html',
 		controller:'_accountingCtrl'
 	})
 	.when('/tax',{
-		templateUrl:'static/tax.html',
+		templateUrl:_static+'tax.html',
 		controller:'taxCtrl'
 	})
 	.when('/_tax',{
-		templateUrl:'static/_tax.html',
+		templateUrl:_static+'_tax.html',
 		controller:'_taxCtrl'
 	})
 	.when('/department',{
-		templateUrl:'static/department.html',
+		templateUrl:_static+'department.html',
 		controller:'departmentCtrl'
 	})
 	.when('/roles',{
-		templateUrl:'static/roles.html',
+		templateUrl:_static+'roles.html',
 		controller:'rolesCtrl'
 	})
 	.when('/resource',{
-		templateUrl:'static/resource.html',
+		templateUrl:_static+'resource.html',
 		controller:'resourceCtrl'
 	})
 	.when('/account',{
-		templateUrl:'static/account.html',
+		templateUrl:_static+'account.html',
 		controller:'accountCtrl'
 	})
 	.when('/tax_type',{
-		templateUrl:'static/tax_type.html',
+		templateUrl:_static+'tax_type.html',
 		controller:'taxTypeCtrl'
 	})
 	.when('/pay_record',{
-		templateUrl:'static/pay_record.html',
+		templateUrl:_static+'pay_record.html',
 		controller:'payrecordCtrl'
 	})
 	.when('/_pay_record',{
-		templateUrl:'static/_pay_record.html',
+		templateUrl:_static+'_pay_record.html',
 		controller:'_payrecordCtrl'
 	})
 	.when('/todo',{
-		templateUrl:'static/todo.html',
+		templateUrl:_static+'todo.html',
 		controller:'todoCtrl'
 	});
 }]);
@@ -247,6 +247,7 @@ myapp.directive('searchUsersRealTime',function($http,$route){
 	    }
 	};
 });
+
 myapp.directive('sureSearchResultTodo',function(todoService,$http){
 	return {
 		restrict:'A',
@@ -263,21 +264,21 @@ myapp.directive('sureSearchResultTodo',function(todoService,$http){
 		}
 	}
 })
+
 myapp.directive('sureSearchResultEmployee',function(todoService,$http){
 	return{
 		restrict:'A',
 		link:function(scope,ele,attrs){
 			ele.bind('click',function(){
 				todoService.employee_id=scope.r.employee_id;
-				console.log(todoService);
 				scope.$parent.searchstr = scope.r.name;
 				scope.$parent.results= [{}];
 				scope.$parent.$apply();
-				console.log(scope.$parent)
 			})
 		}
 	}
 });
+
 myapp.directive('sureSearchResult',function(userService,$http){
 	return {
 		restrict:'A',
@@ -302,7 +303,7 @@ myapp.directive('requestArea',function($http){
 	return {
 		restrict:'A',
 		link:function(scope,ele,attrs){
-			$post($http,_host+"area/findall",{}).success(function(r){
+			$post($http,_host+"area/find",{}).success(function(r){
 				if(r){
 					scope.areas = r;
 				}
@@ -470,10 +471,8 @@ myapp.directive('searchEmployeeRealTime',function($http,$route){
 						$post($http,_host+"employee/search",{"phone":str}).success(function(r){
 							if(r){
 								scope.results = r;
-								console.log(r);
 							}else{
 								scope.results = [{}];
-								console.log('error');
 							}
 						});
 					}else if(str.match(/^[^\d]+$/)){//默认按姓名查询
@@ -509,7 +508,6 @@ myapp.directive('requestDepartment',function($http){
 
 					$post($http,_host+"department/findAll",{}).success(function(r){
 						scope.department=r;
-						console.log(r);
 					})
 					
 					scope.$apply();
@@ -1530,7 +1528,7 @@ myapp.service('taxService',function($http){
 				'nation':nation,
 				'local':local
 			}).success(function(r){
-				console.log(r);
+				
 			});
 		}
 	};
@@ -1753,7 +1751,7 @@ myapp.service('todoService',function($http){
 					date_end=$("#date_end_task").val(),
 					sender=obj.sender,
 					accepter=obj.employee_id;
-					console.log(sender);
+					
 					layer.load();
 					if(task_content!==undefined){
 						$post(http,_host+"todo/save",{
@@ -1764,7 +1762,6 @@ myapp.service('todoService',function($http){
 						'accepter':accepter
 						}).success(function(r){
 							layer.closeAll('loading');
-							console.log(r);
 							if(r.affected_rows==1){
 								obj.data.splice(0,0,r.data[0]);
 								fn(othis);
@@ -1797,7 +1794,6 @@ myapp.service('todoService',function($http){
 						'sender':sender,
 						'accepter':accepter
 					}).success(function(r){
-						console.log(r);
 						layer.closeAll('loading');
 						if(r.affected_rows==1){
 							obj.data.forEach(function(ele,index){
@@ -1874,7 +1870,6 @@ myapp.controller('todoCtrl',function($scope,$http,todoService){
 	});
 	$scope.editTask = todoService.editTask($http,$scope,function(ele){
 		if(ele.nodeName == 'I'){
-			console.log(ele);
 			$(ele).parent().prev().trigger('click');
 		}else{
 			$(ele).prev().trigger('click');
@@ -2350,7 +2345,7 @@ myapp.service('rolesService',function($http){
 				layer.load();
 				$post($http,_host+"roles/update",{'roles_id':obj.roles_id,'name':name,'permission':obj.select_edit}).success(function(r){
 					layer.closeAll('loading');
-					console.log(r);
+					
 					if(r != 'false'){
 						obj.data.forEach(function(ele,index){
 							if(ele.roles_id == r.roles_id){
