@@ -109,19 +109,6 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 
 			$scope.total = total;	
 		}
-=======
-myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
-	
-	//get session
-	$post($http,_host+"employee/session",{}).success(function(r){
-		if(r != 'false'){
-			$scope.name = r.user.name;
-			dashboardService.employee_id = r.user.employee_id;
-			dashboardService.getCount(function(r){
-				$scope.count = r.count;
-			});
->>>>>>> tmp
-
 		if(_config.tag == 'accounting'){
 			$scope.accept_business = r.accept_business.count || 0;
 			$scope.unaccept_business = r.unaccept_business.count || 0;
@@ -132,6 +119,7 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 		}
 
 		if(_config.tag == 'accounting_admin'){
+
 			$scope.accept_business = r.accept_business.count || 0;
 			$scope.unaccept_business = r.unaccept_business.count || 0;
 			$scope.accept_accounting = r.accept_accounting.count || 0;
@@ -151,7 +139,6 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 			
 			var total= 0;
 
-<<<<<<< HEAD
 			$scope.ing = r.ing.count || 0;
 			total += parseInt($scope.ing);
 			$scope.deal = r.deal.count || 0;
@@ -169,30 +156,9 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 			d_total += parseInt($scope.d_deal);
 			$scope.d_lose = r.d_lose.count || 0;
 			d_total += parseInt($scope.d_lose);
-=======
-			dashboardService.getDepartment(function(r){
-				$scope.department = r.name;
-			});
-			//zgj add 2015-12-2 
-			dashboardService.getTodo(function(r){
-				$scope.todos = r.data;
-				$scope.todo_count = r.total;
-				if($scope.todo_count > 0){
-					$scope.show_todo = true;
-				}
-			});
-			dashboardService.getEarly(function(r){
-				$scope.todo_early = r.data;
-				$scope.todo_count_early = r.total;
-				if($scope.todo_count_early > 0){
-					$scope.show_todo_early = true;
-				}
-			});
->>>>>>> tmp
 
 			$scope.d_total = d_total;
 		}
-<<<<<<< HEAD
 
 		if(_config.tag == 'admin'){
 			$scope.ing = r.ing.count || 0;
@@ -214,17 +180,13 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 		}
 	});
 
-	$scope.getEarly = dashboardService.getEarly($http,function(r){
+	$scope.getEarly = dashboardService.getEarly(function(r){
 		$scope.todo_early = r.data;
 		$scope.todo_count_early = r.total;
 		if($scope.todo_count_early > 0){
 			$scope.show_todo_early = true;
 		}
 	});
-=======
-	});
-	
->>>>>>> tmp
 });
 /*实时查询*/
 myapp.directive('searchUsersRealTime',function($http,$route){
@@ -3377,7 +3339,6 @@ myapp.controller('resourceCtrl',function($scope,$http,resourceService){
 myapp.service('accountService',function($http){
 	var obj = {
 		update:function(scope,fn){
-<<<<<<< HEAD
 			var old_pass = scope.old_pass,
 				new_pass = scope.new_pass,
 				repeat_pass = scope.repeat_pass;
@@ -3402,36 +3363,10 @@ myapp.service('accountService',function($http){
 					fn();
 				});
 			});
-=======
-			return function(){
-				var old_pass = scope.old_pass,
-					new_pass = scope.new_pass,
-					repeat_pass = scope.repeat_pass;
-
-				if(!validate('pass',old_pass)){
-					layer.msg('老密码格式不正确');
-					return;
-				}
-				if(!validate('pass',new_pass)){
-					layer.msg('新密码格式不正确');
-					return;
-				}
-				if(new_pass != repeat_pass){
-					layer.msg('两次输入密码不相同');
-					return;
-				}
-				$post($http,_host+'employee/changePass',{'oldPass':old_pass,'newPass':new_pass}).success(function(r){
-					fn(r);
-				})
-				//send
-				
-			};
->>>>>>> tmp
 		}
 	};
 	return obj;
 });
-<<<<<<< HEAD
 
 myapp.controller('accountCtrl',function($scope,accountService){
 	$scope.editPass = function(){
@@ -3441,23 +3376,6 @@ myapp.controller('accountCtrl',function($scope,accountService){
 			$scope.repeat_pass = '';
 		});
 	}
-=======
-myapp.controller('accountCtrl',function($scope,$http,accountService){
-	$scope.checkPass = accountService.update($scope,function(r){
-		$scope.old_pass = '';
-		$scope.new_pass = '';
-		$scope.repeat_pass = '';
-		if(r==1){
-			setTimeout(function(){
-				layer.msg('修改成功');
-			},1000);	
-		}else{
-			setTimeout(function(){
-				layer.msg(r.info);
-			},1000);
-		}
-	});
->>>>>>> tmp
 });
 
 myapp.service('taxTypeService',function($http){
