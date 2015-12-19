@@ -13,6 +13,7 @@
             $this->pdo = new PDO("mysql:host=".$servername.";dbname=".$dbname,$username,$password,array(PDO::ATTR_PERSISTENT => true,PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8';"));
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
          }catch(Exception $e){
+            // trigger_error($e);
             trigger_error("database connecting error!please check class zjhsql construct params!");
             exit;
          }

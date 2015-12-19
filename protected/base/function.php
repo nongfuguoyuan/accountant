@@ -26,11 +26,20 @@ function validate($case,$str){
 		case 'name':
 			return preg_match('/^[\x{4e00}-\x{9fa5}]{2,4}$/u',$str);
 			break;
+		case 'year':
+			return preg_match('/^20\d{2}$/',$str);
+			break;
+		case 'date'://e:2015-12-12 no hours ...
+			return preg_match('/^20\d{2}[-\/\.]{1}(1[012]?|[1-9]|0[1-9])[-\/\.](0[1-9]|[12][0-9]|[1-9]|3[01])$/',$str);
+			break;
+		case 'month':
+			return preg_match('/(^0[1-9]$)|(^1[012]$)|(^[1-9]$)/',$str);
+			break;
 		case 'email':
 			return preg_match('/^[\da-zA-Z_]{5,}@[a-z\d]+\.(com|cn|net)$/',$str);
 			break;
 		case 'pass':
-			return preg_match('/^[a-zA-Z0-9_#%$@.]{8,20}$/', $str);
+			return preg_match('/^[a-zA-Z0-9_#%$@.]{6,20}$/', $str);
 			break;
 		case 'phone':
 			return preg_match('/^1[34578]\d{9}$/',$str);
@@ -45,7 +54,7 @@ function validate($case,$str){
 			return preg_match('/^\d{6}$/',$str);
 			break;
 		default:
-			return false;
+			throw new Exception('type you validate is not be supported');
 			break;
 	}
 }

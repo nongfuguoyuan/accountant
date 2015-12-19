@@ -23,16 +23,27 @@
 				create_time=now()
 			",$params);
 		}
+		function update($params){
+			return $this->db->exec("update `progress` set 
+				process_id=:process_id,
+				note=:note,
+				date_end=:date_end
+				where
+				progress_id=:progress_id
+			",$params);
+		}
+
 		function delete($progress_id){
 			return $this->db->exec('delete from `progress` where progress_id=?',$progress_id);
 		}
 		function find($business_id){
-			return $this->db->query("select
+			return $this->db->query('select
 				pr.progress_id,
 				pr.business_id,
+				p.process_id,
 				pr.note,
 				p.name,
-				pr.date_end,
+				DATE_FORMAT(pr.date_end ,"%Y-%m-%d") date_end,
 				pr.create_time
 				from
 				`progress` pr,
@@ -41,7 +52,7 @@
 				where
 				pr.business_id = b.business_id and
 				pr.process_id = p.process_id and
-				pr.business_id=?",$business_id);
+				pr.business_id=?',$business_id);
 		}
 	}
 ?>

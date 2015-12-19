@@ -1,6 +1,15 @@
 <?php
 	class Employee extends Model{
 
+		function updatePass($params){
+			return $this->db->exec('update `employee` set 
+				password=:new_pass
+				where
+				password=:old_pass
+				and
+				employee_id=:employee_id
+			',$params);
+		}
 
 		function updateStatus($employee_id,$status){
 			return $this->db->exec('update `employee` set status=:status where employee_id=:employee_id',array(
@@ -8,7 +17,27 @@
 				'status'=>$status
 			));
 		}
-
+		//按角色标签查找
+		function findByTag($tag){
+			return $this->db->query('select 
+				e.employee_id,
+				e.name
+				 from 
+				`employee` e,
+				`roles` r
+				where e.roles_id = r.roles_id
+				and e.status = 1
+				and r.tag = ?',$tag);
+		}
+		// 查询某个用户的角色
+		function findTag($employee_id){
+			return $this->db->queryOne("
+				select tag from `employee` e,`roles` r
+				where e.roles_id = r.roles_id
+				and employee_id=?
+			",$employee_id);
+		}
+		
 		function findByName($name){
 			return $this->db->query('select * from `employee` where name=?',$name);
 		}
@@ -20,6 +49,8 @@
 				e.employee_id,
 				e.name,
 				r.name r_name,
+				r.tag,
+				r.level,
 				r.permission permissions,
 				e.phone
 				from 
@@ -36,14 +67,18 @@
 				e.sex,
 				date_format(e.create_time,"%Y-%m-%d") create_time,
 				e.employee_id,
+				e.roles_id,
+				r.name r_name,
 				d.name d_name,
 				e.department_id,
 				e.phone
 				 from 
 				`employee` e,
+				`roles` r,
 				`department` d 
 				where
 				e.department_id=d.department_id
+				and r.roles_id = e.roles_id
 				and d.department_id= ?
 				and e.status = 1',$department_id);
 		}
@@ -51,6 +86,7 @@
 			$result = $this->db->query('select 
 				e.name,
 				e.sex,
+				r.roles_id,
 				r.name r_name,
 				date_format(e.create_time,"%Y-%m-%d") create_time,
 				e.employee_id,
@@ -78,6 +114,7 @@
 			return $this->db->queryOne('select 
 				e.name,
 				e.sex,
+				r.roles_id,
 				r.name r_name,
 				date_format(e.create_time,"%Y-%m-%d") create_time,
 				e.employee_id,

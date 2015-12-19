@@ -19,11 +19,11 @@
 				$pass = $post['pass'];
 
 				if(!validate('phone',$phone)){
-					return false;
+					$this->redirect(_HOST."login");
 				}
 
-				if(strlen($pass) < 5){
-					return false;
+				if(!validate('pass',$pass)){
+					$this->redirect(_HOST."login");
 				}
 
 				$result = $this->load('employee')->login($phone,secret($pass));
@@ -34,7 +34,6 @@
 					if(!empty($per)){
 						$result['permissions'] = array_map("strtolower",unserialize($per));
 					}
-
 					$this->session['user'] = $result;
 					$this->redirect('index');
 				}else{
@@ -55,17 +54,25 @@
 		}
 		
 		function index(){
+			global $error_code;
+
 			if(empty($this->session['user'])){
 				$this->redirect("login");
 			}else{
 				$permissions = $this->session['user']['permissions'];
 				return $this->view(HOME_PATH,array(
-					'static'=>_STATIC,
-					'host'=>_HOST,
-					'css'=>CSS,
-					'js'=>JS,
-					'img'=>IMG,
-					'permission'=>$permissions
+					'error_code'=> $error_code,
+					'static'	=>	_STATIC,
+					'host'		=>	_HOST,
+					'css'		=>	CSS,
+					'js'		=>	JS,
+					'img'		=>	IMG,
+					'tag'		=>	$this->session['user']['tag'],
+					'level'		=>	$this->session['user']['level'],
+					'r_name'	=>	$this->session['user']['r_name'],
+					'employee_id'=>	$this->session['user']['employee_id'],
+					'name'		=> 	$this->session['user']['name'],
+					'permission'=>	$permissions
 				));
 			}
 		}

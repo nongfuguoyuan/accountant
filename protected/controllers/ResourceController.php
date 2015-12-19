@@ -1,6 +1,7 @@
 <?php
 	class ResourceController extends ZjhController{
-		function findAll(){
+		
+		function find(){
 			return $this->load('resource')->find();
 		}
 		function save(){

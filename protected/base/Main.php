@@ -29,16 +29,43 @@ class Main {
 			$controller = new $class();
 			if(is_callable(array($controller,$this->method))){
 				$ret = call_user_func(array($controller,$this->method));
-				if(is_array($ret) || is_bool($ret)){
-					return json_encode($ret);
-				}else{
-					return $ret;//return value is string type
+				
+				if(is_array($ret)){
+					if(isset($ret['info'])){
+						$ret['error_code'] = 120;
+						return json_encode($ret);
+					}else{
+						return json_encode(array(
+							'error_code'	=>	0,
+							'list'			=> 	$ret
+						));
+					}
+				}else if(is_numeric($ret)){
+					if($ret == 0){
+						return json_encode(array('error_code'=>5));//insert or update fail
+					}else{
+						return json_encode(array('error_code'=>0,'info'=>'操作成功'));
+					}
+				}else if(is_string($ret)){
+					if(mb_strlen($ret,"utf-8") < 40){
+						return json_encode(array('info'=>$ret,"error_code"=>120));//return warning or notice
+					}else{
+						return $ret;//return html tmplate
+					}
+				}else if($ret == false){
+					return json_encode(array());
+				}
+				else{
+					// return $ret;
+					return "what's this?";
 				}
 			}else{
-				return "can not call method you request";
+				// return "can not call method you request";
+				return json_encode(array('error_code'=>4));
 			}
 		}else{
-			trigger_error("can not find controller file");
+			// trigger_error("can not find controller file");
+			return json_encode(array('error_code'=>3));
 		}
 
 	}
@@ -46,14 +73,17 @@ class Main {
 	function start(){
 		
 		if(empty($this->clazz) || empty($this->method)){
-			return 'can not find file you request!';
+			// return 'can not find file you request!';
+			return json_encode(array('error_code'=>3));
 		}else{
-			
-			if($this->filter($this->clazz,$this->method)){
+			$filter_result = $this->filter($this->clazz,$this->method);
+			if($filter_result === true){
 				return $this->dispatch();
-			}else{
-				return "no permission";
-				return json_encode(array());
+			}else if($filter_result === false){
+				return json_encode(array('error_code'=>1));//no permisssion
+			}
+			else{
+				return json_encode(array('error_code'=>$filter_result));//session timeout
 			}
 		}
 	}
@@ -70,7 +100,7 @@ class Main {
 			return true;
 		}else{
 			if(empty($_SESSION['user'])){
-				return 'Please Login First';
+				return 2;//session timeout
 			}else{
 
 				$pub = array_map('strtolower',array_keys($publicPermission));

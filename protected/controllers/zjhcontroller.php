@@ -1,24 +1,31 @@
 <?php
 	class ZjhController{
 
+		private function filter_tags($arr){
+			if(is_array($arr)){
+				foreach($arr as $key => $value){
+					if(is_array($value)){
+						$arr[$key] = $this->filter_tags($value);
+					}else{
+						$arr[$key] = trim(strip_tags($value));
+					}
+				}
+			}else{
+				return trim(strip_tags($arr));
+			}
+			return $arr;
+		}
+
 		public function __construct(){
 			$post = &$_POST;
 			$get = &$_GET;
 			
 			if(!empty($post)){
-				foreach($post as $key => $value){
-					// if(is_string($value)){
-					// 	$value = htmlspecialchars_decode(trim($value))
-					// }
-					$post[$key] = $value;
-				}
+				$post = $this->filter_tags($post);
 			}
 			if(!empty($get)){
-				foreach($get as $key => $value){
-					$get[$key] = htmlspecialchars_decode(trim($value));
-				}
+				$get = $this->filter_tags($get);
 			}
-
 			$this->post = $post;
 			$this->get = $get;
 			$this->session = &$_SESSION;
@@ -61,7 +68,7 @@
 		}
 
 		public function load($model){
-			require_once('/../base/'.$model.".php");
+			require_once(M_PATH.$model.".php");
 			$class = ucfirst($model);
 			return new $class();
 		}

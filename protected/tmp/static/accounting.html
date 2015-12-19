@@ -1,17 +1,59 @@
 <div class="row">
 	<div class="col-sm-12">
 		<div class="clearfix push-10">
-			<!-- <label class="css-input switch switch-sm switch-primary pull-left push-5">
-		        只看自己<input type="checkbox" checked="checked"><span></span>
-		    </label>
-		    <div class="pull-left push-10-l rel">
-		    	<input placeholder="姓名/电话" ng-model="searchstr" class="form-control input-sm" type="text" search-users-real-time>
-		    	<ul class="search-result">
-		    		<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{ r.user_id }}" sure-search-result>
-		    			{{ r.name }}
-		    		</li>
-		    	</ul>
-		    </div> -->
+		    <div class="pull-left">
+		    	<input class="form-control" ng-keyup="selectCom($event.target,$event)" placeholder="公司/电话/姓名">
+		    </div>
+		    <div class="pull-left push-5-l">
+		    	<select class="form-control" ng-change="selectStatus()" ng-model="status" ng-init="status=1">
+		    		<option value="1">已受理</option>
+		    		<option value="0">未受理</option>
+		    	</select>
+		    </div>
+		    <div class="pull-left push-5-l">
+		    	<select class="form-control" ng-change="selectFee()" ng-model="owe" ng-init="owe=0">
+		    		<option value="0">欠费</option>
+		    		<option value="1">正常</option>
+		    	</select>
+		    </div>
+		    <div class="pull-left remove-padding-l push-10-l rel call-date-control col-lg-2">
+				<div class="input-group">
+                    <input class="form-control" type="text" placeholder="日期" ng-model="whole"/>
+                    <span class="input-group-btn">
+                        <button ng-click="clearDate()" class="btn btn-default" type="button"><i class="fa fa-close"></i></button>
+                    </span>
+                </div>
+				<div class="date-select">
+					<div class="date-year">
+						<ul>
+							<li ng-click="initYear($event.target)">2014</li>
+							<li ng-click="initYear($event.target)">2015</li>
+							<li ng-click="initYear($event.target)">2016</li>
+						</ul>
+					</div>
+					<div class="date-month">
+						<ul>
+							<li><a ng-click="initMonth($event.target)">1</a></li>
+							<li><a ng-click="initMonth($event.target)">2</a></li>
+							<li><a ng-click="initMonth($event.target)">3</a></li>
+							<li><a ng-click="initMonth($event.target)">4</a></li>
+							<li><a ng-click="initMonth($event.target)">5</a></li>
+							<li><a ng-click="initMonth($event.target)">6</a></li>
+							<li><a ng-click="initMonth($event.target)">7</a></li>
+							<li><a ng-click="initMonth($event.target)">8</a></li>
+							<li><a ng-click="initMonth($event.target)">9</a></li>
+							<li><a ng-click="initMonth($event.target)">10</a></li>
+							<li><a ng-click="initMonth($event.target)">11</a></li>
+							<li><a ng-click="initMonth($event.target)">12</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		    <div ng-if="level>1" class="pull-left push-10-l input-xm">
+		    	<a ng-click="loadTree()" data-toggle="modal" data-target="#show-tree">
+		    		<input type="text" class="form-control" placeholder="部门" ng-model="select_department"/>
+		    	</a>
+		    </div>
 	    </div>
 		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
 			<thead class="bg-gray-light">
@@ -23,7 +65,7 @@
 				<th>跟进会计</th>
 				<th>受理状态</th>
 				<th>服务状态</th>
-				<!-- <th>税务详情</th> -->
+				<th>15天后</th>
 				<th>起始日期</th>
 				<th>服务期限</th>
 			</thead>
@@ -36,23 +78,23 @@
 					<td>{{ u.server }}</td>
 					<td>{{ u.accounting }}</td>
 					<td>
-                        <label class="css-input css-radio css-radio-success m0" ng-switch="u.status">
-                        	<span ng-switch-when="0">
-	                            <input type="radio" ng-click="updateStatus(u.accounting_id)"><span></span>
-	                            未受理
-                            </span>
-                            <span ng-switch-when="1">已受理</span>
-                        </label>
+						<div ng-switch="u.status">
+	                        <span ng-switch-when="0" >
+	                        	<span ng-click="updateStatus(u.accounting_id,u.employee_id)" class="cursor label label-danger" title="点击受理" data-original-title="快受理我" data-toggle="tooltip">未受理</span>
+	                        </span>
+							<span ng-switch-when="1">已受理</span>
+                        </div>
 					</td>
-					<td ng-model="today">
+					<td>
 						<span ng-if="today<u.deadline">正常</span>
-						<span ng-if="today>u.deadline">欠费</span>
+						<span ng-if="today>=u.deadline"><code>欠费</code></span>
 					</td>
-					<!-- <td>
-						<a ng-click="" data-toggle="modal" data-target="#add-new-tax">8月份已录入</a>
-					</td> -->
-					<td>{{ u.deadline }}</td>
+					<td>
+						<span ng-if="today15after<u.deadline">正常</span>
+						<span ng-if="today15after>=u.deadline"><code>即将到期</code></span>
+					</td>
 					<td>{{ u.create_time }}</td>
+					<td>{{ u.deadline }}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -100,4 +142,30 @@
 	    </div>
 	</div>
 	<!-- 录入税务信息 end   -->
+	<!-- 员工菜单 begin -->
+    <div class="modal in" id="show-tree" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">请选择</h3>
+	                </div>
+	                <div class="block-content clearfix">
+	                	<div id="tree-show" class="pull-left menu-tree">
+						</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="reload($event.target)" class="btn btn-sm btn-primary" type="button">确定</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <!-- 员工菜单 end   -->
 </div>

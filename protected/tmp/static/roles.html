@@ -50,9 +50,11 @@
 				<th>角色</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="u in roles" ng-click="initRight(u)">
+				<tr ng-repeat="u in roles">
 					<td>{{ $index+1 }}</td>
-					<td>{{ u.name }}</td>
+					<td>
+                        <a ng-click="initRight(u)">{{ u.name }}</a>
+                    </td>
 				</tr>
 			</tbody>
 		</table>

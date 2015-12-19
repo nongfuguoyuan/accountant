@@ -60,6 +60,13 @@ class RolesController extends ZjhController {
 		$name = $this->post['name'];
 		$permission = $this->post['permission'];
 
+		if($roles_id == 0){
+			return '请选定要操作的记录';
+		}
+		if(strlen($name) < 1){
+			return '名字不符合要求';
+		}
+
 		$result =  $this->load('roles')->update(array(
 			'roles_id'   => $roles_id,
 			'name'       => $name,
@@ -69,7 +76,7 @@ class RolesController extends ZjhController {
 		if($result){
 			return $this->load('roles')->findName($roles_id);
 		}else{
-			return false;
+			return 0;//update fail
 		}
 	}
 

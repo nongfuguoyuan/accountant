@@ -1,18 +1,75 @@
 <div class="row">
 	<div class="col-sm-12">
 		<div class="clearfix push-10">
-			<!-- <label class="css-input switch switch-sm switch-primary pull-left push-5">
-		        只看自己<input type="checkbox" checked="checked"><span></span>
-		    </label> -->
-		    <!-- <div class="pull-left push-10-l rel">
-		    	<input placeholder="姓名/电话" ng-model="searchstr" class="form-control input-sm" type="text" search-users-real-time>
-		    	<ul class="search-result">
-		    		<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{ r.user_id }}" sure-search-result>
-		    			{{ r.name }}
-		    		</li>
-		    	</ul>
-		    </div> -->
-		    <!-- <a class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-task">新建任务</a> -->
+		    <div class="pull-left">
+		    	<input class="form-control" ng-keyup="selectCom($event.target,$event)" placeholder="公司/电话/姓名">
+		    </div>
+		    <div class="pull-left  push-5-l">
+		    	<select class="form-control" ng-change="selectStatus()" ng-model="status" ng-init="status=1">
+		    		<option value="1">已受理</option>
+		    		<option value="0">未受理</option>
+		    	</select>
+		    </div>
+		    <div class="pull-left push-10-l rel" id="show-progress">
+		    	<input class="form-control" placeholder="进度" ng-model="process_str"/>
+		    	<div class="progress-content">
+		    		<div class="push-10">
+			    		<label class="css-input css-radio css-radio-primary remove-margin-t remove-margin-b">
+	                        <input name="x" ng-click="selectProcess($event.target)" type="radio" /><span></span>
+	                        清空
+	                    </label>
+                    </div>
+		    		<div ng-repeat="p in processgroup">
+			    		<h4 class="block-title push-10 font-w300">{{ p.name }}</h4>
+			    		<ul class="list-unstyled">
+			    			<li ng-repeat="r in p.process" class="push-5">
+			    				<label class="css-input css-radio css-radio-primary remove-margin-t remove-margin-b">
+			                        <input name="x" ng-click="selectProcess($event.target,p.process_group_id,p.name,r)" type="radio" value="{{ r.progress_id }}" /><span></span>
+			                        {{ r.name }}
+			                    </label>
+			    			</li>
+			    		</ul>
+		    		</div>
+		    	</div>
+		    </div>
+		    <div class="pull-left remove-padding-l push-10-l rel call-date-control col-lg-2">
+				<div class="input-group">
+                    <input class="form-control" type="text" placeholder="日期" ng-model="whole"/>
+                    <span class="input-group-btn">
+                        <button ng-click="clearDate()" class="btn btn-default" type="button"><i class="fa fa-close"></i></button>
+                    </span>
+                </div>
+				<div class="date-select">
+					<div class="date-year">
+						<ul>
+							<li ng-click="initYear($event.target)">2014</li>
+							<li ng-click="initYear($event.target)">2015</li>
+							<li ng-click="initYear($event.target)">2016</li>
+						</ul>
+					</div>
+					<div class="date-month">
+						<ul>
+							<li><a ng-click="initMonth($event.target)">1</a></li>
+							<li><a ng-click="initMonth($event.target)">2</a></li>
+							<li><a ng-click="initMonth($event.target)">3</a></li>
+							<li><a ng-click="initMonth($event.target)">4</a></li>
+							<li><a ng-click="initMonth($event.target)">5</a></li>
+							<li><a ng-click="initMonth($event.target)">6</a></li>
+							<li><a ng-click="initMonth($event.target)">7</a></li>
+							<li><a ng-click="initMonth($event.target)">8</a></li>
+							<li><a ng-click="initMonth($event.target)">9</a></li>
+							<li><a ng-click="initMonth($event.target)">10</a></li>
+							<li><a ng-click="initMonth($event.target)">11</a></li>
+							<li><a ng-click="initMonth($event.target)">12</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		    <div ng-if="level>1" class="pull-left push-10-l input-xm">
+		    	<a ng-click="loadTree()" data-toggle="modal" data-target="#show-tree">
+		    		<input type="text" class="form-control" placeholder="部门" ng-model="select_department"/>
+		    	</a>
+		    </div>
 	    </div>
 		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
 			<thead class="bg-gray-light">
@@ -27,6 +84,7 @@
 				<th>应收款</th>
 				<th>已收款</th>
 				<th>进度</th>
+				<th>预计完成</th>
 				<th>申请时间</th>
 			</thead>
 			<tbody>
@@ -39,26 +97,26 @@
 					<td>{{ u.server }}</td>
 					<td>{{ u.accounting }}</td>
 					<td>
-                        <label class="css-input css-radio css-radio-success m0" ng-switch="u.status">
-                        	<span ng-switch-when="0">
-	                            <input type="radio" ng-click="updateStatus(u.business_id)"><span></span>
-	                            未受理
-                            </span>
-                            <span ng-switch-when="1">已受理</span>
-                        </label>
+                        <div ng-switch="u.status">
+	                        <span ng-switch-when="0" >
+	                        	<span ng-click="updateStatus(u.business_id,u.employee_id)" class="cursor label label-danger" title="点击受理" data-original-title="快受理我" data-toggle="tooltip">未受理</span>
+	                        </span>
+							<span ng-switch-when="1">已受理</span>
+                        </div>
 					</td>
 					<td>
 						{{ u.should_fee }}
 					</td>
 					<td>
-						{{ u.have_fee }}
+						<a data-toggle="modal" data-target="#edit-fee" ng-click="vanEditFee(u)">{{ u.have_fee }}</a>
 					</td>
 					<td>
 						<span ng-if="u.p_name == null">
-							<a ng-click="requestProgress(u.business_id,u.process_group_id)" data-toggle="modal" data-target="#edit-business-progress">添加进度</a>
+							<a ng-click="vanAddProgress(u)" data-toggle="modal" data-target="#edit-business-progress">添加进度</a>
 						</span>
-						<a ng-click="requestProgress(u.business_id,u.process_group_id)" data-toggle="modal" data-target="#edit-business-progress">{{ u.p_name }}</a>
+						<a ng-click="vanAddProgress(u)" data-toggle="modal" data-target="#edit-business-progress">{{ u.p_name }}</a>
 					</td>
+					<td>{{ u.date_end }}</td>
 					<td>{{ u.create_time }}</td>
 				</tr>
 			</tbody>
@@ -74,7 +132,47 @@
 		
 	</div>
 
-	<!-- 编辑进度 begin -->
+	<!-- 编辑一个进度 begin -->
+	<div class="modal in" id="edit-progress" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;z-index: 1051">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">编辑进度<small class="push-10-l">{{company}}</small></h3>
+	                </div>
+	                <div class="block-content">
+	                	<div class="push-20 push-20-t">
+	                		<div class="push-10 row">
+	                			<div class="col-lg-5">
+			                		<label class="pull-left">进度</label>
+			                		<select class="form-control" ng-model="edit_process_id">
+			                			<option ng-repeat="p in process" value="{{ p.process_id }}">{{ p.name }}</option>
+			                		</select>
+		                		</div>
+		                		<div class="col-lg-5">
+			                		<label>完成日期</label>
+			                		<input id="edit_finish_date_end" type="text" ng-model="date_end" class="form-control" onclick="laydate({istime: true, format:'YYYY-MM-DD'})"/>
+		                		</div>
+	                		</div>
+	                		<textarea ng-model="edit_note" class="form-control" placeholder="备注"></textarea>
+	                	</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="editProgress($event.target)" class="btn btn-sm btn-primary">更新</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 编辑一个进度 end -->
+
+	<!-- 添加进度 begin -->
 	<div class="modal in" id="edit-business-progress" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
 	    <div class="modal-dialog">
 	        <div class="modal-content">
@@ -85,7 +183,7 @@
 	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
 	                        </li>
 	                    </ul>
-	                    <h3 class="block-title">编辑进度</h3>
+	                    <h3 class="block-title">添加进度<small class="push-10-l">{{company}}</small></h3>
 	                </div>
 	                <div class="block-content">
 	                	<ul class="list list-timeline pull-t">
@@ -94,13 +192,16 @@
 	                            <i class=" list-timeline-icon bg-default">{{ $index+1 }}</i>
 	                            <div class="list-timeline-content">
 	                                <p class="font-w600">{{ p.name }}</p>
-	                                <p class="font-s13">{{ p.note }}</p>
-	                                <p>{{ p.date_end }}</p>
+	                                <p class="font-s13 push-10">{{ p.note }}</p>
+	                                <small class="">
+	                                	{{ p.date_end }}
+										<i class="fa fa-close" ng-click="deleteProgress($event.target,p.progress_id,p.business_id)"></i>
+	                            		<i data-toggle="modal" data-target="#edit-progress" class="fa fa-pencil" ng-click="vanEditProgress(p,$event.target)"></i>
+	                                </small>
 	                            </div>
-	                            <button ng-click="deleteProgress($event.target,p.progress_id,p.business_id)" class="pull-right btn btn-sm btn-default">删除</button>
 	                        </li>
 	                	</ul>
-	                	<div class="push-10">
+	                	<div class="push-20 push-20-t">
 	                		<div class="push-10 row">
 	                			<div class="col-lg-5">
 			                		<label class="pull-left">进度</label>
@@ -118,11 +219,69 @@
 	                </div>
 	            </div>
 	            <div class="modal-footer">
-	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
-	                <button ng-click="addProgress($event.target)" class="btn btn-sm btn-primary"><i class="fa fa-check"></i>添加</button>
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="addProgress($event.target)" class="btn btn-sm btn-primary">添加</button>
 	            </div>
 	        </div>
 	    </div>
 	</div>
-	<!-- 编辑进度 end -->
+	<!-- 添加进度 end -->
+
+	<!-- 编辑应收款已付款 begin -->
+    <div class="modal in" id="edit-fee" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">编辑应收款已付款</h3>
+	                </div>
+	                <div class="block-content clearfix">
+	                	<div class="form-group">
+	                		<label>应收款</label>
+	                		<input class="form-control push-10" type="text" ng-model="edit_should"/>
+	                		<label>已收款</label>
+	                		<input class="form-control" type="text" ng-model="edit_have"/>
+						</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="editFee($event.target)" class="btn btn-sm btn-primary" type="button">更新</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <!-- 编辑应收款已付款 end   -->
+
+	<!-- 员工菜单 begin -->
+    <div class="modal in" id="show-tree" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">请选择</h3>
+	                </div>
+	                <div class="block-content clearfix">
+	                	<div id="tree-show" class="pull-left menu-tree">
+						</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="reload($event.target)" class="btn btn-sm btn-primary" type="button">确定</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <!-- 员工菜单 end   -->
 </div>

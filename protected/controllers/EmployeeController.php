@@ -9,13 +9,38 @@ class EmployeeController extends ZjhController{
 		$employee_id = (int)$this->post['employee_id'];
 		$status = (int)$this->post['status'];
 
-		if(empty($employee_id)) return false;
-		else return $this->load('employee')->updateStatus($employee_id,$status);
+		if(empty($employee_id)){
+			return '请指定员工';
+		}
+
+		return $this->load('employee')->updateStatus($employee_id,$status);
 	}
-	
+
+	function updatePass(){
+		$old_pass = $this->post['old_pass'];
+		$new_pass = $this->post['new_pass'];
+
+		if(!validate('pass',$old_pass)){
+			return '密码不符合要求';
+		}
+		if(!validate('pass',$new_pass)){
+			return '密码不符合要求';
+		}
+
+		return $this->load('employee')->updatePass(array(
+			'old_pass'		=> secret($old_pass),
+			'new_pass'		=> secret($new_pass),
+			'employee_id'	=> $this->session['user']['employee_id']
+		));
+	}
+	//查询所有的会计
+	function findAccountings(){
+		return $this->load('employee')->findByTag("accounting");
+	}
+
 	function session(){
 		if(empty($this->session)){
-			return false;
+			return '请登录';
 		}else{
 			return $this->session;
 		}
@@ -30,7 +55,6 @@ class EmployeeController extends ZjhController{
 	}
 
 	public function find(){
-
 		return $this->load('employee')->find(array($this->page()));
 	}
 
@@ -38,7 +62,7 @@ class EmployeeController extends ZjhController{
 		$department_id = (int)$this->post['department_id'];
 		return $this->load('employee')->findByDepartmentid($department_id);
 	}
-
+	//not using right now
 	public function search(){
 		$post = $this->post;
 
@@ -57,12 +81,11 @@ class EmployeeController extends ZjhController{
 		$roles_id = (int)$post['roles_id'];
 
 		if(!validate('name',$name)){
-			return false;
+			return '姓名不符合要求';
 		}
 		if(!validate('phone',$phone)){
-			return false;
+			return '电话不符合要求';
 		}
-
 
 		$lastid = $this->load('employee')->add(array(
 			'name'=>$name,
@@ -77,7 +100,7 @@ class EmployeeController extends ZjhController{
 		if($lastid){
 			return $this->load('employee')->findById($lastid);
 		}else{
-			return false;
+			return 0;//insert fail
 		}
 
 	}
@@ -91,10 +114,10 @@ class EmployeeController extends ZjhController{
 		$roles_id = (int)$post['roles_id'];
 
 		if(!validate('name',$name)){
-			return false;
+			return '姓名不符合要求';
 		}
 		if(!validate('phone',$phone)){
-			return false;
+			return '电话不符合要求';
 		}
 
 		$result =  $this->load('employee')->update(array(
@@ -108,7 +131,7 @@ class EmployeeController extends ZjhController{
 		if($result){
 			return $this->load('employee')->findById($employee_id);
 		}else{
-			return false;
+			return 0;//update fail
 		}
 	}
 	public function delete(){

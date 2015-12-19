@@ -18,7 +18,7 @@
 			return $this->db->exec('insert into `department` set 
 				parent_id=:parent_id,
 				name=:name,
-				create_time=:create_time
+				create_time=now()
 			',$params);
 		}
 		function update($params){
