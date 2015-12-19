@@ -52,4 +52,9 @@
 			else return $this->load('payrecord')->delete($pay_record_id);
 		}
 
+		function payNotice(){
+			$employee_id = (int)$this->session['user']['employee_id'];
+			return $this->load('payrecord')->payNotice($employee_id,array($this->page()));
+		}
+
 	}

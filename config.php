@@ -1,5 +1,5 @@
 <?php
-	define('_HOST','http://192.168.10.105/accountant/');
+	define('_HOST','http://192.168.10.100/accountant/');
 	define('_DASHBOARD',_HOST.'protected/tmp/index.html');
 	define("ROOT",__dir__."/");
 	define("APP_PATH",__dir__."/protected/");

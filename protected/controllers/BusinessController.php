@@ -75,8 +75,7 @@
 
 			$page = $this->page();
 			$employee_id = (int)$this->session['user']['employee_id'];
-			return $this->load('business')->_find($employee_id,array($page));
-			
+			return $this->load('business')->_find($employee_id,array($page));	
 		}
 
 		function find(){
@@ -133,6 +132,16 @@
 		function delete(){
 			$business_id = (int)$this->post['business_id'];
 			return $this->load('business')->delete($business_id);
+		}
+		/*
+			add by zgj 2015-12-8
+			查询工商代办事项
+		*/
+		function waitProcess(){
+			$page = $this->page();
+			$employee_id = (int)$this->session['user']['employee_id'];
+			return $this->load('business')->waitProcess($employee_id,array($page));	
+
 		}
 	}
 ?>

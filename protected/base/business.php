@@ -179,5 +179,16 @@
 		function updateProcess($params){
 			return $this->db->exec('update `business` set process_id=:process_id where business_id=:business_id',$params);
 		}
+		/*
+			add by zgj 2015-12-8
+			查询工商代办事项
+		*/
+		function waitProcess($employee_id,$page){
+			return $this->db->query("select g.company,e.name,p.* from 
+				(select * from (select * from progress order by create_time desc)p 
+				group by p.business_id)p,guest g,employee e,business b where 
+				p.business_id=b.business_id and b.guest_id=g.guest_id and 
+				b.employee_id=e.employee_id and e.employee_id=?",$employee_id,$page);
+		}
 	}
 ?>
