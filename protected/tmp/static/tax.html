@@ -14,25 +14,6 @@
                     <div class="block-header bg-gray-lighter">
                     </div>
                     <div class="block-content z-content">
-                    	<button ng-click="findList()" class="btn btn-minw btn-default" type="button" style="width:100%">详细信息</button>
-                    	<table ng-show="listshow" ng-init="listshow=false" class="push-10-t block-table text-center bg-gray-lighter border-b">
-                    		<thead>
-                    			<th>税种</th>
-                    			<th>金额</th>
-                    		</thead>
-                    		<tr ng-repeat="t in taxlist">
-                    			<td class="border-r" width="50%">
-                    				{{ t.name }}
-                    			</td>
-                    			<td width="50%">
-                    				{{ t.fee }}
-                    				<div class="btn-group" ng-click="initOne(t)">
-                                        <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#edit-one"><i class="fa fa-pencil"></i></button>
-                                        <button ng-click="deleteOne(t.tax_collect_id)" class="btn btn-xs btn-default" type="button"><i class="fa fa-times"></i></button>
-                                    </div>
-                    			</td>
-                    		</tr>
-                    	</table>
                     	<ul class="list list-activity">
                     		<!-- <li ng-repeat="f in follow_record" class="record-list">
 	                            <i class="fa fa-times push-2-t cursor" ng-click="deleteRecord(f.record_id,$event.target)"></i>
@@ -55,42 +36,81 @@
 
 
 	<div class="col-sm-12">
-		<!-- <div class="clearfix push-10">
-			<label class="css-input switch switch-primary">
-		        <input type="checkbox" checked="checked"><span></span>只看自己
-		    </label>
-	    </div> -->
-
+		<div class="clearfix push-10">
+			<div class="pull-left">
+		    	<input class="form-control" ng-model="keywords" ng-keyup="selectCom($event.target,$event)" placeholder="公司/电话/姓名">
+		    </div>
+		    <div class="pull-left remove-padding-l push-10-l rel call-date-control col-lg-2">
+				<div class="input-group">
+                    <input class="form-control" type="text" placeholder="日期" ng-model="whole"/>
+                    <span class="input-group-btn">
+                        <button ng-click="clearDate()" class="btn btn-default" type="button"><i class="fa fa-close"></i></button>
+                    </span>
+                </div>
+				<div class="date-select">
+					<div class="date-year">
+						<ul>
+							<li ng-click="initYear($event.target)">2014</li>
+							<li ng-click="initYear($event.target)">2015</li>
+							<li ng-click="initYear($event.target)">2016</li>
+						</ul>
+					</div>
+					<div class="date-month">
+						<ul>
+							<li><a ng-click="initMonth($event.target)">1</a></li>
+							<li><a ng-click="initMonth($event.target)">2</a></li>
+							<li><a ng-click="initMonth($event.target)">3</a></li>
+							<li><a ng-click="initMonth($event.target)">4</a></li>
+							<li><a ng-click="initMonth($event.target)">5</a></li>
+							<li><a ng-click="initMonth($event.target)">6</a></li>
+							<li><a ng-click="initMonth($event.target)">7</a></li>
+							<li><a ng-click="initMonth($event.target)">8</a></li>
+							<li><a ng-click="initMonth($event.target)">9</a></li>
+							<li><a ng-click="initMonth($event.target)">10</a></li>
+							<li><a ng-click="initMonth($event.target)">11</a></li>
+							<li><a ng-click="initMonth($event.target)">12</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+	    </div>
+		
 		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
 			<thead class="bg-gray-light">
-				<th>序号</th>
 				<th>公司</th>
 				<th>姓名</th>
 				<th>电话</th>
-				<th>跟进人</th>
-				<th>地税</th>
+				<th>跟进客服</th>
+				<th>跟进会计</th>
 				<th>国税</th>
+				<th>地税</th>
+				<th>最近缴纳年份</th>
 				<th>最近缴纳月份</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="u in tax" ng-click="initRight(u)">
-					<td>{{ $index+1 }}</td>
-					<td>{{ u.company }}</td>
-					<td>{{ u.name }}</td>
+				<tr ng-repeat="u in tax">
+					<td>
+						<a ng-click="initRight(u)">{{ u.company }}</a>
+					</td>
+					<td><a ng-click="filterName(u.name)">{{ u.name }}</a></td>
 					<td>{{ u.phone }}</td>
+					<td>{{ u.server }}</td>
 					<td>{{ u.accounting }}</td>
 					<td>
 						<span ng-if="u.nation == null">0</span>
-						<span ng-if="u.nation != null">{{ u.nation }}</span>
+						<a ng-click="vanEditCount(u)" data-toggle="modal" data-target="#edit-count" ng-if="u.nation != null">{{ u.nation }}</a>
 					</td>
 					<td>
 						<span ng-if="u.local == null">0</span>
-						<span ng-if="u.local != null">{{ u.local }}</span>
+						<a ng-click="vanEditCount(u)" data-toggle="modal" data-target="#edit-count" ng-if="u.local != null">{{ u.local }}</a>
 					</td>
-
+					<td>
+						<span ng-if="u.year == null">未开始纳税</span>
+						<a data-toggle="modal" data-target="#tax-list" ng-click="findList(u)" ng-if="u.year != null">{{ u.year }}</a>
+					</td>
 					<td>
 						<span ng-if="u.month == null">未开始纳税</span>
-						<span ng-if="u.month != null">{{ u.month }}</span>
+						<a data-toggle="modal" data-target="#tax-list" ng-click="findList(u)" ng-if="u.month != null">{{ u.month }}</a>
 					</td>
 				</tr>
 			</tbody>
@@ -265,8 +285,8 @@
 	<!-- 添加统计 end -->
 
 	<!-- 更新一个税 begin -->
-	<div class="modal in" id="edit-one" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
-	    <div class="modal-dialog modal-sm">
+	<div class="modal fade in" id="edit-one" tabindex="1" role="dialog" aria-hidden="false" style="display: none;z-index: 1051">
+	    <div class="modal-dialog modal-xm modal-dialog-top">
 	        <div class="modal-content">
 	            <div class="block block-themed block-transparent remove-margin-b">
 	                <div class="block-header bg-primary-dark">
@@ -292,6 +312,123 @@
 	    </div>
 	</div>
 	<!-- 更新一个税 end -->
+
+	<!-- 编辑统计 begin -->
+	<div class="modal in" id="edit-count" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">编辑统计</h3>
+	                </div>
+	                <div class="block-content push-20">
+	                	<form class="form-horizontal" onsubmit="return false;">
+                            <!-- <div class="push-10-t">
+                            	<p class="push-10">日期</p>
+	                			<div class="row">
+	                				<div class="col-lg-5">
+										<select class="form-control" ng-model="edit_count_year">
+			                				<option value="2015">2015</option>
+			                				<option value="2014">2014</option>
+			                			</select>
+		                			</div>
+		                			<div class="col-lg-5">
+		                				<select class="form-control" ng-model="edit_count_month">
+				                			<option>1</option>
+				                			<option>2</option>
+				                			<option>3</option>
+				                			<option>4</option>
+				                			<option>5</option>
+				                			<option>6</option>
+				                			<option>7</option>
+				                			<option>8</option>
+				                			<option>9</option>
+				                			<option>10</option>
+				                			<option>11</option>
+				                			<option>12</option>
+				                		</select>
+		                			</div>
+	                			</div>
+	                		</div> -->
+
+	                		<div class="push-10-t push-20" id="add-nation">
+	                			<div class="input-group col-lg-10 push-10">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">国税</button>
+                                    </span>
+                                    <input ng-model="edit_nation" class="form-control" type="text" placeholder="总和">
+                                </div>
+                                <div class="input-group col-lg-10 push-10">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">地税</button>
+                                    </span>
+                                    <input ng-model="edit_local" class="form-control" type="text" placeholder="总和">
+                                </div>
+	                		</div>
+	                	</form>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button ng-click="editCount($event.target)" class="btn btn-sm btn-primary" type="button">更新</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 编辑统计 end -->
+
+	<!-- 详细缴税记录 begin -->
+	<div class="modal in" id="tax-list" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">详细缴税记录</h3>
+	                </div>
+	                <div class="block-content push-20">
+	                	<div ng-if="taxlist.length>0">
+	                	<table class="push-10-t block-table text-center bg-gray-lighter border-b">
+							<thead>
+								<th>税种</th>
+								<th>金额</th>
+							</thead>
+							<tr ng-repeat="t in taxlist">
+								<td class="border-r" width="50%">
+									{{ t.name }}
+								</td>
+								<td width="50%">
+									{{ t.fee }}
+									<div class="btn-group" ng-click="initOne(t)">
+					                    <button data-permission="taxcollect/update" class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#edit-one"><i class="fa fa-pencil"></i></button>
+					                    <button data-permission="taxcollect/delete" ng-click="deleteOne(t.tax_collect_id)" class="btn btn-xs btn-default" type="button"><i class="fa fa-times"></i></button>
+					                </div>
+								</td>
+							</tr>
+						</table>
+						</div>
+						<div ng-if="taxlist.length==0">
+							暂无记录
+						</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <!-- <button ng-click="editOne($event.target)" class="btn btn-sm btn-primary" type="button">更新</button> -->
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- 详细缴税记录 end -->
 
 	<script type="text/javascript">
 		

@@ -5,14 +5,15 @@
                 <img class="img-avatar img-avatar-thumb" src="protected/tmp/assets/img/avatars/avatar13.jpg" alt="">
             </div>
             <h1 class="h2 text-white push-5-t animated zoomIn">{{ name }}</h1>
-            <h2 class="h5 text-white-op animated zoomIn">{{department}}</h2>
+            <h2 class="h5 text-white-op animated zoomIn">{{ r_name }}</h2>
         </div>
     </div>
-    <div class="content bg-white border-b">
+    <!-- server begin -->
+    <div ng-if="tag=='server'" class="content bg-white border-b">
         <div class="row items-push text-uppercase">
             <div class="col-xs-6 col-sm-3">
                 <div class="font-w700 text-gray-darker animated fadeIn">名下客户</div>
-                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{count}}</a>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{total}}</a>
             </div>
             <div class="col-xs-6 col-sm-3">
                 <div class="font-w700 text-gray-darker animated fadeIn">谈判中</div>
@@ -28,6 +29,186 @@
             </div>
         </div>
     </div>
+    <!-- server end -->
+
+    <!-- server_admin begin -->
+    <div ng-if="tag=='server_admin'" class="content bg-white border-b">
+        <h2 class="font-w300 push">自己</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">名下客户</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{total}}</a>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">谈判中</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{ing}}</a>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已成交</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{deal}}</a>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已流失</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{lose}}</a>
+            </div>
+        </div>
+        <h2 class="font-w300 push">部门</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">名下客户</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_total}}</a>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">谈判中</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_ing}}</a>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已成交</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_deal}}</a>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已流失</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_lose}}</a>
+            </div>
+        </div>
+    </div>
+    <!-- server_admin end -->
+
+    <!-- accounting begin -->
+    <div ng-if="tag=='accounting'" class="content bg-white border-b">
+        <h2 class="font-w300 push">工商</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{accept_business}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{unaccept_business}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未及时更新进度</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{owe_business}}</a>
+            </div>
+        </div>
+        <h2 class="font-w300 push">代理记账</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{accept_accounting}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{unaccept_accounting}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">欠款(15天后)</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{owe_accounting}}</a>
+            </div>
+        </div>
+    </div>
+    <!-- accountingr end -->
+
+    <!-- accounting begin -->
+    <div ng-if="tag=='accounting_admin'" class="content bg-white border-b">
+        <h2 class="font-w300 push">工商(自己)</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{accept_business}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{unaccept_business}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未及时更新进度</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{owe_accounting}}</a>
+            </div>
+        </div>
+        <h2 class="font-w300 push">代理记账(自己)</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{accept_accounting}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{unaccept_accounting}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">欠款(15天后)</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{owe_business}}</a>
+            </div>
+        </div>
+        <h2 class="font-w300 push">工商(部门)</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_accept_business}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_unaccept_business}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未及时更新进度</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_owe_accounting}}</a>
+            </div>
+        </div>
+        <h2 class="font-w300 push">代理记账(部门)</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_accept_accounting}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_unaccept_accounting}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">欠款(15天后)</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{d_owe_business}}</a>
+            </div>
+        </div>
+    </div>
+    <!-- accountingr end -->
+
+    <!-- admin begin -->
+    <div ng-if="tag=='admin'" class="content bg-white border-b">
+        <h2 class="font-w300 push">工商</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{accept_business}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{unaccept_business}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未及时更新进度</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{owe_accounting}}</a>
+            </div>
+        </div>
+        <h2 class="font-w300 push">代理记账</h2>
+        <div class="row items-push text-uppercase">
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">已受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{accept_accounting}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">未受理</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{unaccept_accounting}}</a>
+            </div>
+            <div class="col-lg-4 col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">欠款(15天后)</div>
+                <a class="h2 font-w300 text-primary animated flipInX" href="javascript:void(0)">{{owe_business}}</a>
+            </div>
+        </div>
+    </div>
+    <!-- admin end -->
+
     <div class="block">
         <ul class="nav nav-tabs" data-toggle="tabs">
             <li class="active" onclick="toggleMe(this)">

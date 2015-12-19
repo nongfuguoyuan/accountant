@@ -1,5 +1,14 @@
 <?php
 	class ProcessController extends ZjhController{
+
+		function getAll(){
+			$result = $this->load("processgroup")->find();
+			foreach($result as $key => $value){
+				$result[$key]['process'] = $this->load('processgroup')->findWhole((int)$value['process_group_id']);
+			}
+			return $result;
+		}
+
 		function getList(){
 			$process_group_id = $this->post['process_group_id'];
 			return $this->load('process')->findByGroupid($process_group_id);

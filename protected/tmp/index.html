@@ -7,42 +7,15 @@
         <meta name="description" content="米蝶财务管理系统，最了解财务公司的财务系统">
         <meta name="robots" content="noindex, nofollow">
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0">
-        <!-- Icons -->
-        <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
         <link rel="shortcut icon" href="<?php echo $img;?>favicons/favicon.png">
-       <!--  <link rel="icon" type="image/png" href="assets/img/favicons/favicon-16x16.png" sizes="16x16">
-        <link rel="icon" type="image/png" href="assets/img/favicons/favicon-32x32.png" sizes="32x32">
-        <link rel="icon" type="image/png" href="assets/img/favicons/favicon-96x96.png" sizes="96x96">
-        <link rel="icon" type="image/png" href="assets/img/favicons/favicon-160x160.png" sizes="160x160">
-        <link rel="icon" type="image/png" href="assets/img/favicons/favicon-192x192.png" sizes="192x192">
-        <link rel="apple-touch-icon" sizes="57x57" href="assets/img/favicons/apple-touch-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="assets/img/favicons/apple-touch-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="assets/img/favicons/apple-touch-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="assets/img/favicons/apple-touch-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="assets/img/favicons/apple-touch-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="assets/img/favicons/apple-touch-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="assets/img/favicons/apple-touch-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="assets/img/favicons/apple-touch-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon-180x180.png"> -->
-        <!-- END Icons -->
-
-        <!-- Stylesheets -->
-        <!-- Web fonts -->
-        <!-- <link rel="stylesheet" href="http://fonts.useso.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700"> -->
-
-        <!-- Page JS Plugins CSS -->
         <link rel="stylesheet" href="<?php echo $js; ?>plugins/slick/slick.min.css">
         <link rel="stylesheet" href="<?php echo $js; ?>plugins/slick/slick-theme.min.css">
-
-        <!-- OneUI CSS framework -->
         <link rel="stylesheet" id="css-main" href="<?php echo $css; ?>oneui.css">
-        <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
-        <!-- <link rel="stylesheet" id="css-theme" href="assets/css/themes/flat.min.css"> -->
-        <!-- END Stylesheets -->
         <script>
             _permission = eval('<?php echo json_encode($permission);?>');
             _host = "<?php echo $host;?>";
             _static = "<?php echo $static; ?>";
+            _config = {"name":"<?php echo $name;?>","level":"<?php echo $level;?>",'tag':"<?php echo $tag;?>","r_name":"<?php echo $r_name;?>","employee_id":"<?php echo $employee_id;?>",'error_code':eval('(<?php echo json_encode($error_code); ?>)')};
         </script>
     </head>
     <body>
@@ -112,7 +85,7 @@
                                 <i class="fa fa-times"></i>
                             </button>
                             <!-- Themes functionality initialized in App() -> uiHandleTheme() -->
-                            <div class="btn-group pull-right">
+                            <!-- <div class="btn-group pull-right">
                                 <button class="btn btn-link text-gray dropdown-toggle" data-toggle="dropdown" type="button">
                                     <i class="si si-drop"></i>
                                 </button>
@@ -148,57 +121,44 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </div>
-                            <a class="h5 text-white" href="index.html">
-                                <i class="fa fa-circle-o-notch text-primary"></i> <span class="h4 font-w600 sidebar-mini-hide">ne</span>
+                            </div> -->
+                            <a class="h5 text-white" href="<?php echo $host;?>index">
+                                <!-- <i class="fa fa-circle-o-notch text-primary"></i>  -->
+                                <i class="icon iconfont text-primary">&#xe600;</i>
+                                <span class="h4 font-w600 sidebar-mini-hide">me</span>
                             </a>
                         </div>
                         <!-- END Side Header -->
 
                         <!-- Side Content -->
                         <div class="side-content">
-                            <ul class="nav-main">
+                            <ul class="nav-main" id="me-navigation">
                                 <li>
                                     <a class="active" href="<?php echo $host;?>index"><i class="si si-speedometer"></i><span class="sidebar-mini-hide">管理面板</span></a>
                                 </li>
-                                <li data-permission="guest/_find" class="nav-main-heading"><span class="sidebar-mini-hide">CRM</span></li>
-                                <!-- <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/add_user"><i class="si si-badge"></i><span class="sidebar-mini-hide">新建客户</span></a>
-                                </li> -->
-                                <li data-permission="guest/_find">
+                                <li data-permission="guest/find" class="nav-main-heading"><span class="sidebar-mini-hide">CRM</span></li>
+                                <li data-permission="guest/find">
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="si si-grid"></i><span class="sidebar-mini-hide">管理客户</span></a>
                                     <ul>
-                                        <li data-permission="guest/_find">
-                                            <a href="#/_users">自己名下</a>
-                                        </li>
-                                        <li data-permission="guest/find">
+                                        <li>
                                             <a href="#/users">所有客户</a>
                                         </li>
                                     </ul>
                                 </li>
-                                <!-- <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#"><i class="si si-note"></i><span class="sidebar-mini-hide">客户统计</span></a>
-                                </li> -->
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">任务</span></li>
-                                <li data-permission="business/find">
+                                <li>
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-briefcase"></i><span class="sidebar-mini-hide">工商</span></a>
                                     <ul>
-                                        <li data-permission="business/_find">
-                                            <a href="#/_business">自己负责</a>
-                                        </li>
-                                        <li data-permission="business/find">
-                                            <a href="#/business">所有客户</a>
+                                        <li>
+                                            <a href="#/business">工商用户</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="si si-magic-wand"></i><span class="sidebar-mini-hide">代理记账</span></a>
                                     <ul>
-                                        <li data-permission="accounting/_find">
-                                            <a href="#/_accounting">自己负责</a>
-                                        </li>
-                                        <li data-permission="accounting/find">
-                                            <a href="#/accounting">所有客户</a>
+                                        <li>
+                                            <a href="#/accounting">代理记账用户</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -206,32 +166,36 @@
                                 <li>
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-money"></i><span class="sidebar-mini-hide">财务报表</span></a>
                                     <ul>
-                                        <li data-permission="taxcollect/_find">
-                                            <a href="#/_tax">自己负责</a>
-                                        </li>
-                                        <li data-permission="taxcollect/find">
-                                            <a href="#/tax">所有客户</a>
+                                        <li>
+                                            <a href="#/tax">用户财务报表</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="si si-wallet"></i><span class="sidebar-mini-hide">缴费记录</span></a>
                                     <ul>
-                                        <li data-permission="payrecord/_find">
-                                            <a href="#/_pay_record">自己负责</a>
-                                        </li>
-                                        <li data-permission="payrecord/find">
+                                        <li>
                                             <a href="#/pay_record">所有客户</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">TODO</span></li>
                                 <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/todo"><i class="fa fa-calendar"></i><span class="sidebar-mini-hide">所有任务</span></a>
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-calendar"></i><span class="sidebar-mini-hide">TODOS</span></a>
+                                    <ul>
+                                        <li>
+                                            <a href="#/todo">所有任务</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="nav-main-heading"><span class="sidebar-mini-hide">通讯录</span></li>
                                 <li>
-                                    <a class="nav-submenu" data-toggle="nav-submenu" href="#/department"><i class="fa fa-users"></i><span class="sidebar-mini-hide">部门</span></a>
+                                    <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-users"></i><span class="sidebar-mini-hide">部门</span></a>
+                                    <ul>
+                                        <li>
+                                            <a href="#/department">所有部门</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li data-permission="roles">
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="#/roles"><i class="fa-user-secret fa"></i><span class="sidebar-mini-hide">角色</span></a>
@@ -240,16 +204,16 @@
                                 <li data-permission="processgroup">
                                     <a class="nav-submenu" data-toggle="nav-submenu" href="javascript:;"><i class="fa fa-windows"></i><span class="sidebar-mini-hide">系统设置</span></a>
                                     <ul>
-                                        <li>
+                                        <!-- <li>
                                             <a href="#/process_group">流程组</a>
-                                        </li>
-                                        <li>
+                                        </li> -->
+                                        <li data-permission="process/delete">
                                             <a href="#/process">流程</a>
                                         </li>
-                                        <li>
+                                        <li data-permission="rescource">
                                             <a href="#/resource">来源</a>
                                         </li>
-                                        <li>
+                                        <li data-permission="taxtype">
                                             <a href="#/tax_type">税务类型</a>
                                         </li>
                                     </ul>
@@ -285,31 +249,6 @@
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <!-- <li class="dropdown-header">Profile</li>
-                                <li>
-                                    <a tabindex="-1" href="base_pages_inbox.html">
-                                        <i class="si si-envelope-open pull-right"></i>
-                                        <span class="badge badge-primary pull-right">3</span>Inbox
-                                    </a>
-                                </li>
-                                <li>
-                                    <a tabindex="-1" href="base_pages_profile.html">
-                                        <i class="si si-user pull-right"></i>
-                                        <span class="badge badge-success pull-right">1</span>Profile
-                                    </a>
-                                </li>
-                                <li>
-                                    <a tabindex="-1" href="javascript:void(0)">
-                                        <i class="si si-settings pull-right"></i>Settings
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li class="dropdown-header">Actions</li>
-                                <li>
-                                    <a tabindex="-1" href="base_pages_lock.html">
-                                        <i class="si si-lock pull-right"></i>Lock Account
-                                    </a>
-                                </li> -->
                                 <li>
                                     <a tabindex="-1" onclick="gologout()">
                                         <i class="si si-logout pull-right"></i>注销
@@ -341,12 +280,11 @@
                             <i class="fa fa-ellipsis-v"></i>
                         </button>
                     </li>
-                    <li>
-                        <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
+                    <!-- <li>
                         <button class="btn btn-default pull-right" data-toggle="modal" data-target="#apps-modal" type="button">
                             <i class="si si-grid"></i>
                         </button>
-                    </li>
+                    </li> -->
                     <li class="visible-xs">
                         <!-- Toggle class helper (for .js-header-search below), functionality initialized in App() -> uiToggleClass() -->
                         <button class="btn btn-default" data-toggle="class-toggle" data-target=".js-header-search" data-class="header-search-xs-visible" type="button">
@@ -354,19 +292,23 @@
                         </button>
                     </li>
                     <li class="js-header-search header-search">
-                        <form class="form-horizontal" action="base_pages_search.html" method="post">
+                        <!-- <p class="push-5">
+                            
+                        </p> -->
+                        <!-- <form class="form-horizontal" action="base_pages_search.html" method="post">
                             <div class="form-material form-material-primary input-group remove-margin-t remove-margin-b">
-                                <input onkeyup="overallSearch(this,event)" class="form-control" type="text" id="base-material-text" name="base-material-text" placeholder="搜索">
+                                <input onkeyup="overallSearch(this,event)" class="form-control" type="text" id="base-material-text" name="base-material-text" placeholder="<?php echo $name.'->'.$r_name;?>">
                                 <span class="input-group-addon"><i class="si si-magnifier"></i></span>
                                 <div id="overall-search">
-                                   <!--  <ul>
-                                        <li>dfslk</li>
-                                        <li>dfslk</li>
-                                        <li>dfslk</li>
-                                    </ul> -->
                                 </div>
                             </div>
-                        </form>
+                        </form> -->
+                    </li>
+                    <li>
+                        <button class="btn btn-minw btn-default" type="button" disabled="">
+                            <small id="parent-nav">首页</small>    
+                            <small id="sub-nav"></small>
+                        </button>
                     </li>
                 </ul>
                 <!-- END Header Navigation Left -->
@@ -384,10 +326,8 @@
             <!-- Footer -->
             <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
                 <div class="pull-right">
-                    Crafted with <i class="fa fa-heart text-city"></i> by <a class="font-w600" href="http://mecaiwu.com" target="_blank">mecaiwu</a>
-                </div>
-                <div class="pull-left">
-                    <a class="font-w600" href="javascript:void(0)" target="_blank">OneUI 1.0</a> &copy; <span class="js-year-copy"></span>
+                    <!-- Dev<i class="fa fa-heart text-city"></i> by <a class="font-w600" href="http://mecaiwu.com" target="_blank">mecaiwu</a> -->
+                    <span class="badge badge-info"><?php echo $name.'->'.$r_name;?></span>
                 </div>
             </footer>
             <!-- END Footer -->
@@ -482,13 +422,6 @@
         <script src="<?php echo $js;?>angular1.3.js"></script>
         <script src="<?php echo $js;?>angular-route.js"></script>
         <script src='<?php echo $js;?>controller.js'></script>
-
-        <script src='<?php echo $js;?>controller/_users.js'></script>
-        <script src='<?php echo $js;?>controller/_business.js'></script>
-        <script src='<?php echo $js;?>controller/_accounting.js'></script>
-        <script src='<?php echo $js;?>controller/_pay_record.js'></script>
-        <script src='<?php echo $js;?>controller/_tax.js'></script>
-
         <script src='<?php echo $js;?>validate.js'></script>
         <script src='<?php echo $js;?>laydate/laydate.js'></script>
         <script>
@@ -584,6 +517,29 @@
                     ele.empty();
                 }
             }
+
+            $(document).ready(function(){
+                //点击菜单 更新导航
+                var eles = $("#me-navigation").find("a"),
+                    parent = $("#parent-nav"),
+                    sub = $("#sub-nav");
+
+                for(var i = 0,len = eles.length;i<len;i++){
+                    if(eles[i].className == 'nav-submenu'){
+                        (function(i){
+                            var target = $(eles[i]);
+                            target.bind('click',function(){
+                                parent.text(target.find('span').text());
+                                sub.text("");
+                            });
+                            var href = target.siblings('ul').find("a");
+                            $(href).bind('click',function(){
+                                sub.text(">"+$(this).text());
+                            });
+                        })(i);
+                    }
+                }
+            });
         </script>
     </body>
 </html>

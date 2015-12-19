@@ -4,7 +4,7 @@
 
 		/*查找一项服务的完整流程*/
 		function findWhole($process_group_id){
-			return $this->db->query('select name from `process` where process_group_id = ?',$process_group_id);
+			return $this->db->query('select process_id,name from `process` where process_group_id = ?',$process_group_id);
 		}
 
 		function findNameById($process_group_id){

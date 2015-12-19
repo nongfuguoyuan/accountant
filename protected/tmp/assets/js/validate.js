@@ -41,6 +41,50 @@ function in_array(a,arr){
 	return tag;
 }
 
+function datenow(apart){
+	if(typeof apart == 'undefined'){
+		apart = 0;
+	}else{
+		apart = parseInt(apart);
+	}
+
+	var date = new Date(),
+		anony = date.setDate(date.getDate()+apart),
+		month = date.getMonth()+1,
+		day = date.getDate();
+
+	if(month < 10) month = "0"+month;
+	if(day < 10) day = "0"+day;
+
+	return date.getFullYear()+"-"+month+"-"+day;
+}
+
+function viewResult(data,fn){
+	if(data == null || data.length == 0){
+		// layer.msg('暂无数据');
+		// return;
+		fn([]);
+		return;
+	}
+	if(data.error_code > 0){
+		if(data.info){
+			layer.msg(data.info);
+		}else{
+			var ec = _config.error_code;
+			for(e in ec){
+				if(e == data.error_code){
+					layer.msg(ec[e]);
+					return;
+				}
+			}
+		}
+	}else{
+		if(typeof fn == 'function'){
+			fn(data.list);
+		}
+	}
+}
+
 function initPermission(permissions){
 	var ele = $("[data-permission]");
 	// console.log(permissions);
@@ -67,7 +111,13 @@ function initPermission(permissions){
 }
 
 var dateComponent = {
-	initYear:function($scope,othis){
+	clear:function($scope,fn){
+		$scope.whole = "";
+		if(typeof fn == 'function'){
+			fn();
+		}
+	},
+	initYear:function($scope,othis,fn){
 		var year = $(othis).text() || '',
 			whole = $scope.whole || '';
 
@@ -83,8 +133,11 @@ var dateComponent = {
 		if(arr.length == 2){
 			$scope.whole = year+'/'+arr[1];
 		}
+		if(typeof fn == 'function'){
+			fn(year);
+		}
 	},
-	initMonth:function($scope,othis){
+	initMonth:function($scope,othis,fn){
 		var month = $(othis).text() || '',
 			whole = $scope.whole || '';
 
@@ -100,6 +153,9 @@ var dateComponent = {
 
 		if(arr.length == 2){
 			$scope.whole = arr[0]+'/'+month;
+		}
+		if(typeof fn == 'function'){
+			fn(month);
 		}
 	},
 	initWhole:(new Date().getFullYear()+"/"+(new Date().getMonth()+1))
@@ -134,6 +190,14 @@ function validate(model,str){
 	switch(model){
 		case 'name':
 			return str.match(/.{2,}/);
+		case 'year':
+			return str.match(/^20\d{2}$/);
+		case 'month':
+			return str.match(/(^0[1-9]$)|(^1[012]$)|(^[1-9]$)/);
+		case 'number':
+			return !isNaN(str);
+		case 'date'://e:2015-01-12 2015-12-01
+			return str.match(/^20\d{2}[-\/\.]{1}(1[012]?|[1-9]|0[1-9])[-\/\.](0[1-9]|[12][0-9]|[1-9]|3[01])$/);
 		case 'pass':
 			return str.length > 5;
 		case 'phone':
@@ -150,7 +214,7 @@ function validate(model,str){
 			return false;
 	}
 }
-/*构建菜单树*/
+/*构建菜单树 仅有部门*/
 function buildTree(arr,fn){
 	if(!arr || arr.toString() == "false"){
 		return document.createElement('p');
@@ -188,6 +252,59 @@ function buildTree(arr,fn){
 							if(typeof fn == 'function'){
 								fn(obj,span);
 							}
+						}
+						if(domSelect){
+							domSelect.style.backgroundColor = '#fff';
+						}
+						span.style.backgroundColor = '#efefef';
+						domSelect = span;
+					};
+				})(span,obj);
+				li.appendChild(span);
+				if(obj.sub){
+					li.appendChild(itdom(obj.sub,fn));
+				}
+				ul.appendChild(li);
+			}
+			return ul;
+		}
+	}
+	return itdom(arr,fn);
+}
+/*部门和员工*/
+function buildEmployeeTree(arr,fn){
+	if(!arr || arr.toString() == "false"){
+		return document.createElement('p');
+	}
+	var domSelect = '';
+	function itdom(arr,fn){
+		if(arr.length > 0){
+			var args = arguments;
+			var ul = document.createElement('ul');
+
+			for(var i = 0,len = arr.length;i<len;i++){
+				var obj = arr[i];
+				var li = document.createElement('li');
+				var span = document.createElement('span');
+				if(obj.sub){
+					span.innerHTML = "<i class='fa fa-folder-o'></i>"+obj.name;
+				}else{
+					span.innerHTML = "<i class='fa fa-user'></i>"+obj.name;
+				}
+				(function(span,obj){
+					span.onclick = function(){
+						var kids = span.parentNode.children;
+						if(kids[1]){
+							if(kids[1].style.display == 'block'){
+								span.children[0].className = "fa fa-folder-o";
+								kids[1].style.display = 'none';
+							}else{
+								kids[1].style.display = 'block';
+								span.children[0].className = "fa fa-folder-open-o";
+							}
+						}
+						if(typeof fn == 'function'){
+							fn(obj,span);
 						}
 						if(domSelect){
 							domSelect.style.backgroundColor = '#fff';

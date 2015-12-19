@@ -50,6 +50,10 @@
 				,$guest_id);
 		}
 
+		function update($record_id,$content){
+			return $this->db->exec("update `record` set content=? where record_id=?",array($content,$record_id));
+		}
+
 		function delete($record_id){
 			return $this->db->exec('delete from `record` where record_id =?',$record_id);
 		}

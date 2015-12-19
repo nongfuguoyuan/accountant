@@ -12,8 +12,6 @@
             </div>
             <div class="side-content remove-padding-t">
                 <div class="block">
-                    <p>成交客户</p>
-                    <p>正在追踪客户</p>
                 </div>
             </div>
             <div class="toolbar" data='employee/update'>
@@ -33,18 +31,7 @@
 	</div>
 	<div class="col-lg-10 col-sm-12">
 		<div class="clearfix push-10">
-			<!-- <label class="css-input switch switch-sm switch-primary pull-left push-5">
-		        只看自己<input type="checkbox" checked="checked"><span></span>
-		    </label>
-		    <div class="pull-left push-10-l rel">
-		    	<input placeholder="姓名/手机/职位" ng-model="searchstr" class="form-control input-sm" type="text" search-users-real-time>
-		    	<ul class="search-result">
-		    		<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{ r.user_id }}" sure-search-result>
-		    			{{ r.name }}
-		    		</li>
-		    	</ul>
-		    </div> -->
-		    <a data-permission="employee/save" ng-click="initRoles()" class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-employee">添加成员</a>
+		    <a data-permission="employee/save" ng-click="vanAddEmployee()" class="pull-right btn btn-minw btn-square btn-info" data-toggle="modal" data-target="#add-new-employee">添加成员</a>
 	    </div>
 		<table class="table table-bordered table-striped js-dataTable-full dataTable no-footer">
 			<thead class="bg-gray-light">
@@ -57,14 +44,14 @@
 				<th>入职日期</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="u in employees" ng-click="initRight(u)">
+				<tr ng-repeat="u in employees">
 					<td>{{ $index+1 }}</td>
 					<td>
                         <span ng-if="u.d_name==null">没有设定</span>
                         <span ng-if="u.d_name!=null">{{ u.d_name }}</span>
                     </td>
 					<td>
-						{{ u.name }}
+						<a ng-click="initRight(u)">{{ u.name }}</a>
 					</td>
 					<td ng-switch="u.sex">
                         <span ng-switch-when="0">女</span>
@@ -166,8 +153,8 @@
 	                <div class="block-content">
 	                	<div class="text-center">
 		                	<div class="btn-group push-10">
-	                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#apps-modal">添加</button>
-	                            <button class="btn btn-default" type="button" ng-click='showEditWindow()'>编辑</button>
+	                            <button ng-click="vanAdd()" class="btn btn-default" type="button" data-toggle="modal" data-target="#add-department">添加</button>
+	                            <button class="btn btn-default" type="button" ng-click='vanEdit()'>编辑</button>
 	                            <button class="btn btn-default" type="button" ng-click="delete()">删除</button>
 	                        </div>
                         </div>
@@ -187,7 +174,7 @@
 	</div>
 	<!-- 编辑部门 end   -->
 	<!-- 插入部门 begin -->
-	<div class="modal fade in" id="apps-modal" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;top:100px;">
+	<div class="modal fade in" id="add-department" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;top:100px;">
         <div class="modal-sm modal-dialog modal-dialog-top">
             <div class="modal-content">
                 <div class="block block-themed block-transparent">

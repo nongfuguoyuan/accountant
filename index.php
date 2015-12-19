@@ -5,14 +5,16 @@
 	// header('Access-Control-Allow-Methods: GET, POST, PUT');
 	// header("Content-type:text/plain");
 	error_reporting(E_ERROR | E_WARNING);
+	// error_reporting(E_ALL);
 	session_start();
 	require "config.php";
+	require "log.php";
 	require M_PATH.'model.php';
 	require C_PATH.'zjhcontroller.php';
 	require M_PATH.'function.php';
 	require CONFIG_PATH."permission.php";
 	require M_PATH."Main.php";
-
+	
 	$main = new Main;
 	$result = $main->start();
 	echo $result;
