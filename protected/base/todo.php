@@ -5,8 +5,7 @@ class todo extends Model {
 		$result = $this->db->query("select t.todo_id,t.task_content,t.accepter as accepter_id,t.date_start as date_start,t.date_end as date_end,e.`name` as `sender`,e1.`name` as accepter from todo as t,employee as e,
 employee as e1 where t.`sender`=e.employee_id and t.accepter=e1.employee_id order by date_start desc,date_end",array(),$page);
 		$count = $this->db->count;
-	    $pagebar=$this->db->getPage();
-		return array('count'=>$count,'data'=>$result,'pagebar'=>$pagebar);
+		return array('total'=>$count,'data'=>$result);
 	}
 	public function findBy($array){
 		$sql="select t.todo_id,t.task_content,t.date_start as date_start,t.date_end as date_end,e.`name` as `sender`,e1.`name` as accepter from todo as t,employee as e,

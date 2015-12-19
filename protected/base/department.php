@@ -2,6 +2,7 @@
 	class Department extends Model{
 		
 		function findByEmployee($employee_id){
+
 			return $this->db->queryOne('select d.name from `department` d,`employee` e where e.department_id=d.department_id and e.employee_id=?',$employee_id);
 		}
 

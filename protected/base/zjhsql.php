@@ -103,7 +103,7 @@
       /*
       当前页面
       url
-      每页数据条数 默认$pagenum = 15
+      每页数据条数 默认$pagenum = 10
       */
       function pagination($total,$page){
          // var_dump($page);

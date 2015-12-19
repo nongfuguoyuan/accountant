@@ -18,11 +18,3 @@
 	$main = new Main;
 	$result = $main->start();
 	echo $result;
-
-
-
-
-
-
-
-

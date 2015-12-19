@@ -142,9 +142,24 @@
 			foreach ($array as $key => $value) {
 				$sql .= " $key like '%$value%'";
 			}
-			return $this->db->query($sql,array(),null);
+			return $this->db->query($sql);
 		}
-
+		/*author:zgj 
+		*date:2015-12-3
+		*查询密码
+		*/
+		public function findPass($employee_id){
+			$sql='select password from employee where employee_id='.$employee_id;
+			return $this->db->query($sql);
+		}
+		/*author:zgj 
+		*date:2015-12-3
+		*修改密码
+		*/
+		public function changePass($newPass,$employee_id){
+			$sql='update employee set password =\''.$newPass.'\' where employee_id='.$employee_id;
+			return $this->db->exec($sql);
+		}
 		public function add($params){
 			$result = $this->db->exec('insert into `employee` set 
 				name=:name,

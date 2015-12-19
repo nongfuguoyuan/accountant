@@ -43,8 +43,6 @@
 		'department/save'		=> '添加部门',
 		'department/update'		=> '更新部门',
 		'department/delete'		=> '删除部门',
-		
-
 		'employee'				=> '员工(所有权限)',
 		'employee/findAccountings'=>'查询所有会计',
 		"employee/updateStatus" => '更新员工状态（离职）',
