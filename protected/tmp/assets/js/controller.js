@@ -2446,11 +2446,16 @@ myapp.service('todoService',function($http){
 				}
 
 				layer.load();
+				var arr = [],
+					tmp = "";
+				for(tmp in obj.employees){
+					arr.push(tmp);
+				}
 				$post($http,_host+"todo/save",{
 					'task_content':task_content,
 					'date_start':date_start,
 					'date_end':date_end,
-					'accepters':obj.employees
+					'accepters':arr
 				}).success(function(r){
 					layer.closeAll('loading');
 					viewResult(r,function(r){
