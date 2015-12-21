@@ -72,15 +72,19 @@ myapp.service('dashboardService',function($http){
 				});
 			});
 		},
-		getTodo:function(http,fn){
-			$post(http,_host+'todo/todoNotice',{'accepter':'34'}).success(function(r){
-				// fn(r);
-			})
+		getTodo:function(fn){
+			$post($http,_host+'todo/todoNotice',{'accepter':obj.employee_id}).success(function(r){
+				viewResult(r,function(r){
+					fn(r);
+				});
+			});
 		},
 		getEarly:function(fn){
 			$post($http,_host+'todo/todoEarly',{'accepter':obj.employee_id}).success(function(r){
-				fn(r);
-			})
+				viewResult(r,function(r){
+					fn(r);
+				});
+			});
 			
 		}
 	};
@@ -89,7 +93,7 @@ myapp.service('dashboardService',function($http){
 
 
 myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
-	$scope.todos = dashboardService.getTodo($http);
+
 	$scope.r_name = _config.r_name;
 	//get session
 	$scope.name = _config.name;
@@ -179,7 +183,14 @@ myapp.controller('dashboardCtrl',function($scope,$http,dashboardService){
 
 		}
 	});
-
+	
+	$scope.getTodo = dashboardService.getTodo(function(r){
+		$scope.todo_early = r.data;
+		$scope.todo_count_early = r.total;
+		if($scope.todo_count_early > 0){
+			$scope.show_todo_early = true;
+		}
+	});
 	$scope.getEarly = dashboardService.getEarly(function(r){
 		$scope.todo_early = r.data;
 		$scope.todo_count_early = r.total;
@@ -2397,7 +2408,9 @@ myapp.service('todoService',function($http){
 		data:[],
 		get:function(params,fn){
 			$post($http,_host+"todo/findAll",params).success(function(r){
-				fn(r);
+				viewResult(r,function(r){
+					fn(r);
+				});
 			});	
 		},
 		getEmployee:function($scope,fn){
@@ -2487,14 +2500,14 @@ myapp.controller('todoCtrl',function($scope,$http,todoService){
 
 	$post($http,_host+"employee/session",{}).success(function(r){
 		if(r != 'false'){
-			todoService.sender=r.user.employee_id;
-			
+			todoService.sender=r.list.user.employee_id;		
 		}
 	});
 	//zgj 2015-12-2 添加分页
 	void function (current,fn){
 		var arg = arguments;
 		todoService.get({"page":current},function(r){
+			console.log(r);
 			$scope.todos = r.data;
 			var pagination = pageit(current,r.total);
 			if(pagination.length > 0){

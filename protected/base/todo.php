@@ -1,41 +1,37 @@
 <?php
 class todo extends Model {
-	
+	private $sql_str = 'select t.*,e.`name` as `sender`,GROUP_CONCAT(e1.`name`) as accepter from todo as t,todo_list as tl,employee as e,
+employee as e1 where t.todo_id=tl.todo_id and tl.employee_id=e1.employee_id and t.`sender_id`=e.employee_id ';
 	public function find($page){
-		$result = $this->db->query("select t.todo_id,t.task_content,t.accepter as accepter_id,t.date_start as date_start,t.date_end as date_end,e.`name` as `sender`,e1.`name` as accepter from todo as t,employee as e,
-employee as e1 where t.`sender`=e.employee_id and t.accepter=e1.employee_id order by date_start desc,date_end",array(),$page);
+		$result = $this->db->query($this->sql_str,array(),$page);
 		$count = $this->db->count;
 		return array('total'=>$count,'data'=>$result);
 	}
 	public function findBy($array){
-		$sql="select t.todo_id,t.task_content,t.date_start as date_start,t.date_end as date_end,e.`name` as `sender`,e1.`name` as accepter from todo as t,employee as e,
-employee as e1 where t.`sender`=e.employee_id and t.accepter=e1.employee_id";
+		$sql=$this->sql_str;
 		foreach ($array as $key => $value) {
-			$sql.=" and $key=:$key";
+			$sql.="and $key=:$key";
 		}
 		
 		return $this->db->query($sql,$array,null);
 	}
 
 	public function search($array){//按任务内容模糊查询
-		$sql="select t.todo_id,t.task_content,t.date_start as date_start,t.date_end as date_end,e.`name` as `sender`,e1.`name` as accepter from todo as t,employee as e,
-employee as e1 where t.`sender`=e.employee_id and t.accepter=e1.employee_id";
+		$sql=$this->sql_str;
 		foreach ($array as $key => $value) {
-			$sql.=" and $key like '%$value%'";
+			$sql.="and $key like '%$value%'";
 		}
 		
 		return $this->db->query($sql,$array,null);
 	}
 	
 	public function findByAccepterIdNotice($accepter){//根据开始结束时间提醒
-		$result = $this->db->query("select t.todo_id,t.task_content,t.date_start as date_start,t.date_end as date_end,e.`name` as `sender`,e1.`name` as accepter from todo as t,employee as e,
-employee as e1 where t.`sender`=e.employee_id and t.accepter=e1.employee_id and accepter=:accepter and date_start < NOW() and date_end >NOW()",array('accepter'=>$accepter));
+		$result = $this->db->query($this->sql_str."and tl.employee_id=:accepter and date_start < NOW() and date_end >NOW()",array('accepter'=>$accepter));
 		return $result;
 	}
 	
 	public function findByAccepterIdEarlyNotice($accepter){//根据开始结束时间提醒
-		$result = $this->db->query("select t.todo_id,t.task_content,t.date_start as date_start,t.date_end as date_end,e.`name` as `sender`,e1.`name` as accepter from todo as t,employee as e,
-employee as e1 where t.`sender`=e.employee_id and t.accepter=e1.employee_id and accepter=:accepter and date_end <NOW()",array('accepter'=>$accepter));
+		$result = $this->db->query($this->sql_str."and tl.employee_id=:accepter and date_end <NOW()",array('accepter'=>$accepter));
 		return $result;
 	}
 
