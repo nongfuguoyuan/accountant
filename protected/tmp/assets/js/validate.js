@@ -324,3 +324,67 @@ function buildEmployeeTree(arr,fn){
 	}
 	return itdom(arr,fn);
 }
+/*可选择的 部门和员工*/
+function buildSelectEmployeeTree(arr,fn){
+	if(!arr || arr.toString() == "false"){
+		return document.createElement('p');
+	}
+	var domSelect = '';
+	function itdom(arr,fn){
+		if(arr.length > 0){
+			var args = arguments;
+			var ul = document.createElement('ul');
+
+			for(var i = 0,len = arr.length;i<len;i++){
+				var obj = arr[i];
+				var li = document.createElement('li');
+				if(obj.sub){
+					var span = document.createElement('span');
+					span.innerHTML = "<i class='fa fa-folder-o'></i>"+obj.name;
+				}else{
+					var span = document.createElement("label"),
+						input = document.createElement("input");
+						input.setAttribute("type",'checkbox');
+					span.appendChild(input);
+					span.appendChild(document.createTextNode(obj.name));
+					(function(input,obj){
+						input.onclick = function(){
+							if(typeof fn == 'function'){
+								fn(obj,span,input.checked);
+							}
+						};
+					})(input,obj);
+				}
+				(function(span,obj){
+					span.onclick = function(){
+						var kids = span.parentNode.children;
+						if(kids[1]){
+							if(kids[1].style.display == 'block'){
+								span.children[0].className = "fa fa-folder-o";
+								kids[1].style.display = 'none';
+							}else{
+								kids[1].style.display = 'block';
+								span.children[0].className = "fa fa-folder-open-o";
+							}
+						}
+						if(typeof fn == 'function'){
+							fn(obj,span);
+						}
+						if(domSelect){
+							domSelect.style.backgroundColor = '#fff';
+						}
+						span.style.backgroundColor = '#efefef';
+						domSelect = span;
+					};
+				})(span,obj);
+				li.appendChild(span);
+				if(obj.sub){
+					li.appendChild(itdom(obj.sub,fn));
+				}
+				ul.appendChild(li);
+			}
+			return ul;
+		}
+	}
+	return itdom(arr,fn);
+}

@@ -741,11 +741,16 @@ myapp.service('userService',function($http){
 			});
 		},
 		loadTree:function(fn){
-			$post($http,_host+"department/findWholeMenu",{}).success(function(r){
-				viewResult(r,function(r){
-					fn(r);
+			if(!obj.trees){
+				$post($http,_host+"department/findWholeMenu",{}).success(function(r){
+					viewResult(r,function(r){
+						obj.trees = r;
+						fn(r);
+					});
 				});
-			});
+			}else{
+				fn(obj.trees);
+			}
 		}
 	};
 	return obj;
@@ -2393,58 +2398,70 @@ myapp.controller('taxCtrl',function($scope,taxService,taxcollectService){
 
 myapp.service('todoService',function($http){
 	var obj = {
-		"hasSelect":[],
-		data:[],
 		get:function(params,fn){
 			$post($http,_host+"todo/findAll",params).success(function(r){
-				fn(r);
+				viewResult(r,function(r){
+					viewResult(r,function(r){
+						obj.data = r;
+						fn(r);
+					});
+				});
 			});	
 		},
-		getEmployee:function($scope,fn){
-			return function(){
-				var data = [{
-					id:1,
-					name:'翟晶辉'
-				},{
-					id:2,
-					name:'王大明'
-				}];
-				if(typeof fn == 'function'){
-					fn(data);
-				}
-			};
-		},
-		addTask:function(http,$scope,fn){
-			return function(othis){
-				var task_content = $scope.add_task_content,
-					date_start=$("#date_start_task").val(),
-					date_end=$("#date_end_task").val(),
-					sender=obj.sender,
-					accepter=obj.employee_id;
-					
-					layer.load();
-					if(task_content!==undefined){
-						$post(http,_host+"todo/save",{
-						'task_content':task_content,
-						'date_start':date_start,
-						'date_end':date_end,
-						'sender':sender,
-						'accepter':accepter
-						}).success(function(r){
-							layer.closeAll('loading');
-							if(r.affected_rows==1){
-								obj.data.splice(0,0,r.data[0]);
-								fn(othis);
-							}else{
-								layer.msg(r.data);
-							}
-						});
-					}else{
-						layer.msg('任务内容不能为空')
-						return;
-					}
-					
+		getEmployee:function(fn){
+			if(!obj.employees){
+				$post($http,_host+"department/findWholeMenu",{}).success(function(r){
+					viewResult(r,function(r){
+						obj.trees = r;
+						fn(r);
+					});
+				});
+			}else{
+				fn(obj.trees);
 			}
+		},
+		add:function($scope,fn){
+			var task_content = ($scope.add_task_content || "").trim(),
+				date_start = ($("#date_start_task").val() || '').trim(),
+				date_end = ($("#date_end_task").val() || '').trim();
+
+				if(task_content.length < 1){
+					layer.msg('任务内容不能为空')
+					return;
+				}
+
+				if(!validate('date',date_start)){
+					layer.msg('起始日期不能为空');
+					return;
+				}
+
+				if(!validate('date',date_end)){
+					layer.msg('终止日期不能为空');	
+					return;
+				}
+
+				if(typeof obj.employees == 'undefined' || obj.employees.length == 0){
+					layer.msg('请先指定指派人');	
+					return;
+				}
+
+				layer.load();
+				$post($http,_host+"todo/save",{
+					'task_content':task_content,
+					'date_start':date_start,
+					'date_end':date_end,
+					'accepters':obj.employees
+				}).success(function(r){
+					layer.closeAll('loading');
+					viewResult(r,function(r){
+						if(!obj.data){
+							obj.data = [];
+						}
+						obj.data.splice(0,0,r.data[0]);
+						fn(r);
+					});
+				});
+
 		},
 		editTask:function(http,$scope,fn){
 			return function(othis){			
@@ -2485,12 +2502,6 @@ myapp.service('todoService',function($http){
 
 myapp.controller('todoCtrl',function($scope,$http,todoService){
 
-	$post($http,_host+"employee/session",{}).success(function(r){
-		if(r != 'false'){
-			todoService.sender=r.user.employee_id;
-			
-		}
-	});
 	//zgj 2015-12-2 添加分页
 	void function (current,fn){
 		var arg = arguments;
@@ -2517,28 +2528,58 @@ myapp.controller('todoCtrl',function($scope,$http,todoService){
 	$scope.sendSubTodo = function(){
 		$scope.copytask = this.u.task;
 	};
-	$scope.getEmployee = todoService.getEmployee($scope,function(data){
-		$scope.employee = data;
-		var id = $scope.employee_id;
-	});
 
-	$scope.checkTask = todoService.addTask($http,$scope,function(ele){
-		if(ele.nodeName == 'I'){
-			$(ele).parent().prev().trigger('click');
-		}else{
-			$(ele).prev().trigger('click');
+	$scope.getEmployee = function(){
+		if(!todoService.trees){
+			todoService.getEmployee(function(r){
+				$("#tree-show").empty().append(buildSelectEmployeeTree(r,function(obj,span,tag){
+					if(typeof obj.employee_id != 'undefined' && typeof tag != 'undefined'){
+						
+
+						if(!todoService.employees){
+							todoService.employees = {};
+						}
+
+						if(tag == true){
+							todoService.employees[obj.employee_id] = obj.name;
+						}
+
+						if(tag == false){
+							delete todoService.employees[obj.employee_id];
+						}
+						var arr = [],
+							tmp = "";
+						for(tmp in todoService.employees){
+							arr.push(todoService.employees[tmp]);
+						}
+						$scope.employee_name = arr.join(",");
+						$scope.$apply();
+					}
+				}));
+			});
 		}
-		//清空scope中自定义变量
-		for(s in $scope){
-			var x = s.toString();
-			if(x.indexOf('add_')>-1){
-				$scope[s] = '';
-			}	
-		}
-		$("#date_start_task").val('');
-		$("#date_end_task").val('');
-		$scope.todos = todoService.data;
-	});
+	};
+
+	$scope.add = function(){
+		todoService.add($scope,function(ele){
+			if(ele.nodeName == 'I'){
+				$(ele).parent().prev().trigger('click');
+			}else{
+				$(ele).prev().trigger('click');
+			}
+			//清空scope中自定义变量
+			for(s in $scope){
+				var x = s.toString();
+				if(x.indexOf('add_')>-1){
+					$scope[s] = '';
+				}	
+			}
+			$("#date_start_task").val('');
+			$("#date_end_task").val('');
+			$scope.todos = todoService.data;
+		});
+	};
+
 	$scope.editTask = todoService.editTask($http,$scope,function(ele){
 		if(ele.nodeName == 'I'){
 			$(ele).parent().prev().trigger('click');
@@ -2557,8 +2598,8 @@ myapp.controller('todoCtrl',function($scope,$http,todoService){
 		$("#date_end_task1").val(this.u.date_end);
 		todoService.todo_id=this.u.todo_id;
 		todoService.employee_id=this.u.accepter_id;
-
 	}
+
 	$scope.hasSelect = function(othis){
 		var that = this;
 		if(othis.checked){
