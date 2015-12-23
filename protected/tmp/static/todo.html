@@ -1,17 +1,14 @@
 <div class="row">
 	<div class="col-sm-12">
 		<div class="clearfix push-10">
-			<!-- <label class="css-input switch switch-sm switch-primary pull-left push-5">
-		        只看自己<input type="checkbox" checked="checked"><span></span>
-		    </label> -->
 		    <style type="text/css">
 			    #task-ul .active{
 			    	background-color: #efefef;
 			    }
 		    </style>
 		    <div class="pull-left push-10-l rel">
-		    	<input placeholder="任务内容" ng-model="taskstr" class="form-control input-sm" type="text" search-todo-real-time>
-		    	<ul class="search-result" id="task-ul">
+		    	<input placeholder="任务内容" ng-keyup="selectContent($event.target,$event)" class="form-control input-sm" type="text">
+		    	<ul class="search-result" id="active-ul">
 		    		<li ng-repeat='r in taskresults' data-id="{{ r.todo_id }}" sure-search-result-todo>
 		    			{{ r.task_content }}
 		    		</li>
@@ -72,34 +69,45 @@
 	                    <input type="text" class="form-control push-10" type="text" id="date_start_task" placeholder="From" ng-model="add_date_start">
 	                    <input type="text" class="form-control push-5" type="text" id="date_end_task" placeholder="To"ng-model="add_date_end">
 	                    <label>指派给</label>
-	                    <input placeholder="姓名/手机" ng-model="searchstr" class="form-control input-sm" id="employee_name" type="text" search-employee-real-time>
-	                    <ul class="search-result" style="position:relative" id="active-ul">
-	                    	<li ng-repeat='r in results' data-value="{{r.name}}" data-id="{{r.employee_id}}" sure-search-result-employee>
-	                    		{{ r.name }}
-	                    	</li>
-	                    </ul>
-	                    <!-- <select class="form-control push-10" ng-change="getEmployee()" ng-model="add_employee_id" request-department>
-	                        <option ng-repeat="d in department" value="{{d.id}}">{{d.name}}</option>
-	                    </select>
-	                    <div class="">
-	                    	<span ng-repeat="e in hasSelects">{{e.name}}&nbsp;</span>
-	                    </div>
-	                    <div class="">
-	                        <div ng-repeat="u in employee" class="checkbox-inline">
-	                            <label for="roles-{{u.id}}">
-	                                <input ng-click="hasSelect($event.target)" type="checkbox" id="roles-{{u.id}}">{{u.name}}
-	                            </label>
-	                        </div>
-	                    </div> -->
+	                    <a ng-click="getEmployee()" data-toggle="modal" data-target="#show-tree">
+	                    	<input placeholder="同事" ng-model="employee_name" class="form-control input-sm" type="text">
+	                    </a>
 	                </div>
 	            </div>
 	            <div class="modal-footer">
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button class="btn btn-sm btn-primary" type="button" ng-click="checkTask($event.target)"><i class="fa fa-check"></i>添加</button>
+	                <button class="btn btn-sm btn-primary" type="button" ng-click="add($event.target)">添加</button>
 	            </div>
 	        </div>
 	    </div>
 	</div>
+
+	<!-- 员工菜单 begin -->
+    <div class="modal in" id="show-tree" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
+	    <div class="modal-dialog modal-sm">
+	        <div class="modal-content">
+	            <div class="block block-themed block-transparent remove-margin-b">
+	                <div class="block-header bg-primary-dark">
+	                    <ul class="block-options">
+	                        <li>
+	                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+	                        </li>
+	                    </ul>
+	                    <h3 class="block-title">请选择</h3>
+	                </div>
+	                <div class="block-content clearfix">
+	                	<div id="tree-show" class="pull-left menu-tree">
+						</div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
+	                <button onclick="$(this).prev().trigger('click')" class="btn btn-sm btn-primary" type="button">确定</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <!-- 员工菜单 end   -->
 
 	<div class="modal in" id="edit-task-dialog" tabindex="-1" role="dialog" aria-hidden="false" style="display: none;">
 	    <div class="modal-dialog modal-sm">
@@ -119,38 +127,18 @@
 		                <label>时间</label>
 		                <input type="text" class="form-control push-5" type="text" id="date_start_task1" ng-model="add_date_start">
 		                <input type="text" class="form-control push-5" type="text" id="date_end_task1" ng-model="add_date_end">
-		                指派给
+		                <!-- 指派给
 		                <input ng-model="searchstr" class="form-control input-sm" id="accepter_name" type="text" search-employee-real-time>
 		                <ul class="search-result" style="position:relative" id="active-ul">
 			                <li ng-repeat="r in results" data-value="{{r.name}}" data-id="{{r.employee_id}}" sure-search-result-employee>
 			                	{{ r.name }}
 			            	</li>
-		                </ul>
+		                </ul> -->
 	                </div>
-	               <!--  <div class="block-content">
-	                	<label>任务</label>
-	                	<div class="copy-task push-5">
-	                		{{copytask}}
-	                	</div>
-	                    <label>指派给</label>
-	                    <select class="form-control push-10" size="1" ng-model="employee_id" ng-change="getEmployee()" request-department>
-	                        <option ng-repeat="d in department" value="{{d.id}}">{{d.name}}</option>
-	                    </select>
-	                    <div class="">
-	                    	<span ng-repeat="e in hasSelects">{{e.name}}&nbsp;</span>
-	                    </div>
-	                    <div class="">
-	                        <div ng-repeat="u in employee" class="checkbox-inline">
-	                            <label for="roles-{{u.id}}">
-	                                <input ng-click="hasSelect($event.target)" type="checkbox" id="roles-{{u.id}}">{{u.name}}
-	                            </label>
-	                        </div>
-	                    </div>
-	                </div> -->
 	            </div>
 	            <div class="modal-footer">
 	                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal"><i class="fa fa-close"></i></button>
-	                <button class="btn btn-sm btn-primary" type="button" ng-click="editTask($event.target)"><i class="fa fa-check"></i>更新</button>
+	                <button class="btn btn-sm btn-primary" type="button" ng-click="editTask($event.target)">更新</button>
 	            </div>
 	        </div>
 	    </div>

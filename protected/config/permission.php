@@ -39,7 +39,7 @@
 		'department'			=> '部门（所有权限）',
 		'department/find'		=> '显示所有部门',
 		'department/findMenu'	=> '菜单（只有部门）',
-		'department/findWholeMenu'=> '菜单（包括员工）',
+		// 'department/findWholeMenu'=> '菜单（包括员工）',
 		'department/save'		=> '添加部门',
 		'department/update'		=> '更新部门',
 		'department/delete'		=> '删除部门',

@@ -13,8 +13,11 @@ class todo_list extends Model{
 		$sql_str = 'insert into todo_list(todo_id, employee_id) values ';
 		for ($i=0; $i < $count; $i++) { 
 			$params["todo_list{$i}"]=$todo_list[$i];
-			$sql_str .= "(:todo_id,:todo_list{$i}) ";
+			$sql_str .= "(:todo_id,:todo_list{$i}), ";
 		}
+		$sql_str=substr($sql_str, 0, -2);
+		unset($params['todo_list']);
+
 		return $this->db->exec($sql_str,$params);
 	}
 }
