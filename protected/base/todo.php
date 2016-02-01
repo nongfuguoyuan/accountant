@@ -1,7 +1,8 @@
 <?php
 class todo extends Model {
 	private $sql_str_show_self='select t.*,e.`name` as `sender`, tl.accepter from (select tl.todo_id, GROUP_CONCAT(e.`name`) as accepter from todo_list as tl,employee as e 
-WHERE e.employee_id=tl.employee_id and tl.employee_id=:accepter GROUP BY tl.todo_id)as tl,employee as e,todo as t where t.todo_id=tl.todo_id and t.sender_id=e.employee_id';
+WHERE e.employee_id=tl.employee_id GROUP BY tl.todo_id)as tl,(select todo_id from todo_list where todo_list.employee_id=:accepter)as tl1,employee as e,
+todo as t where t.todo_id=tl.todo_id and t.sender_id=e.employee_id and tl.todo_id=tl1.todo_id';
 	private $sql_str = 'select t.*,e.`name` as `sender`, tl.accepter from (select tl.todo_id, GROUP_CONCAT(e.`name`) as accepter from todo_list as tl,employee as e 
 WHERE e.employee_id=tl.employee_id GROUP BY tl.todo_id)as tl,employee as e,todo as t where t.todo_id=tl.todo_id and t.sender_id=e.employee_id ';
 	public function find($params,$page){
@@ -16,12 +17,12 @@ WHERE e.employee_id=tl.employee_id GROUP BY tl.todo_id)as tl,employee as e,todo 
 	}
 
 	public function findByAccepterIdNotice($accepter){//根据开始结束时间提醒
-		$result = $this->db->query($this->sql_str_show_self." and date_start < CURDATE() and date_end > CURDATE()",array('accepter'=>$accepter));
+		$result = $this->db->query($this->sql_str_show_self." and date_start <= CURDATE() and date_end >= CURDATE() ORDER BY t.date_start DESC,t.date_end ASC",array('accepter'=>$accepter));
 		return $result;
 	}
 	
 	public function findByAccepterIdEarlyNotice($accepter){//根据开始结束时间提醒
-		$result = $this->db->query($this->sql_str_show_self." and date_start < CURDATE() and date_end < CURDATE()",array('accepter'=>$accepter));
+		$result = $this->db->query($this->sql_str_show_self." and date_start <= CURDATE() and date_end <= CURDATE()",array('accepter'=>$accepter));
 		return $result;
 	}
 

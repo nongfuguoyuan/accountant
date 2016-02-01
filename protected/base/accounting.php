@@ -1,6 +1,6 @@
 <?php
 	class Accounting extends Model{
-
+		
 		//查询状态
 		function findStatus($accounting_id){
 			return $this->db->queryOne('select status from `accounting` where accounting_id=?',$accounting_id);
@@ -49,7 +49,7 @@
 
 		// 查询指定用户是否开通代理记账服务
 		function findOpen($guest_id){
-			return $this->db->queryOne("select 
+			$re = $this->db->queryOne("select 
 				DATE_FORMAT(p.deadline,'%Y-%m-%d') deadline,
 				a.guest_id
 				from
@@ -59,6 +59,8 @@
 				a.accounting_id = p.accounting_id
 				where a.guest_id = ?
 				order by p.deadline desc limit 1",$guest_id);
+			
+			return $re;
 		}
 		//查询是否由指定员工负责
 		function findByEmployee($employee_id,$accounting_id){
@@ -90,6 +92,7 @@
 				on 
 				e.employee_id = a.employee_id
 				where g.guest_id = a.guest_id
+
 			';
 
 			if(!empty($params['phone'])){

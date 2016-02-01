@@ -15,13 +15,20 @@
 				order by p.progress_id desc",$business_id);
 		}
 		function add($params){
-			return $this->db->exec("insert into `progress` set 
+		 $re = $this->db->exec("insert into `progress` set 
 				business_id=:business_id,
 				process_id=:process_id,
 				note=:note,
 				date_end=:date_end,
 				create_time=now()
 			",$params);
+		 if($re==1){
+		 	include 'msg.php';
+		 	$msg=new Msg($params['business_id'], 'business');
+		 	$msg->pushMessage('工商注册', '尊敬的客户你的工商注册进度更新了');
+		 }
+		return $re;
+		
 		}
 		function update($params){
 			return $this->db->exec("update `progress` set 

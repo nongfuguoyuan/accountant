@@ -976,7 +976,8 @@ myapp.controller('userCtrl',function($scope,$http,$route,areaService,resourceSer
 
 	//添加工商
 	$scope.addBusiness = function(ele){
-		businessService.add($scope,function(){
+		businessService.add($scope,function(r){
+			console.log(r);
 			if(ele.nodeName == 'I'){
 				$(ele).parent().prev().trigger('click');
 			}else{
@@ -1405,6 +1406,7 @@ myapp.service('businessService',function($http){
 			}).success(function(r){
 				layer.closeAll('loading');
 				viewResult(r,function(r){
+
 					fn(r);
 				});
 			});

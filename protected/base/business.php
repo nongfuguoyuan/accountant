@@ -151,7 +151,7 @@
 			$sql = $sql." order by pr.progress_id desc) b group by b.business_id";			
 
 			$result =  $this->db->query($sql,$params,$page);
-
+			
 			if($result){
 				return array('total'=>$this->db->count,'data'=>$result);	
 			}else{

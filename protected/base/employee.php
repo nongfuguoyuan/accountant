@@ -18,6 +18,7 @@
 			));
 		}
 		//按角色标签查找
+		
 		function findByTag($tag){
 			return $this->db->query('select 
 				e.employee_id,
@@ -27,7 +28,7 @@
 				`roles` r
 				where e.roles_id = r.roles_id
 				and e.status = 1
-				and r.tag = ?',$tag);
+				and r.tag like "%"?"%"',$tag);
 		}
 		// 查询某个用户的角色
 		function findTag($employee_id){
