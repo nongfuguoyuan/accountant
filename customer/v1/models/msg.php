@@ -2,7 +2,7 @@
 	class Msg extends Model{
 		//统计有几条消息
 		function findCount($guest_id,$readed){
-			return $this->db->queryOne("select count(*) count from `msg` where readed=? and guest_id=?",array($readed,$guest_id));
+			return $this->db->queryOne("select count(*) count from `msg` where readed=? and showed = 1 and guest_id=?",array($readed,$guest_id));
 		}
 
 		function find($guest_id,$readed){
