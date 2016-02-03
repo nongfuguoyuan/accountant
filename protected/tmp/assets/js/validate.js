@@ -189,7 +189,7 @@ function validate(model,str){
 	}
 	switch(model){
 		case 'name':
-			return str.match(/.{2,}/);
+			return str.match(/^[\u4E00-\u9FA5\uF900-\uFA2D]{2,4}$/);
 		case 'year':
 			return str.match(/^20\d{2}$/);
 		case 'month':
