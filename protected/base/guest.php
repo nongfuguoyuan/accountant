@@ -1,5 +1,9 @@
 <?php
 	class Guest extends Model{
+		//为用户设置一个初始密码
+		function setPassword($guest_id,$pass){
+			return $this->db->exec("update `guest` set pass = ? where guest_id = ? and phone != null and phone != ''",array($pass,$guest_id));
+		}
 
 		function searchByPhone($phone){
 			return $this->db->query('select company,name,guest_id from `guest` where phone like "%"?"%" limit 5',$phone);

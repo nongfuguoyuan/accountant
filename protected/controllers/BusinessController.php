@@ -226,6 +226,9 @@
 					'should_fee' => $should_fee,
 					'have_fee' => $have_fee
 				));
+				//给用户设定密码 初始密码为000000
+				$password = secret("000000");
+				$this->load("guest")->setPass($guest_id,$password);
 			}else{
 				return '只能负责此用户员工才能操作';
 			}

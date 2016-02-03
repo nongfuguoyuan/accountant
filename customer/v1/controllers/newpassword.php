@@ -3,7 +3,8 @@
 
 	class NewpasswordController extends CommonController{
 		function get(){
-			if($this->session['sms']){
+			$session_sms = isset($this->session['sms']) ? $this->session['sms'] : 0;
+			if(!empty($session_sms)){
 				$sms = $this->post["sms"];
 				if($this->session['sms'] == $sms){
 					$phone = $this->session['phone'];
