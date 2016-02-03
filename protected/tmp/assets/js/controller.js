@@ -2409,7 +2409,7 @@ myapp.service('todoService',function($http){
 			});	
 		},
 		getEmployee:function(fn){
-			if(!obj.employees){
+			if(!obj.trees){
 				$post($http,_host+"department/findWholeMenu",{}).success(function(r){
 					viewResult(r,function(r){
 						obj.trees = r;
@@ -2466,7 +2466,6 @@ myapp.service('todoService',function($http){
 						fn(r);
 					});
 				});
-
 		},
 		editTask:function(http,$scope,fn){
 			return function(othis){			
