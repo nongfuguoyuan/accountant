@@ -83,6 +83,7 @@
 			",array($accounting_id,$year));
 		}
 
+
 		function accounting_admin_find($params,$page){
 			$sql = '
 				select 
@@ -892,4 +893,39 @@
 			return $this->db->exec('delete from `pay_record` where pay_record_id=?',$pay_record_id);
 		}
 		
+		/*function payNotice($employee_id,$page){
+			return $result = $this->db->query("
+				select 
+				g.company,
+				g.name,
+				g.phone,
+				s.money,
+				s.pay_record_id,
+				e.name server,
+				e2.name accounting,
+				DATE_FORMAT(s.create_time,'%Y-%m-%d') create_time,
+				DATE_FORMAT(s.deadline,'%Y-%m-%d') deadline,
+				a.accounting_id
+				 from
+				`guest` g,
+				`employee` e,
+				`employee` e2,
+				`accounting` a
+				left join
+				(select deadline,accounting_id,money,create_time,pay_record_id from (select * from pay_record where  TO_DAYS(deadline) - TO_DAYS(NOW())<15 ORDER BY deadline desc)p GROUP BY accounting_id) s
+				on
+				s.accounting_id = a.accounting_id
+				where
+				a.guest_id = g.guest_id and
+				a.employee_id = e2.employee_id and 
+				e.employee_id = g.employee_id and
+				a.employee_id = ?
+				order by s.pay_record_id desc
+			",$employee_id,$page);
+
+			if($result){
+				return array('total'=>$this->db->count,'data'=>$result);
+			}
+
+		}*/
 	}

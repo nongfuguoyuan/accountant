@@ -105,6 +105,7 @@
 				'business_id'=>$business_id
 			));
 		}
+
 		//查询客服自己名下
 		private function server_find($params){
 			return $this->load("business")->server_find($params,array($this->page()));
@@ -254,6 +255,16 @@
 		function delete(){
 			$business_id = (int)$this->post['business_id'];
 			return $this->load('business')->delete($business_id);
+		}
+		/*
+			add by zgj 2015-12-8
+			查询工商代办事项
+		*/
+		function waitProcess(){
+			$page = $this->page();
+			$employee_id = (int)$this->session['user']['employee_id'];
+			return $this->load('business')->waitProcess($employee_id,array($page));	
+
 		}
 	}
 ?>

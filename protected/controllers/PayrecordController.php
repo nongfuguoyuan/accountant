@@ -226,4 +226,9 @@
 			}
 		}
 
+		function payNotice(){
+			$employee_id = (int)$this->session['user']['employee_id'];
+			return $this->load('payrecord')->payNotice($employee_id,array($this->page()));
+		}
+
 	}
