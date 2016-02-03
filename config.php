@@ -12,4 +12,6 @@
 	define("JS",_HOST."protected/tmp/assets/js/");
 	define("IMG",_HOST."protected/tmp/assets/img/");
 	define("_STATIC",_HOST."protected/tmp/static/");
+	//用户配置项
+	define("CUSTOMER",__dir__."/customer/");
 

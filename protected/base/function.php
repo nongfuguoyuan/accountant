@@ -9,7 +9,19 @@ function orm($name){
 	
 	return $tableName;
 }
-
+// 返回随机的，未经加密的密码
+function randomPass($num = 6){
+	if($num <= 0){
+		throw new Exception("random need a positive number as parameter", 1);
+	}
+	$source = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	$str = "";
+	for($i = 0;$i < $num;$i++){
+		$index = rand(0,51);
+		$str = $str . substr($source,$index,1);
+	}
+	return $str;
+}
 /*
  * example:EmployeeController->EmployeeModel
  */

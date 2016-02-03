@@ -71,7 +71,6 @@ class Main {
 	}
 
 	function start(){
-		
 		if(empty($this->clazz) || empty($this->method)){
 			// return 'can not find file you request!';
 			return json_encode(array('error_code'=>3));

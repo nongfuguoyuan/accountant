@@ -2410,7 +2410,6 @@ myapp.service('todoService',function($http){
 						fn();
 					});
 				});
-
 		},
 		editTask:function($scope,fn){				
 			var todo_id=obj.todo_id,
